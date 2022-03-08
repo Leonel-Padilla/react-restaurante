@@ -1,12 +1,17 @@
 import './App.css';
 import Empleado from './Componentes/Empleado/Empleado'
-import { Button} from '@nextui-org/react';
 import { Link, Route, Routes, BrowserRouter} from 'react-router-dom';
+import { Avatar, Button, Card, Input, useBodyScroll,} from '@nextui-org/react'
 
 
 function App() {
   return (
     <div>
+      {/*<Card className='nav'>
+          <Button>Regresar</Button>
+          <h3>Registrar Empleado</h3>
+          <Avatar className='avatar' color={'gradient'} text={'Nombre'} textColor={'white'}></Avatar>
+      </Card>*/}
 
       <Link to={'/Empleados'}><Button>Empleado</Button></Link>
 
