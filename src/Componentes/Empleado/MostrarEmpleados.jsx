@@ -52,8 +52,8 @@ const MostrarEmpleados = ()=>{
         <div>
 
             
-        <table className='table table-striped'>
-            <thead className='bg-primary text-white'>
+        <table className='table table-bordeless mt-2'> 
+            <thead className='bg-primary text-white'> 
                 <tr>
                     <th>Id</th>
                     <th>Nombre</th>
