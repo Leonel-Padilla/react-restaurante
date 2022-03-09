@@ -4,7 +4,8 @@ import { Link } from 'react-router-dom'
 import { Button, Modal, Switch, Tooltip } from '@nextui-org/react';
 
 
-const endPoint = 'http://localhost:8000/api'
+const endPoint = 'http://127.0.0.1:8000/api/Empleado'
+const endPointUpdate = 'http://127.0.0.1:8000/api/updateEmpleado'
 
 const MostrarEmpleados = ()=>{
     const [empleados, setEmpleados] = useState([])
@@ -13,8 +14,11 @@ const MostrarEmpleados = ()=>{
         getAllEmpleados()
     },[])
 
-    const getAllEmpleados = ()=>{
-        const response = {
+    const getAllEmpleados = async ()=>{
+        
+        const response = await axios.get(endPoint)
+        
+        /*const response = {
             data: [
                 {empleadoId:1, empleadoNombre: 'Manuel', empleadoNumero: 89306904, empleadoCorreo: 'manu@gmail.com', 
                 empleadoDireccion: 'Aqui cerca', empleadoEstado: 0, empleadoTipoDocumentacion: 2},
@@ -25,25 +29,26 @@ const MostrarEmpleados = ()=>{
                 {empleadoId:4, empleadoNombre: 'pedrito', empleadoNumero: 89306904, empleadoCorreo: 'pedrito@gmail.com', 
                 empleadoDireccion: 'Aqui cerca', empleadoEstado: 1, empleadoTipoDocumentacion: 5},
             ],
-        }
+        }*/
 
         setEmpleados(response.data)
     }
 
-    const deleteEmpleado = (id)=>{
-        /*await axios.delete(`${endPoint}/deleteEmpleado/${id}`)
-        getAllBooks()*/
-    }
+    const cambioEstado = async (empleado)=>{
 
-    const cambioEstado = (empleadoId)=>{
+        await axios.put(`${endPointUpdate}/${empleado.id}`, {tipoDocumentoId:empleado.tipoDocumentoId,
+        empleadoNombre: empleado.empleadoNombre, empleadoNumero: empleado.empleadoNumero, empleadoCorreo: empleado.empleadoCorreo,
+        empleadoDireccion: empleado.empleadoDireccion, estado: empleado.estado == 1? 0 : 1})
 
-        const copiaEmpleados = [...empleados]
+        getAllEmpleados()
+
+        /*const copiaEmpleados = [...empleados]
 
         copiaEmpleados.map((empleado)=> empleado.empleadoId == empleadoId? 
         empleado.empleadoEstado == 1? 
         empleado.empleadoEstado = 0 : empleado.empleadoEstado = 1 : null)
-        
-        setEmpleados(copiaEmpleados)
+    
+        setEmpleados(copiaEmpleados)*/
 
     }
 
@@ -69,16 +74,16 @@ const MostrarEmpleados = ()=>{
             <tbody>
                 {empleados.map(empleado => 
                     
-                    <tr key={empleado.empleadoId}>
-                        <td>{empleado.empleadoId}</td>
+                    <tr key={empleado.id}>
+                        <td>{empleado.id}</td>
                         <td>{empleado.empleadoNombre}</td>
                         <td>{empleado.empleadoNumero}</td>
                         <td>{empleado.empleadoCorreo}</td>
                         <td>{empleado.empleadoDireccion}</td>
-                        <td>{empleado.empleadoEstado == 1 ? 'Habilitado' : 'Desabilitado'}</td>
-                        <td>{empleado.empleadoTipoDocumentacion}</td>
+                        <td>{empleado.estado == 1 ? 'Habilitado' : 'Desabilitado'}</td>
+                        <td>{empleado.tipoDocumentoId}</td>
                         <td>
-                            <Link to={`updateEmpleado/${empleado.empleadoId}`}><Button color={'gradient'} ghost>Editar</Button></Link>
+                            <Link to={`updateEmpleado/${empleado.id}`}><Button color={'gradient'} ghost>Editar</Button></Link>
 
                             <Tooltip
                             placement='left'
@@ -88,13 +93,13 @@ const MostrarEmpleados = ()=>{
                                         <p>Está seguro que desea cambiar este registro?</p> 
                                         <Button 
                                             color={'error'}
-                                            children={empleado.empleadoEstado == 1 ? 'Desabilitar' : 'Habilitar'}
-                                            onClick={()=> cambioEstado(empleado.empleadoId)}
+                                            children={empleado.estado == 1 ? 'Desabilitar' : 'Habilitar'}
+                                            onClick={()=> cambioEstado(empleado)}
                                         ></Button>
                                         
                                     </div>}>
                                 <Button 
-                                children={empleado.empleadoEstado == 1 ? 'Desabilitar' : 'Habilitar'}
+                                children={empleado.estado == 1 ? 'Desabilitar' : 'Habilitar'}
                                 color={'error'}
                                 ></Button>
                             </Tooltip>

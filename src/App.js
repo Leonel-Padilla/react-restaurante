@@ -7,12 +7,6 @@ import { Avatar, Button, Card, Input, useBodyScroll,} from '@nextui-org/react'
 function App() {
   return (
     <div>
-      {/*<Card className='nav'>
-          <Button>Regresar</Button>
-          <h3>Registrar Empleado</h3>
-          <Avatar className='avatar' color={'gradient'} text={'Nombre'} textColor={'white'}></Avatar>
-      </Card>*/}
-
       <Link to={'/Empleados'}><Button>Empleado</Button></Link>
 
       <section>

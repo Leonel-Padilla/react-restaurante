@@ -3,19 +3,21 @@ import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { Avatar, Button, Card, Input, useBodyScroll,} from '@nextui-org/react'
 
-const endPointGet = 'http://localhost:8000/api'
-const endPoint = 'http://localhost:8000/api/addLibro'
+const endPointRegistrarEmpleado = 'http://127.0.0.1:8000/api/addEmpleado'
+const endPointRegistrarTipoDocumento = 'http://127.0.0.1:8000/api/addTipoDocumento'
+const endPointBuscarTipoDocumento = 'http://127.0.0.1:8000/api/TipoDocumentoND'
+const endPointEliminarTipoDocumento = 'http://127.0.0.1:8000/api/deleteTipoDocumento'
 
 const AgregarEmpleado = () =>{
-    const [empleadoId, setEmpleadoId] = useState(0)
     const [empleadoNombre, setEmpleadoNombre] = useState('')
     const [empleadoNumero, setEmpleadoNumero] = useState('')
     const [empleadoCorreo, setEmpleadoCorreo] = useState('')
     const [empleadoDireccion, setEmpleadoDireccion] = useState('')
-    const [empleadoEstado, setEmpleadoEstado] = useState(0)
-    const [empleadoTipoDocumentacion, setEmpleadoTipoDocumentacion] = useState(0)
+    const [empleadoEstado, setEmpleadoEstado] = useState(1)
 
-    const [tiposDocumentacion, setTiposDocumentacion] = useState([])
+    const [empleadoNombreDocumento, setEmpleadoNombreDocumento] = useState('RTN')
+    const [empleadoNumeroDocumento, setEmpleadoNumeroDocumento] = useState('')
+    const [documentoEstado, setDocumentoEstado] = useState(1)
 
     useEffect(()=>{
         getTiposDocumentacion()
@@ -30,19 +32,31 @@ const AgregarEmpleado = () =>{
             ]
         }
 
-        setTiposDocumentacion(response.data)
-        setEmpleadoTipoDocumentacion(response.data[0].id)
     }
 
-    const registrar = ()=>{
-        /*e.preventDefault()
-        const response = await axios.post(endPoint, {categoria_id:categoria_id, nombre:nombre})
+    const registrar = async (e)=>{
+        e.preventDefault()
+        const response = await axios.post(endPointRegistrarTipoDocumento, {nombreDocumento: empleadoNombreDocumento,
+            numeroDocumento: empleadoNumeroDocumento, estado: documentoEstado})
 
         if (response.status !== 200){
-            console.log(response.data)
-            alert(response.data.Error)  
+            console.log(response.data) //DEV
+            alert(response.data.Error)
+        }else{
+            
+            const responseDocumento = await axios.get(`${endPointBuscarTipoDocumento}/${empleadoNumeroDocumento}`)
+
+            const response1 = await axios.post(endPointRegistrarEmpleado, {tipoDocumentoId: responseDocumento.data.id,
+                empleadoNombre: empleadoNombre, empleadoNumero: empleadoNumero, empleadoCorreo: empleadoCorreo,
+                empleadoDireccion: empleadoDireccion, estado: empleadoEstado})
+
+            if (response1.status !== 200){
+                console.log(response1.data)
+                alert(response1.data.Error)
+
+                await axios.delete(`${endPointEliminarTipoDocumento}/${responseDocumento.data.id}`)
+            }
         }
-        navigate('/')*/
     }
 
     return(
@@ -108,15 +122,25 @@ const AgregarEmpleado = () =>{
                 <div className='atributo'>
                     <label>Tipo Documentacion</label> <br/>
                     <select
-                    value={empleadoTipoDocumentacion}
-                    onChange={(e)=> setEmpleadoTipoDocumentacion(e.target.value)}
+                    value={empleadoNombreDocumento}
+                    onChange={(e)=> setEmpleadoNombreDocumento(e.target.value)}
                     type='number'
                     className='select'
                     >
-                        {tiposDocumentacion.map((elemento)=>
-                            <option key={elemento.tipoDocumentacionId}>{elemento.tipoDocumentacionId}</option>
-                        )}
+                        <option>RTN</option>
+                        <option>Identidad</option>
+                        <option>Pasaporte</option>
                     </select>
+                </div>
+                <div className='atributo'>
+                    <Input
+                    underlined
+                    labelPlaceholder='Numero Documento'
+                    value={empleadoNumeroDocumento}
+                    onChange={(e)=> setEmpleadoNumeroDocumento(e.target.value)}
+                    type='text'
+                    className='form-control'
+                    />
                 </div>
 
 
