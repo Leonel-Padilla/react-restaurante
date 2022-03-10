@@ -61,10 +61,10 @@ const AgregarEmpleado = () =>{
 
     return(
         <div>
-            <Card className='nav'>
+            {/* <Card className='nav'>
                 <h3>Registrar Empleado</h3>
                 <Avatar className='avatar' color={'gradient'} text={'Nombre'} textColor={'white'}></Avatar>
-            </Card>
+            </Card>*/}
 
             <form onSubmit={registrar} className='formulario'>
                 <div className='atributo'>
@@ -116,7 +116,7 @@ const AgregarEmpleado = () =>{
                     className='select'
                     >
                     <option>Habilitado</option>
-                    <option>Desabilitado</option>
+                    <option>Deshabilitado</option>
                     </select>
                 </div>
                 <div className='atributo'>
