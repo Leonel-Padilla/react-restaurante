@@ -1,17 +1,22 @@
-import React, {useState, useEffect, useRef} from 'react'
+import React, {useState, useEffect} from 'react'
 import axios from 'axios'
-import { Link } from 'react-router-dom'
-import { Button, Input, Modal, Switch, Tooltip } from '@nextui-org/react';
-import buscarLupa from '../../img/buscar_lupa.png'
-import { Search } from 'react-iconly';
+import { useNavigate } from 'react-router-dom'
+import { Button, Input,Tooltip } from '@nextui-org/react';
+import buscarLupa from '../../img/buscar_lupa.png';
+import lapizEditar from '../../img/lapiz_editar.png'
 
 const endPoint = 'http://127.0.0.1:8000/api/Empleado'
 const endPointUpdate = 'http://127.0.0.1:8000/api/updateEmpleado'
 const endPointGetEmpleadosNombre = 'http://127.0.0.1:8000/api/EmpleadoN'
+const endPointGetTipoDocumento = 'http://127.0.0.1:8000/api/TipoDocumento'
 
-const MostrarEmpleados = ()=>{
+const MostrarEmpleados = (props)=>{
     const [empleados, setEmpleados] = useState([])
     const [nombreBusqueda, setNombreBusqueda] = useState('')
+    const navigate = useNavigate()
+    const [nombreDocumento, setnombreDocumento] = useState('')
+
+
 
     useEffect(()=>{
         getAllEmpleados()
@@ -32,7 +37,7 @@ const MostrarEmpleados = ()=>{
         getAllEmpleados()
     }
 
-    const buscarPorNombre = async (e)=>{
+    const GetByNombre = async (e)=>{
         e.preventDefault()
         
         const response = await axios.get(`${endPointGetEmpleadosNombre}/${nombreBusqueda}`)
@@ -40,31 +45,58 @@ const MostrarEmpleados = ()=>{
         setEmpleados(response.data)
     }
 
+    const getTipoDocumento = async (id)=>{
+        const response = await axios.get(`${endPointGetTipoDocumento}/${id}`)
+
+        //const nombre = response.data.nombreDocumento
+
+        setNombreBusqueda(response.data.nombreDocumento)
+    }
+
 
     return(
         <div>
-
-        <form className='d-flex align-items-start justify-content-end' onSubmit={buscarPorNombre}>
-            <Input
-                underlined
-                placeholder='nombre'
-                onChange={(e)=>setNombreBusqueda(e.target.value)}
-                type='text'
-                className='form-control me-2'
-                required={true}
-                />
-            <Button
-            className='me-2 ms-2'
-            color={'primary'}
+        
+        <div className='d-flex justify-content-center pt-2 pb-2'
+        style={{backgroundColor: 'whitesmoke'}} >
+            <Button 
+            color={'gradient'}
             bordered
-            icon={<img src={buscarLupa}></img>}
-            type={'submit'}>
-                Buscar
+            style={{right: '600px'}}
+            className='align-self-center me-2' 
+            auto onClick={()=>navigate('/')}>
+                Regresar
             </Button>
-        </form>
+
+            <h1 className='ms-4 me-4' >Empleado</h1>
+
+            <form 
+            className='d-flex align-self-center' 
+            style={{left: '300px'}} 
+            onSubmit={GetByNombre}>
+                <Input
+                    underlined
+                    placeholder='nombre'
+                    aria-label='aria-describedby'
+                    onChange={(e)=>setNombreBusqueda(e.target.value)}
+                    type='text'
+                    className='form-control me-2'
+                    required={true}
+                    />
+                <Button
+                auto
+                className='ms-2'
+                color={'gradient'}
+                icon={<img src={buscarLupa}/>}
+                type={'submit'}>
+                    Buscar
+                </Button>
+            </form>
+        </div>
+
             
-        <table className='table table-bordeless mt-2'> 
-            <thead className='bg-primary text-white'> 
+        <table className='table mt-2'> 
+            <thead className='bg-dark text-white'> 
                 <tr>
                     <th>Id</th>
                     <th>Nombre</th>
@@ -89,8 +121,13 @@ const MostrarEmpleados = ()=>{
                         <td>{empleado.estado == 1 ? 'Habilitado' : 'Deshabilitado'}</td>
                         <td>{empleado.tipoDocumentoId}</td>
                         <td>
-                            <Link to={`updateEmpleado/${empleado.id}`}><Button className='mb-1'
-                                                                        color={'gradient'} bordered>Editar</Button></Link>
+                            <Button
+                            className='mb-1'
+                            color={'gradient'}
+                            iconRight={<img src={lapizEditar}/>}
+                            onClick={()=>navigate(`/Empleados/updateEmpleado/${empleado.id}`)}
+                                >Editar
+                            </Button>
 
                             <Tooltip
                             placement='left'
@@ -98,17 +135,20 @@ const MostrarEmpleados = ()=>{
                             trigger='click' 
                             content={<div>
                                         <p>Está seguro que desea cambiar este registro?</p> 
+
                                         <Button 
-                                            color={'warning'}
-                                            children={empleado.estado == 1 ? 'Deshabilitar' : 'Habilitar'}
-                                            onClick={()=> cambioEstado(empleado)}
+                                        className='bg-dark text-light'
+                                        color={'dark'}
+                                        children={empleado.estado == 1 ? 'Deshabilitar' : 'Habilitar'}
+                                        onClick={()=> cambioEstado(empleado)}
                                         ></Button>
                                         
                                     </div>}>
                                 <Button 
+                                light
+                                shadow
                                 children={empleado.estado == 1 ? 'Deshabilitar' : 'Habilitar'}
-                                bordered
-                                color={'warning'}
+                                color={'secondary'}
                                 ></Button>
                             </Tooltip>
 
@@ -118,12 +158,14 @@ const MostrarEmpleados = ()=>{
             </tbody>
         </table>
 
-        <Link className='link' style={{margin: 0}} to="addEmpleado">
-            <Button style={{margin: 0}} color={'success'} ghost>
-                Registrar
-                
-            </Button>
-        </Link>
+        <Button 
+        className='bg-dark text-light'
+        color={'dark'}
+        bordered
+        onClick={()=>navigate('/Empleados/addEmpleado')}>
+            Registrar
+        </Button>
+
         </div>
     )
 }

@@ -1,6 +1,6 @@
 import { useNavigate, useParams} from "react-router-dom";
 import React, {useState, useEffect} from 'react'
-import { Avatar, Button, Card, Input, useBodyScroll,} from '@nextui-org/react'
+import { Button, Input} from '@nextui-org/react'
 import axios from "axios";
 
 const ActualizarEmpleado = () =>{
@@ -15,6 +15,7 @@ const ActualizarEmpleado = () =>{
     const [empleadoNumeroDocumento, setEmpleadoNumeroDocumento] = useState('')
     const [documentoEstado, setDocumentoEstado] = useState(1)
     const {id} = useParams()
+    const navigate = useNavigate()
 
     useEffect(()=>{
         getEmpleadoById()
@@ -73,6 +74,12 @@ const ActualizarEmpleado = () =>{
 
     return(
         <div>
+
+            <div className='d-flex justify-content-center bg-dark mb-2'
+            style={{backgroundColor: 'whitesmoke'}}>
+                <h1 className='text-white'>Actualizar Empleado</h1>
+            </div>
+
             <form onSubmit={actualizar} className='formulario'>
                 <div className='atributo'>
                     <Input
@@ -114,18 +121,6 @@ const ActualizarEmpleado = () =>{
                     className='form-control'
                     />
                 </div>
-                {/*<div className='atributo'>
-                    <label>Estado</label> <br/>
-                    <select
-                    value={empleadoEstado == 1? 'Habilitado': 'Deshabilitado'}
-                    onChange={(e)=> setEmpleadoEstado(e.target.value)}
-                    type='number'
-                    className='select'
-                    >
-                    <option>Habilitado</option>
-                    <option>Deshabilitado</option>
-                    </select>
-                </div>*/}
                 <div className='atributo'>
                     <label>Tipo Documentacion</label> <br/>
                     <select
@@ -151,7 +146,25 @@ const ActualizarEmpleado = () =>{
                 </div>
 
 
-                <Button type='submit' color={'gradient'} ghost>Guardar</Button>
+                <div className="d-flex">
+
+                    <Button 
+                    color={'gradient'}
+                    className='align-self-end me-2' 
+                    auto 
+                    onClick={()=>navigate('/Empleados')}
+                    ghost>
+                        Regresar
+                    </Button>
+                    <Button
+                    auto
+                    type='submit' 
+                    color={'gradient'} 
+                    ghost>
+                        Guardar
+                    </Button>
+
+                </div>
             </form>
 
         </div>

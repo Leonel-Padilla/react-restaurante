@@ -1,7 +1,7 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState} from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
-import { Avatar, Button, Card, Input, useBodyScroll,} from '@nextui-org/react'
+import { Button, Input} from '@nextui-org/react'
 
 const endPointRegistrarEmpleado = 'http://127.0.0.1:8000/api/addEmpleado'
 const endPointRegistrarTipoDocumento = 'http://127.0.0.1:8000/api/addTipoDocumento'
@@ -18,22 +18,9 @@ const AgregarEmpleado = () =>{
     const [empleadoNombreDocumento, setEmpleadoNombreDocumento] = useState('RTN')
     const [empleadoNumeroDocumento, setEmpleadoNumeroDocumento] = useState('')
     const [documentoEstado, setDocumentoEstado] = useState(1)
+    const navigate = useNavigate()
 
-    useEffect(()=>{
-        getTiposDocumentacion()
-    }, [])
-
-    const getTiposDocumentacion = ()=>{
-        const response = {
-            data:[
-                {tipoDocumentacionId: 1, nombreDocumento: 'Identidad', numeroDocumento: 'A4015', estado: 1},
-                {tipoDocumentacionId: 2, nombreDocumento: 'Pasaporte', numeroDocumento: 'A4015', estado: 1},
-                {tipoDocumentacionId: 3, nombreDocumento: 'RTN', numeroDocumento: 'A4015', estado: 1}
-            ]
-        }
-
-    }
-
+    
     const registrar = async (e)=>{
         e.preventDefault()
         const response = await axios.post(endPointRegistrarTipoDocumento, {nombreDocumento: empleadoNombreDocumento,
@@ -51,7 +38,7 @@ const AgregarEmpleado = () =>{
                 empleadoDireccion: empleadoDireccion, estado: empleadoEstado})
 
             if (response1.status !== 200){
-                console.log(response1.data)
+                console.log(response1.data) //DEV
                 alert(response1.data.Error)
 
                 await axios.delete(`${endPointEliminarTipoDocumento}/${responseDocumento.data.id}`)
@@ -61,10 +48,12 @@ const AgregarEmpleado = () =>{
 
     return(
         <div>
-            {/* <Card className='nav'>
-                <h3>Registrar Empleado</h3>
-                <Avatar className='avatar' color={'gradient'} text={'Nombre'} textColor={'white'}></Avatar>
-            </Card>*/}
+
+            <div className='d-flex justify-content-center bg-dark mb-2'
+            style={{backgroundColor: 'whitesmoke'}}>
+                <h1 className='text-white'>Registrar Empleado</h1>
+                
+            </div>
 
             <form onSubmit={registrar} className='formulario'>
                 <div className='atributo'>
@@ -144,7 +133,23 @@ const AgregarEmpleado = () =>{
                 </div>
 
 
-                <Button type='submit' color={'gradient'} ghost>Guardar</Button>
+                <div className='d-flex'>
+                    <Button 
+                    color={'gradient'}
+                    className='align-self-end me-2' 
+                    auto 
+                    onClick={()=>navigate('/Empleados')}
+                    ghost>
+                        Regresar
+                    </Button>
+                    <Button 
+                    auto
+                    type='submit' 
+                    color={'gradient'} 
+                    ghost>
+                        Guardar
+                    </Button>
+                </div>
             </form>
 
 
