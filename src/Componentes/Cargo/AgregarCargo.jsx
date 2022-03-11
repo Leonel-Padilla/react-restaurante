@@ -1,32 +1,61 @@
-
-
 import React, {useState} from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
-import { Button, Input} from '@nextui-org/react'
+import { Button, Input, Modal, Text} from '@nextui-org/react'
 
 const endPointRegistarCargo = 'http://127.0.0.1:8000/api/addCargo'
 
 function AgregarCargo() {
 
-  const [cargoNombre, setCargoNombre] = useState('')
-  const [cargoDescripcion, setCargoDescripcion] = useState('')
-  const [cargoEstado, setCargoEstado] = useState(1)
-  const navigate = useNavigate()
+    const [cargoNombre, setCargoNombre] = useState('')
+    const [cargoDescripcion, setCargoDescripcion] = useState('')
+    const [cargoEstado, setCargoEstado] = useState(1)
+    const navigate = useNavigate()
 
-  const registrar = async (e)=>{
-    e.preventDefault()
-    const response = await axios.post(endPointRegistarCargo, {cargoNombre: cargoNombre, 
-    cargoDescripcion: cargoDescripcion, estado: cargoEstado})
+    const [mensajeModal, setMensajeModal] = useState('')
+    const [tituloModal, setTituloModal] = useState('')
+    const [visible, setVisible] = useState(false)
 
-    if (response.status !== 200){
-        console.log(response.data) //DEV
-        alert(response.data.Error)
+    const registrar = async (e)=>{
+        e.preventDefault()
+        const response = await axios.post(endPointRegistarCargo, {cargoNombre: cargoNombre, 
+        cargoDescripcion: cargoDescripcion, estado: cargoEstado})
+
+        if (response.status !== 200){
+            /*console.log(response.data) //DEV
+            alert(response.data.Error)*/
+
+            setTituloModal('Error')
+            setMensajeModal(response.data.Error)
+            setVisible(true)
+        }else{
+            navigate('/Cargos')
+        }
     }
-  }
 
   return (
     <div>
+
+            <Modal
+            closeButton
+            blur
+            preventClose
+            className='bg-dark text-white'
+            open={visible}
+            onClose={()=>setVisible(false)}>
+                <Modal.Header>
+                    <Text 
+                    h4
+                    className='text-white'>
+                        {tituloModal}
+                    </Text>
+                </Modal.Header>
+                <Modal.Body>
+                    {mensajeModal}
+                </Modal.Body>
+
+            </Modal>
+
           <div className='d-flex justify-content-center bg-dark mb-2'
           style={{backgroundColor: 'whitesmoke'}}>
               <h1 className='text-white'>Registrar Cargo</h1>

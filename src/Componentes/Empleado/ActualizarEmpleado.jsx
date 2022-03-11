@@ -1,6 +1,6 @@
 import { useNavigate, useParams} from "react-router-dom";
 import React, {useState, useEffect} from 'react'
-import { Button, Input} from '@nextui-org/react'
+import { Button, Input, Text, Modal} from '@nextui-org/react'
 import axios from "axios";
 
 const ActualizarEmpleado = () =>{
@@ -9,6 +9,10 @@ const ActualizarEmpleado = () =>{
     const [empleadoCorreo, setEmpleadoCorreo] = useState('')
     const [empleadoDireccion, setEmpleadoDireccion] = useState('')
     const [empleadoEstado, setEmpleadoEstado] = useState(1)
+
+    const [mensajeModal, setMensajeModal] = useState('')
+    const [tituloModal, setTituloModal] = useState('')
+    const [visible, setVisible] = useState(false)
 
     const [empleadoIdDocumento, setEmpleadoIdDocumento] = useState(0)
     const [empleadoNombreDocumento, setEmpleadoNombreDocumento] = useState('RTN')
@@ -38,7 +42,7 @@ const ActualizarEmpleado = () =>{
 
         getTipoDocumentoById(response.data.tipoDocumentoId)
 
-        console.log(response.data)
+        //console.log(response.data)   //DEV
     }
 
     const getTipoDocumentoById = async (id) =>{
@@ -58,22 +62,49 @@ const ActualizarEmpleado = () =>{
             empleadoCorreo: empleadoCorreo, empleadoDireccion: empleadoDireccion, estado: empleadoEstado})
 
         if (response.status !== 200){
-            console.log(response.data) //DEV
-            alert(response.data.Error)
+            /*console.log(response.data) //DEV
+            alert(response.data.Error)*/
+            setTituloModal('Error')
+            setMensajeModal(response.data.Error)
+            setVisible(true)
         }else{
             const response1 = await axios.put(`${endPointActualizarTipoDocumento}/${empleadoIdDocumento}`, 
             {nombreDocumento: empleadoNombreDocumento, numeroDocumento: empleadoNumeroDocumento, estado: documentoEstado})
 
             if (response1.status !== 200){
-                console.log(response1.data)
-                alert(response1.data.Error)
+                setTituloModal('Error')
+                setMensajeModal(response1.data.Error)
+                setVisible(true)
+                /*console.log(response1.data)
+                alert(response1.data.Error)*/
+            }else{
+                navigate('/Empleados')
             }
         }
-        
     }
 
     return(
         <div>
+
+            <Modal
+            closeButton
+            blur
+            preventClose
+            className='bg-dark text-white'
+            open={visible}
+            onClose={()=>setVisible(false)}>
+                <Modal.Header>
+                    <Text 
+                    h4
+                    className='text-white'>
+                        {tituloModal}
+                    </Text>
+                </Modal.Header>
+                <Modal.Body>
+                    {mensajeModal}
+                </Modal.Body>
+
+            </Modal>
 
             <div className='d-flex justify-content-center bg-dark mb-2'
             style={{backgroundColor: 'whitesmoke'}}>

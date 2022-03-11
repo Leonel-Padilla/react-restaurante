@@ -10,7 +10,9 @@ import Cargo from './Componentes/Cargo/Cargo'
 function App() {
   const navigate = useNavigate()
   return (
+
     <div>
+      
       {<div className='d-flex'>
         <Button onClick={()=>navigate('/Empleados')}>Empleado</Button>
         <Button onClick={()=>navigate('/Proveedores')}>Proveedor</Button>

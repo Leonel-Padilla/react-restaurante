@@ -1,6 +1,6 @@
 import { useNavigate, useParams} from "react-router-dom";
 import React, {useState, useEffect} from 'react'
-import { Button, Input, Textarea} from '@nextui-org/react'
+import { Button, Input, Textarea, Modal, Text} from '@nextui-org/react'
 import axios from "axios";
 
 
@@ -14,6 +14,10 @@ function ActualizarCargo() {
   const [cargoEstado, setCargoEstado] = useState(1)
   const navigate = useNavigate()
   const {id} = useParams()
+
+  const [mensajeModal, setMensajeModal] = useState('')
+  const [tituloModal, setTituloModal] = useState('')
+  const [visible, setVisible] = useState(false)
 
   useEffect(()=>{
     getCargo()
@@ -34,13 +38,39 @@ function ActualizarCargo() {
       cargoDescripcion: cargoDescripcion, estado: cargoEstado})
 
     if (response.status !== 200){
-        console.log(response.data) //DEV
-        alert(response.data.Error)
-    }
+        /*console.log(response.data) //DEV
+        alert(response.data.Error)*/
+
+        setTituloModal('Error')
+        setMensajeModal(response.data.Error)
+        setVisible(true)
+    }else(
+      navigate('/Cargos')
+    )
 }
 
   return (
     <div>
+
+            <Modal
+            closeButton
+            blur
+            preventClose
+            className='bg-dark text-white'
+            open={visible}
+            onClose={()=>setVisible(false)}>
+                <Modal.Header>
+                    <Text 
+                    h4
+                    className='text-white'>
+                        {tituloModal}
+                    </Text>
+                </Modal.Header>
+                <Modal.Body>
+                    {mensajeModal}
+                </Modal.Body>
+
+            </Modal>
           <div className='d-flex justify-content-center bg-dark mb-2'
           style={{backgroundColor: 'whitesmoke'}}>
               <h1 className='text-white'>Actualizar Cargo</h1>

@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
-import { Button, Input,Tooltip } from '@nextui-org/react';
+import { Button, getTokenValue, Input,Tooltip } from '@nextui-org/react';
 import buscarLupa from '../../img/buscar_lupa.png';
 import lapizEditar from '../../img/lapiz_editar.png'
 
@@ -23,12 +23,21 @@ const MostrarEmpleados = (props)=>{
     useEffect(()=>{
         getAllEmpleados()
         getAllDocumentos()
+
+        return function cleanup(){
+            setEmpleados(null)
+            setTodosDocumentos(null)
+        }
     },[])
+
+    
+    
 
     const getAllEmpleados = async ()=>{
         
         const response = await axios.get(endPoint)
         setEmpleados(response.data)
+        
     }
 
     const cambioEstado = async (empleado)=>{
@@ -46,6 +55,7 @@ const MostrarEmpleados = (props)=>{
         
         const response = await axios.get(`${endPointGetEmpleadosNombre}/${nombreBusqueda}`)
             
+        
         setEmpleados(response.data)
     }
 
@@ -64,9 +74,11 @@ const MostrarEmpleados = (props)=>{
 
         const response = await axios.get(endPointBuscarTodosDocumentos)
         setTodosDocumentos(response.data)
+        
 
         //console.log(response.data) //DEV
     }
+
 
     return(
         <div>

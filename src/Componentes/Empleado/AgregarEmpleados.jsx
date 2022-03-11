@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
-import { Button, Input} from '@nextui-org/react'
+import { Button, Input, Modal, Text} from '@nextui-org/react'
 
 const endPointRegistrarEmpleado = 'http://127.0.0.1:8000/api/addEmpleado'
 const endPointRegistrarTipoDocumento = 'http://127.0.0.1:8000/api/addTipoDocumento'
@@ -22,6 +22,10 @@ const AgregarEmpleado = () =>{
     const [documentoEstado, setDocumentoEstado] = useState(1)
     const navigate = useNavigate()
 
+    const [mensajeModal, setMensajeModal] = useState('')
+    const [tituloModal, setTituloModal] = useState('')
+    const [visible, setVisible] = useState(false)
+
     
     const registrar = async (e)=>{
         e.preventDefault()
@@ -36,14 +40,19 @@ const AgregarEmpleado = () =>{
         })
 
         if (igualdad){
-            alert('Ya hay un registro con ese numero de documento')
+                setTituloModal('Error')
+                setMensajeModal('Ya hay un registro con ese numero de documento')
+                setVisible(true)
         }else{
             const response = await axios.post(endPointRegistrarTipoDocumento, {nombreDocumento: empleadoNombreDocumento,
                 numeroDocumento: empleadoNumeroDocumento, estado: documentoEstado})
     
             if (response.status !== 200){
-                console.log(response.data) //DEV
-                alert(response.data.Error)
+                //console.log(response.data) //DEV
+                setTituloModal('Error')
+                setMensajeModal(response.data.Error)
+                setVisible(true)
+                
             }else{
                 
                 const responseDocumento = await axios.get(`${endPointBuscarTipoDocumento}/${empleadoNumeroDocumento}`)
@@ -53,12 +62,18 @@ const AgregarEmpleado = () =>{
                     empleadoDireccion: empleadoDireccion, estado: empleadoEstado})
     
                 if (response1.status !== 200){
-                    console.log(response1.data) //DEV
-                    alert(response1.data.Error)
-    
                     const response = await axios.delete(`${endPointEliminarTipoDocumento}/${responseDocumento.data.id}`)
-    
-                    console.log(response.data)
+                    //console.log(response.data)  //DEV
+
+                    //console.log(response1.data) //DEV
+                    setTituloModal('Error')
+                    setMensajeModal(response1.data.Error)
+                    setVisible(true)
+
+                }else{
+
+                    navigate('/Empleados')
+
                 }
             }
         }
@@ -69,16 +84,34 @@ const AgregarEmpleado = () =>{
 
         setTodosDocumentos(response.data)
 
-        console.log(response.data)
+        //console.log(response.data) //DEV
     }
 
     return(
         <div>
+            <Modal
+            closeButton
+            blur
+            preventClose
+            className='bg-dark text-white'
+            open={visible}
+            onClose={()=>setVisible(false)}>
+                <Modal.Header>
+                    <Text 
+                    h4
+                    className='text-white'>
+                        {tituloModal}
+                    </Text>
+                </Modal.Header>
+                <Modal.Body>
+                    {mensajeModal}
+                </Modal.Body>
+
+            </Modal>
 
             <div className='d-flex justify-content-center bg-dark mb-2'
             style={{backgroundColor: 'whitesmoke'}}>
                 <h1 className='text-white'>Registrar Empleado</h1>
-                
             </div>
 
             <form onSubmit={registrar} className='formulario'>
@@ -177,10 +210,6 @@ const AgregarEmpleado = () =>{
                     </Button>
                 </div>
             </form>
-
-
-        
-       
     </div>
     )
 }
