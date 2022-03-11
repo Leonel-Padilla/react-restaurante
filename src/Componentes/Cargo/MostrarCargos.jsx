@@ -55,7 +55,7 @@ const cambioEstado = async (cargo)=>{
             bordered
             style={{right: '0px'}}
             className='align-self-center me-2' 
-            auto onClick={()=>navigate('/')}>
+            auto onClick={()=>navigate('/MenuPrincipal')}>
                 Regresar
             </Button>
 

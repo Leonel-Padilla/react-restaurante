@@ -89,7 +89,7 @@ const MostrarEmpleados = (props)=>{
             color={'gradient'}
             bordered
             className='align-self-center me-2' 
-            auto onClick={()=>navigate('/')}>
+            auto onClick={()=>navigate('/MenuPrincipal')}>
                 Regresar
             </Button>
 
