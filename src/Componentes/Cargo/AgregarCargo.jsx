@@ -1,10 +1,92 @@
 
 
-import React from 'react'
+import React, {useState} from 'react'
+import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
+import { Button, Input} from '@nextui-org/react'
+
+const endPointRegistarCargo = 'http://127.0.0.1:8000/api/addCargo'
 
 function AgregarCargo() {
+
+  const [cargoNombre, setCargoNombre] = useState('')
+  const [cargoDescripcion, setCargoDescripcion] = useState('')
+  const [cargoEstado, setCargoEstado] = useState(1)
+  const navigate = useNavigate()
+
+  const registrar = async (e)=>{
+    e.preventDefault()
+    const response = await axios.post(endPointRegistarCargo, {cargoNombre: cargoNombre, 
+    cargoDescripcion: cargoDescripcion, estado: cargoEstado})
+
+    if (response.status !== 200){
+        console.log(response.data) //DEV
+        alert(response.data.Error)
+    }
+  }
+
   return (
-    <div>AgregarCargo</div>
+    <div>
+          <div className='d-flex justify-content-center bg-dark mb-2'
+          style={{backgroundColor: 'whitesmoke'}}>
+              <h1 className='text-white'>Registrar Cargo</h1>
+          </div>
+
+            <form onSubmit={registrar} className='formulario'>
+                <div className='atributo'>
+                    <Input
+                    underlined
+                    labelPlaceholder='Nombre'
+                    value={cargoNombre}
+                    onChange={(e)=> setCargoNombre(e.target.value)}
+                    type='text'
+                    className='form-control'
+                    />
+                </div>
+                <div className='atributo'>
+                    <Input
+                    underlined
+                    labelPlaceholder='Descripcion'
+                    value={cargoDescripcion}
+                    onChange={(e)=> setCargoDescripcion(e.target.value)}
+                    type='text'
+                    className='form-control'
+                    />
+                </div>
+                <div className='atributo'>
+                    <label>Estado</label> <br/>
+                    <select
+                    value={cargoEstado}
+                    onChange={(e)=> setCargoEstado(e.target.value)}
+                    type='number'
+                    className='select'
+                    >
+                    <option>Habilitado</option>
+                    <option>Deshabilitado</option>
+                    </select>
+                </div>
+                
+                <div className='d-flex'>
+                    <Button 
+                    color={'gradient'}
+                    className='align-self-end me-2' 
+                    auto 
+                    onClick={()=>navigate('/Cargos')}
+                    ghost>
+                        Regresar
+                    </Button>
+
+                    <Button 
+                    auto
+                    type='submit' 
+                    color={'gradient'} 
+                    ghost>
+                        Guardar
+                    </Button>
+                </div>
+            </form>
+
+        </div>
   )
 }
 

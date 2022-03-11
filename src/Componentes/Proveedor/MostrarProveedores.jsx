@@ -51,7 +51,6 @@ const MostrarProveedores = (props)=>{
             <Button 
             color={'gradient'}
             bordered
-            style={{right: '600px'}}
             className='align-self-center me-2' 
             auto onClick={()=>navigate('/')}>
                 Regresar
