@@ -34,8 +34,9 @@ const MostrarEmpleados = (props)=>{
     const cambioEstado = async (empleado)=>{
 
         await axios.put(`${endPointUpdate}/${empleado.id}`, {tipoDocumentoId:empleado.tipoDocumentoId,
-        empleadoNombre: empleado.empleadoNombre, empleadoNumero: empleado.empleadoNumero, empleadoCorreo: empleado.empleadoCorreo,
-        empleadoDireccion: empleado.empleadoDireccion, estado: empleado.estado == 1? 0 : 1})
+        empleadoNombre: empleado.empleadoNombre, empleadoNumero: empleado.empleadoNumero, 
+        empleadoCorreo: empleado.empleadoCorreo, empleadoDireccion: empleado.empleadoDireccion,
+        estado: empleado.estado == 1? 0 : 1})
 
         getAllEmpleados()
     }
