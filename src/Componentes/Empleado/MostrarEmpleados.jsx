@@ -9,17 +9,20 @@ const endPoint = 'http://127.0.0.1:8000/api/Empleado'
 const endPointUpdate = 'http://127.0.0.1:8000/api/updateEmpleado'
 const endPointGetEmpleadosNombre = 'http://127.0.0.1:8000/api/EmpleadoN'
 const endPointGetTipoDocumento = 'http://127.0.0.1:8000/api/TipoDocumento'
+const endPointBuscarTodosDocumentos = 'http://127.0.0.1:8000/api/TipoDocumento'
 
 const MostrarEmpleados = (props)=>{
     const [empleados, setEmpleados] = useState([])
     const [nombreBusqueda, setNombreBusqueda] = useState('')
     const navigate = useNavigate()
-    const [nombreDocumento, setnombreDocumento] = useState('')
+    const [todosDocumentos, setTodosDocumentos] = useState([])
+    let numeroDocumento = ''
 
 
 
     useEffect(()=>{
         getAllEmpleados()
+        getAllDocumentos()
     },[])
 
     const getAllEmpleados = async ()=>{
@@ -45,14 +48,24 @@ const MostrarEmpleados = (props)=>{
         setEmpleados(response.data)
     }
 
-    const getTipoDocumento = async (id)=>{
-        const response = await axios.get(`${endPointGetTipoDocumento}/${id}`)
 
-        //const nombre = response.data.nombreDocumento
-
-        setNombreBusqueda(response.data.nombreDocumento)
+    const getNumeroDocumento = (empleado)=>{
+        todosDocumentos.map((documento)=>{
+            if (documento.id == empleado.tipoDocumentoId){
+                //console.log(documento.numeroDocumento) //DEV
+                //return documento.numeroDocumento
+                numeroDocumento = documento.numeroDocumento
+            }
+        })
     }
 
+    const getAllDocumentos = async ()=>{
+
+        const response = await axios.get(endPointBuscarTodosDocumentos)
+        setTodosDocumentos(response.data)
+
+        //console.log(response.data) //DEV
+    }
 
     return(
         <div>
@@ -65,6 +78,15 @@ const MostrarEmpleados = (props)=>{
             className='align-self-center me-2' 
             auto onClick={()=>navigate('/')}>
                 Regresar
+            </Button>
+
+            <Button
+            auto
+            color={"gradient"}
+            bordered
+            className='align-self-center me-2'
+            onClick={()=>getAllEmpleados()}>
+                Llenar Tabla
             </Button>
 
             <h1 className='ms-4 me-4' >Empleado</h1>
@@ -103,14 +125,18 @@ const MostrarEmpleados = (props)=>{
                     <th>Correo</th>
                     <th>Direccion</th>
                     <th>Estado</th>
-                    <th>TipoDocumentacion</th>
+                    <th>Numero Documento</th>
                     <th>Opciones</th>
                 </tr>
             </thead>
 
             <tbody>
-                {empleados.map(empleado => 
+                {empleados.map(empleado =>{
                     
+                    getNumeroDocumento(empleado)
+                    //console.log(numeroDocumento)
+
+                    return(
                     <tr key={empleado.id}>
                         <td>{empleado.id}</td>
                         <td>{empleado.empleadoNombre}</td>
@@ -118,7 +144,7 @@ const MostrarEmpleados = (props)=>{
                         <td>{empleado.empleadoCorreo}</td>
                         <td>{empleado.empleadoDireccion}</td>
                         <td>{empleado.estado == 1 ? 'Habilitado' : 'Deshabilitado'}</td>
-                        <td>{empleado.tipoDocumentoId}</td>
+                        <td>{numeroDocumento}</td>
                         <td>
                             <Button
                             className='mb-1'
@@ -152,8 +178,7 @@ const MostrarEmpleados = (props)=>{
                             </Tooltip>
 
                         </td>
-                    </tr>
-                )}
+                    </tr>)})}
             </tbody>
         </table>
 

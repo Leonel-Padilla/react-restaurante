@@ -6,6 +6,7 @@ import { Button, Input} from '@nextui-org/react'
 const endPointRegistrarEmpleado = 'http://127.0.0.1:8000/api/addEmpleado'
 const endPointRegistrarTipoDocumento = 'http://127.0.0.1:8000/api/addTipoDocumento'
 const endPointBuscarTipoDocumento = 'http://127.0.0.1:8000/api/TipoDocumentoND'
+const endPointBuscarTodosDocumentos = 'http://127.0.0.1:8000/api/TipoDocumento'
 const endPointEliminarTipoDocumento = 'http://127.0.0.1:8000/api/deleteTipoDocumento'
 
 const AgregarEmpleado = () =>{
@@ -15,6 +16,7 @@ const AgregarEmpleado = () =>{
     const [empleadoDireccion, setEmpleadoDireccion] = useState('')
     const [empleadoEstado, setEmpleadoEstado] = useState(1)
 
+    const [todosDocumentos, setTodosDocumentos] = useState([])
     const [empleadoNombreDocumento, setEmpleadoNombreDocumento] = useState('RTN')
     const [empleadoNumeroDocumento, setEmpleadoNumeroDocumento] = useState('')
     const [documentoEstado, setDocumentoEstado] = useState(1)
@@ -23,27 +25,51 @@ const AgregarEmpleado = () =>{
     
     const registrar = async (e)=>{
         e.preventDefault()
-        const response = await axios.post(endPointRegistrarTipoDocumento, {nombreDocumento: empleadoNombreDocumento,
-            numeroDocumento: empleadoNumeroDocumento, estado: documentoEstado})
 
-        if (response.status !== 200){
-            console.log(response.data) //DEV
-            alert(response.data.Error)
+        getAllDocumentos()
+
+        let igualdad = false
+        todosDocumentos.map((documento)=>{
+            if (documento.numeroDocumento == empleadoNumeroDocumento){
+                igualdad = true
+            }
+        })
+
+        if (igualdad){
+            alert('Ya hay un registro con ese numero de documento')
         }else{
-            
-            const responseDocumento = await axios.get(`${endPointBuscarTipoDocumento}/${empleadoNumeroDocumento}`)
-
-            const response1 = await axios.post(endPointRegistrarEmpleado, {tipoDocumentoId: responseDocumento.data.id,
-                empleadoNombre: empleadoNombre, empleadoNumero: empleadoNumero, empleadoCorreo: empleadoCorreo,
-                empleadoDireccion: empleadoDireccion, estado: empleadoEstado})
-
-            if (response1.status !== 200){
-                console.log(response1.data) //DEV
-                alert(response1.data.Error)
-
-                await axios.delete(`${endPointEliminarTipoDocumento}/${responseDocumento.data.id}`)
+            const response = await axios.post(endPointRegistrarTipoDocumento, {nombreDocumento: empleadoNombreDocumento,
+                numeroDocumento: empleadoNumeroDocumento, estado: documentoEstado})
+    
+            if (response.status !== 200){
+                console.log(response.data) //DEV
+                alert(response.data.Error)
+            }else{
+                
+                const responseDocumento = await axios.get(`${endPointBuscarTipoDocumento}/${empleadoNumeroDocumento}`)
+    
+                const response1 = await axios.post(endPointRegistrarEmpleado, {tipoDocumentoId: responseDocumento.data.id,
+                    empleadoNombre: empleadoNombre, empleadoNumero: empleadoNumero, empleadoCorreo: empleadoCorreo,
+                    empleadoDireccion: empleadoDireccion, estado: empleadoEstado})
+    
+                if (response1.status !== 200){
+                    console.log(response1.data) //DEV
+                    alert(response1.data.Error)
+    
+                    const response = await axios.delete(`${endPointEliminarTipoDocumento}/${responseDocumento.data.id}`)
+    
+                    console.log(response.data)
+                }
             }
         }
+    }
+
+    const getAllDocumentos = async ()=>{
+        const response = await axios.get(endPointBuscarTodosDocumentos)
+
+        setTodosDocumentos(response.data)
+
+        console.log(response.data)
     }
 
     return(
