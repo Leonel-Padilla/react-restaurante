@@ -15,7 +15,7 @@ function MenuLogin () {
     const validar = ()=>{
         console.log(nombre, password)
 
-        if (nombre == 'admin' || password == 'admin'){
+        if (nombre == 'admin' && password == 'admin'){
             navigate('/MenuPrincipal')
         }else{
             alert('Credenciales Invalidas')
@@ -23,56 +23,38 @@ function MenuLogin () {
     }
 
     return (
-    <div>
-
-        <img  src={FondoLogin}/>
-        <Modal 
-            preventClose
-            blur
-            aria-labelledby="modal-title"
-            open={true}
-        >
-            <Modal.Header>
-                <Text id="Titulo" b size={18}>
-                Bienvenido
-                </Text>
-            </Modal.Header>
-            <Modal.Body>
-                <Input
-                    className='text-white'
-                    clearable
-                    bordered
-                    fullWidth
-                    onChange={(e)=>setNombre(e.target.value)}
-                    size="lg"
-                    placeholder="Usuario"
-                    aria-label='aria-labelledby'
-                    
-                />
-                <Input.Password
-                    className='text-white'
-                    clearable
-                    bordered
-                    onChange={(e)=>setPassword(e.target.value)}
-                    fullWidth
-                    size="lg"
-                    placeholder="Contraseña"
-                    aria-label='aria-labelledby'
-                    
-                />
-            </Modal.Body>
-            <Modal.Footer className='d-flex'>
-                <Button 
-                className='bg-dark'
-                style={{right: '80px'}}
-                onClick={()=>validar()} 
-                
-                
-                >Ingresar</Button>
-            </Modal.Footer>
-        </Modal>
-    </div>
-    
+        
+            <div className="container">
+                <div className='container border-style col-sm-6 col-md-4 col-lg-3'>
+                    <form className='form'>
+                        <h2 className="mt-5 mb-4 ms-5 ">Bienvenidos</h2>
+                        <div className="mb-3">
+                        <Input
+                        className='text-white mt-3 ms-4 form-control'
+                        underlined
+                        placeholder='Usuario'
+                        onChange={(e)=>setNombre(e.target.value)}
+                        aria-label='aria-labelledby'
+                        />
+                        </div>
+                        <div className="mb-3">
+                        <Input
+                        className='text-white mt-3 ms-4 form-control' 
+                        underlined
+                        placeholder='contraseña'
+                        type='password'
+                        onChange={(e)=>setPassword(e.target.value)}
+                        aria-label='aria-labelledby'/>
+                        </div>
+                        <Button 
+                        className='bg-dark mt-4 ms-5'
+                        onClick={()=>validar()} 
+                        >Ingresar</Button>
+                    </form>
+                </div>
+            </div>    
+        
+        
     );    
     }
 
