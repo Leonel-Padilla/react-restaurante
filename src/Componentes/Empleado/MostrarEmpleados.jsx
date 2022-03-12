@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, Component} from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { Button, getTokenValue, Input,Tooltip } from '@nextui-org/react';
@@ -17,21 +17,25 @@ const MostrarEmpleados = (props)=>{
     const navigate = useNavigate()
     const [todosDocumentos, setTodosDocumentos] = useState([])
     let numeroDocumento = ''
+    const [state, setState] = useState({})
 
 
 
     useEffect(()=>{
+
+        let cancelado = false
+
+        if (!cancelado){
         getAllEmpleados()
         getAllDocumentos()
-
-        return function cleanup(){
-            setEmpleados(null)
-            setTodosDocumentos(null)
         }
+
+        return()=>{
+            setState({})
+        }
+        
     },[])
 
-    
-    
 
     const getAllEmpleados = async ()=>{
         
@@ -63,8 +67,6 @@ const MostrarEmpleados = (props)=>{
     const getNumeroDocumento = (empleado)=>{
         todosDocumentos.map((documento)=>{
             if (documento.id == empleado.tipoDocumentoId){
-                //console.log(documento.numeroDocumento) //DEV
-                //return documento.numeroDocumento
                 numeroDocumento = documento.numeroDocumento
             }
         })

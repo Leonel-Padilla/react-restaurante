@@ -5,10 +5,12 @@ import FondoLogin from '../../img/FondoLogin.jpg'
 
 
 function MenuLogin () {
-    const [visible, setVisible] = useState(true);
+    //const [visible, setVisible] = useState(true);
     const [nombre, setNombre] = useState('')
     const [password, setPassword] = useState('')
     const navigate = useNavigate()
+
+
 
     const validar = ()=>{
         console.log(nombre, password)
@@ -28,7 +30,7 @@ function MenuLogin () {
             preventClose
             blur
             aria-labelledby="modal-title"
-            open={visible}
+            open={true}
         >
             <Modal.Header>
                 <Text id="Titulo" b size={18}>

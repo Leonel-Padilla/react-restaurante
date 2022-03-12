@@ -2,6 +2,7 @@ import React, {useState} from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { Button, Input, Modal, Text} from '@nextui-org/react'
+import { toHaveDisplayValue } from '@testing-library/jest-dom/dist/matchers'
 
 const endPointRegistrarEmpleado = 'http://127.0.0.1:8000/api/addEmpleado'
 const endPointRegistrarTipoDocumento = 'http://127.0.0.1:8000/api/addTipoDocumento'
@@ -63,14 +64,19 @@ const AgregarEmpleado = () =>{
     
                 if (response1.status !== 200){
                     const response = await axios.delete(`${endPointEliminarTipoDocumento}/${responseDocumento.data.id}`)
-                    //console.log(response.data)  //DEV
 
-                    //console.log(response1.data) //DEV
                     setTituloModal('Error')
                     setMensajeModal(response1.data.Error)
                     setVisible(true)
 
                 }else{
+                    /*setTituloModal('Exito')
+                    setMensajeModal('Registrado con Exito')
+                    setVisible(true)
+                    console.log(response.status)
+                    console.log(tituloModal)
+                    console.log(mensajeModal)
+                    console.log(visible)*/
 
                     navigate('/Empleados')
 
@@ -87,6 +93,15 @@ const AgregarEmpleado = () =>{
         //console.log(response.data) //DEV
     }
 
+    const onClose = ()=>{
+        if (tituloModal == 'Error'){
+            setVisible(false)
+        }else{
+            setVisible(false)
+            navigate('/Empleados')
+        }
+    }
+
     return(
         <div>
             <Modal
@@ -96,6 +111,7 @@ const AgregarEmpleado = () =>{
             className='bg-dark text-white'
             open={visible}
             onClose={()=>setVisible(false)}>
+            {/*onClose={()=>onClose()}>*/}
                 <Modal.Header>
                     <Text 
                     h4

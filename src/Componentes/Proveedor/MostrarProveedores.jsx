@@ -15,7 +15,14 @@ const MostrarProveedores = (props)=>{
     const navigate = useNavigate()
 
     useEffect(()=>{
+
+        let suscrito = true
+
+        if (suscrito == true){
         getAllProveedores()
+        }
+
+        return()=> suscrito = false 
     }, [])
 
     const getAllProveedores = async ()=>{

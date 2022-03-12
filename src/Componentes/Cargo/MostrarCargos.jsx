@@ -19,7 +19,14 @@ function MostrarCargos() {
   const navigate = useNavigate()
 
   useEffect(()=>{
+
+    let suscrito = true
+
+    if (suscrito){
     getAllCargos()
+    }
+
+    return()=> suscrito = false 
   }, [])
 
 const getAllCargos = async ()=>{
