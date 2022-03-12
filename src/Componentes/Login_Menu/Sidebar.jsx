@@ -4,7 +4,6 @@ import Gerente from '../../img/gerente.png'
 import Cargo from '../../img/headhunting.png'
 import Proveedor1 from '../../img/paquetes.png'
 import Background from '../../img/Restaurante.jpg'
-import Logo from '../../img/LOGO.png'
 import { useNavigate } from "react-router-dom";
 
 
@@ -13,8 +12,8 @@ function Sidebar () {
 
 
     return(
-        <div className='d-flex flex-row bg-dark'>
-            <div>
+        <div className='d-flex flex-row  fondo'>
+            <div className="bg-dark" style={{width:"300px"}}>
                 <Collapse.Group>
                 <Collapse 
                 title = {<Text h6 className="text-white">Empleado</Text>}
@@ -39,17 +38,17 @@ function Sidebar () {
 
                 title = {<Text h6 className="text-white">Cargo</Text>}
                 contentLeft={
-                <Avatar size="md" icon={<img src={Cargo}/>} />}>
+                <Avatar size="md" squared icon={<img src={Cargo}/>} />}>
                     <Button light color={'default'} onClick={()=>navigate('/Cargos')} className="text-white"> 
                         Mostrar Cargos</Button>
                     <Button light color={'default'} onClick={()=>navigate('/Cargos/addCargo')}className="text-white">
                         Registrar Cargo</Button>
                 </Collapse>
-            </Collapse.Group>
+        </Collapse.Group>
         </div>
-        <img style={{zIndex:"1" ,height:"753px", width:"1350px",}}src={Background}/>
-            
+        <img src={Background} style={{position:"relative", width:"100%"}}/>
     </div>
+    
     )
 }
 

@@ -72,3 +72,9 @@ form{
 link{
   margin: 0px;
 }
+
+.p{
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
