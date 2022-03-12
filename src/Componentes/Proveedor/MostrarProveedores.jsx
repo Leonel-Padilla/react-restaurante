@@ -53,16 +53,9 @@ const MostrarProveedores = (props)=>{
     return(
         <div>
 
-        <div className='d-flex justify-content-center pt-2 pb-2'
+        <div className='d-flex justify-content-start pt-2 pb-2'
         style={{backgroundColor: 'whitesmoke'}} >
-            <Button 
-            color={'gradient'}
-            bordered
-            className='align-self-center me-2' 
-            auto onClick={()=>navigate('/MenuPrincipal')}>
-                Regresar
-            </Button>
-
+           
             <h1 className='ms-4 me-4' >Proveedor</h1>
 
             <form 
@@ -87,6 +80,24 @@ const MostrarProveedores = (props)=>{
                     Buscar
                 </Button>
             </form>
+
+            <Button 
+            color={'gradient'}
+            bordered
+            className='align-self-center ms-2 me-2' 
+            auto onClick={()=>navigate('/MenuPrincipal')}>
+                Regresar
+            </Button>
+            
+            <Button
+            auto
+            color={"gradient"}
+            bordered
+            className='align-self-center me-2'
+            onClick={()=>getAllProveedores()}>
+                Llenar Tabla
+            </Button>
+            
         </div>
 
 
