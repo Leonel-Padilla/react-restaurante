@@ -32,10 +32,8 @@ function AgregarCargo() {
             navigate('/Cargos')
         }
     }
-
   return (
     <div>
-
             <Modal
             closeButton
             blur
@@ -112,9 +110,9 @@ function AgregarCargo() {
                     ghost>
                         Guardar
                     </Button>
+                    
                 </div>
             </form>
-
         </div>
   )
 }

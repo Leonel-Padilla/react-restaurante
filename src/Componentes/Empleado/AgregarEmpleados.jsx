@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { Button, Input, Modal, Text} from '@nextui-org/react'
@@ -27,11 +27,15 @@ const AgregarEmpleado = () =>{
     const [tituloModal, setTituloModal] = useState('')
     const [visible, setVisible] = useState(false)
 
+
+    useEffect(()=>{
+
+        getAllDocumentos()
+    },[])
     
     const registrar = async (e)=>{
         e.preventDefault()
-
-        getAllDocumentos()
+        //getAllDocumentos()
 
         let igualdad = false
         todosDocumentos.map((documento)=>{
@@ -207,11 +211,10 @@ const AgregarEmpleado = () =>{
                     />
                 </div>
 
-
                 <div className='d-flex'>
                     <Button 
                     color={'gradient'}
-                    className='align-self-end me-2' 
+                    className='align-self-end me-2 mt-2' 
                     auto 
                     onClick={()=>navigate('/Empleados')}
                     ghost>
@@ -219,6 +222,7 @@ const AgregarEmpleado = () =>{
                     </Button>
                     <Button 
                     auto
+                    className='align-self-end me-2 mt-2' 
                     type='submit' 
                     color={'gradient'} 
                     ghost>

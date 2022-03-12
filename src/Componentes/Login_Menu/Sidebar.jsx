@@ -9,11 +9,9 @@ import { useNavigate } from "react-router-dom";
 
 function Sidebar () {
     const navigate = useNavigate()
-
-
     return(
-        <div className='d-flex flex-row  fondo'>
-            <div className="bg-dark" style={{width:"350px"}}>
+        <div className='d-flex flex-row  fondo '>
+            <div className="bg-dark overflow_sideBar" style={{width:"350px"}}>
                 <Collapse.Group>
                 <Collapse 
                 title = {<Text h6 className="text-white">Empleado</Text>}
@@ -35,7 +33,6 @@ function Sidebar () {
                         Registrar Proveedor</Button>
                 </Collapse>
                 <Collapse 
-
                 title = {<Text h6 className="text-white">Cargo</Text>}
                 contentLeft={
                 <Avatar size="md" squared icon={<img src={Cargo}/>} />}>
@@ -44,6 +41,7 @@ function Sidebar () {
                     <Button light color={'default'} onClick={()=>navigate('/Cargos/addCargo')}className="text-white">
                         Registrar Cargo</Button>
                 </Collapse>
+                
         </Collapse.Group>
         </div>
         <img src={Background} style={{position:"relative", width:"100%"}}/>
