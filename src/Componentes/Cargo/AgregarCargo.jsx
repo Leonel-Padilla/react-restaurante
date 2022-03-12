@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
-import { Button, Input, Modal, Text} from '@nextui-org/react'
+import { Button, Input, Modal, Text, Textarea} from '@nextui-org/react'
 
 const endPointRegistarCargo = 'http://127.0.0.1:8000/api/addCargo'
 
@@ -70,16 +70,18 @@ function AgregarCargo() {
                     className='form-control'
                     />
                 </div>
+
                 <div className='atributo'>
-                    <Input
+                    <Textarea
                     underlined
                     labelPlaceholder='Descripcion'
                     value={cargoDescripcion}
                     onChange={(e)=> setCargoDescripcion(e.target.value)}
                     type='text'
-                    className='form-control'
+                    className='form-control p-3'
                     />
                 </div>
+
                 <div className='atributo'>
                     <label>Estado</label> <br/>
                     <select
@@ -94,9 +96,10 @@ function AgregarCargo() {
                 </div>
                 
                 <div className='d-flex'>
+
                     <Button 
                     color={'gradient'}
-                    className='align-self-end me-2' 
+                    className='align-self-end me-2 mt-2' 
                     auto 
                     onClick={()=>navigate('/Cargos')}
                     ghost>
@@ -105,12 +108,13 @@ function AgregarCargo() {
 
                     <Button 
                     auto
+                    className='align-self-end me-2 mt-2' 
                     type='submit' 
                     color={'gradient'} 
                     ghost>
                         Guardar
                     </Button>
-                    
+
                 </div>
             </form>
         </div>
