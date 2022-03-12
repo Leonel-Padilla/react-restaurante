@@ -13,7 +13,7 @@ function Sidebar () {
 
     return(
         <div className='d-flex flex-row  fondo'>
-            <div className="bg-dark" style={{width:"300px"}}>
+            <div className="bg-dark" style={{width:"350px"}}>
                 <Collapse.Group>
                 <Collapse 
                 title = {<Text h6 className="text-white">Empleado</Text>}
@@ -48,7 +48,6 @@ function Sidebar () {
         </div>
         <img src={Background} style={{position:"relative", width:"100%"}}/>
     </div>
-    
     )
 }
 

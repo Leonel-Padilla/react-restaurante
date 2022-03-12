@@ -14,18 +14,24 @@ function App() {
   return (
 
     <div>
+      
+      {/*<div className='d-flex'>
+        <Button onClick={()=>navigate('/Empleados')}>Empleado</Button>
+        <Button onClick={()=>navigate('/Proveedores')}>Proveedor</Button>
+        <Button onClick={()=>navigate('/Cargos')}>Cargo</Button>
+        <Button onClick={()=>navigate('/MenuPrincipal')}>Menu</Button>
+  </div>  */}
+
       <section>
-      <Routes>
+        <Routes>
           <Route path='/' element={<MenuLogin></MenuLogin>}></Route>
           <Route path='/MenuPrincipal' element={<Sidebar></Sidebar>}></Route>
           <Route path='/Empleados/*' element={<Empleado></Empleado>}></Route>
           <Route path='/Proveedores/*' element={<Proveedor></Proveedor>}></Route>
           <Route path='/Cargos/*' element={<Cargo></Cargo>}></Route>
-      </Routes>
-    </section>
-    
-    </div>   
-  
+        </Routes>
+      </section>
+    </div>
   );
 }
 
