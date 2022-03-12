@@ -1,9 +1,10 @@
 import React from "react";
-import { Collapse, Button, Avatar} from '@nextui-org/react';
-import Empleado from '../../img/Empleado.png'
-import Cargo from '../../img/Cargo.png'
-import Proveedor from '../../img/Proveedor.png'
+import { Collapse, Button, Avatar, Text} from '@nextui-org/react';
+import Gerente from '../../img/gerente.png'
+import Cargo from '../../img/headhunting.png'
+import Proveedor1 from '../../img/paquetes.png'
 import Background from '../../img/Restaurante.jpg'
+import Logo from '../../img/LOGO.png'
 import { useNavigate } from "react-router-dom";
 
 
@@ -12,36 +13,43 @@ function Sidebar () {
 
 
     return(
-        <div className='d-flex flex-row'>
+        <div className='d-flex flex-row bg-dark'>
             <div>
                 <Collapse.Group>
                 <Collapse 
-                title='Empleado'
+                title = {<Text h6 className="text-white">Empleado</Text>}
                 contentLeft={
-                <Avatar size="md" squared icon={<img src={Empleado}/>} bordered />}>
-                    <Button light color={'default'} onClick={()=>navigate('/Empleados')}> Mostrar Empleados</Button>
-                    <Button light color={'default'} onClick={()=>navigate('/Empleados/addEmpleado')}> Registrar Empleados</Button>
+                <Avatar size="md" icon={<img src={Gerente}/>}/>}>
+                    <Button light color={'default'} onClick={()=>navigate('/Empleados')}className="text-white"> 
+                        Mostrar Empleados</Button>
+                    <Button light color={'default'} onClick={()=>navigate('/Empleados/addEmpleado')}className="text-white"> 
+                        Registrar Empleados</Button>
                 </Collapse>
                 <Collapse 
-                title='Proveedor'
-                
+
+                title = {<Text h6 className="text-white">Proveedor</Text>}
                 contentLeft={
-                <Avatar size="md" squared icon={<img src={Proveedor}/>} bordered />}>
-                        <Button light color={'default'} onClick={()=>navigate('/Proveedores')}> Mostrar Proveedores</Button>
-                        <Button light color={'default'} onClick={()=>navigate('/Proveedores/addProveedor')}> Registrar Proveedor</Button>
+                <Avatar size="md" icon={<img src={Proveedor1}/>}/>}> 
+                    <Button light color={'default'} onClick={()=>navigate('/Proveedores')}className="text-white"> 
+                        Mostrar Proveedores</Button>
+                    <Button light color={'default'} onClick={()=>navigate('/Proveedores/addProveedor')}className="text-white"> 
+                        Registrar Proveedor</Button>
                 </Collapse>
                 <Collapse 
-                title='Cargo'
-                
+
+                title = {<Text h6 className="text-white">Cargo</Text>}
                 contentLeft={
-                <Avatar size="md" squared icon={<img src={Cargo}/>} bordered />}>
-                        <Button light color={'default'} onClick={()=>navigate('/Cargos')}> Mostrar Cargos</Button>
-                    <Button light color={'default'} onClick={()=>navigate('/Cargos/addCargo')}> Registrar Cargo</Button>
+                <Avatar size="md" icon={<img src={Cargo}/>} />}>
+                    <Button light color={'default'} onClick={()=>navigate('/Cargos')} className="text-white"> 
+                        Mostrar Cargos</Button>
+                    <Button light color={'default'} onClick={()=>navigate('/Cargos/addCargo')}className="text-white">
+                        Registrar Cargo</Button>
                 </Collapse>
-        </Collapse.Group>
+            </Collapse.Group>
         </div>
-            <img style={{height:"800px", width:"1300px",}}src={Background}/>
-        </div>
+        <img style={{zIndex:"1" ,height:"753px", width:"1350px",}}src={Background}/>
+            
+    </div>
     )
 }
 

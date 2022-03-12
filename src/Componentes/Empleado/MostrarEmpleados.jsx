@@ -1,4 +1,4 @@
-import React, {useState, useEffect, Component} from 'react'
+import React, {useState, useEffect} from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { Button, getTokenValue, Input,Tooltip } from '@nextui-org/react';
@@ -17,25 +17,21 @@ const MostrarEmpleados = (props)=>{
     const navigate = useNavigate()
     const [todosDocumentos, setTodosDocumentos] = useState([])
     let numeroDocumento = ''
-    const [state, setState] = useState({})
 
 
 
     useEffect(()=>{
-
-        let cancelado = false
-
-        if (!cancelado){
         getAllEmpleados()
         getAllDocumentos()
-        }
 
-        return()=>{
-            setState({})
+        return function cleanup(){
+            setEmpleados(0)
+            setTodosDocumentos(0)
         }
-        
     },[])
 
+    
+    
 
     const getAllEmpleados = async ()=>{
         
@@ -67,6 +63,8 @@ const MostrarEmpleados = (props)=>{
     const getNumeroDocumento = (empleado)=>{
         todosDocumentos.map((documento)=>{
             if (documento.id == empleado.tipoDocumentoId){
+                //console.log(documento.numeroDocumento) //DEV
+                //return documento.numeroDocumento
                 numeroDocumento = documento.numeroDocumento
             }
         })
@@ -85,25 +83,9 @@ const MostrarEmpleados = (props)=>{
     return(
         <div>
         
-        <div className='d-flex justify-content-center pt-2 pb-2'
+        <div className='d-flex justify-content-start pt-2 pb-2'
         style={{backgroundColor: 'whitesmoke'}} >
-            <Button 
-            color={'gradient'}
-            bordered
-            className='align-self-center me-2' 
-            auto onClick={()=>navigate('/MenuPrincipal')}>
-                Regresar
-            </Button>
-
-            <Button
-            auto
-            color={"gradient"}
-            bordered
-            className='align-self-center me-2'
-            onClick={()=>getAllEmpleados()}>
-                Llenar Tabla
-            </Button>
-
+            
             <h1 className='ms-4 me-4' >Empleado</h1>
 
             <form 
@@ -128,6 +110,22 @@ const MostrarEmpleados = (props)=>{
                     Buscar
                 </Button>
             </form>
+            <Button 
+            color={'gradient'}
+            bordered
+            className='align-self-center ms-2 me-2' 
+            auto onClick={()=>navigate('/MenuPrincipal')}>
+                Regresar
+            </Button>
+
+            <Button
+            auto
+            color={"gradient"}
+            bordered
+            className='align-self-center me-2'
+            onClick={()=>getAllEmpleados()}>
+                Llenar Tabla
+            </Button>
         </div>
 
             

@@ -191,8 +191,8 @@ const AgregarEmpleado = () =>{
                     type='number'
                     className='select'
                     >
-                        <option>RTN</option>
                         <option>Identidad</option>
+                        <option>Visa</option>
                         <option>Pasaporte</option>
                     </select>
                 </div>
