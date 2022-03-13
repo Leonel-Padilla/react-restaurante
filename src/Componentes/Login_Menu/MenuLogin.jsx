@@ -57,14 +57,14 @@ function MenuLogin () {
         <div className='body'>
             <div className='login-box'>
                 <h1>Bienvenido</h1>
-                <label for="username" className='ms-2'>Username</label>
+                <label className='ms-2'>Username</label>
                 <Input 
                     className='ms-4'
                     placeholder='Usuario'
                     onChange={(e)=>setNombre(e.target.value)}
                     aria-label='aria-labelledby'
                     />
-                <label for="password" className='ms-2'>Password</label>
+                <label  className='ms-2'>Password</label>
                 <Input 
                     className='ms-4'
                     placeholder='Contraseña'
