@@ -17,6 +17,9 @@ function MenuLogin () {
 
         if (nombre == 'admin' && password == 'admin'){
             navigate('/MenuPrincipal')
+            
+            sessionStorage.setItem('userName', nombre)
+            sessionStorage.setItem('contrasenia', password)
         }else{
             alert('Credenciales Invalidas')
         }

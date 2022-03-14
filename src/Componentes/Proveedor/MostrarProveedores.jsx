@@ -16,19 +16,17 @@ const MostrarProveedores = (props)=>{
 
     useEffect(()=>{
 
-        let suscrito = true
-
-        if (suscrito == true){
         getAllProveedores()
-        }
 
-        return()=> suscrito = false 
     }, [])
 
     const getAllProveedores = async ()=>{
         
         const response = await axios.get(endPoint)
         setProveedores(response.data)
+
+        console.log(sessionStorage.getItem('userName'))
+        console.log(sessionStorage.getItem('contrasenia'))
         //console.log(response.data) //DEV
     }
 

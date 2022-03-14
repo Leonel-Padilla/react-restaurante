@@ -61,12 +61,13 @@ function AgregarCargo() {
 
             <form onSubmit={registrar} className='formulario'>
                 <div className='atributo'>
-                    <Input
-                    underlined
-                    labelPlaceholder='Nombre'
+                    <input
+                    placeholder='Nombre'
                     value={cargoNombre}
                     onChange={(e)=> setCargoNombre(e.target.value)}
                     type='text'
+                    pattern='[A-Za-z]{3,}'
+                    title='Solo se aceptan letras, Ejemplo: "Cocinero"'
                     className='form-control'
                     />
                 </div>
