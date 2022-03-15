@@ -1,18 +1,22 @@
 import React, {useState, useEffect} from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
-import { Button, Input,Tooltip } from '@nextui-org/react';
+import { Button, Input, Tooltip, Modal, Text } from '@nextui-org/react';
 import buscarLupa from '../../img/buscar_lupa.png';
 import lapizEditar from '../../img/lapiz_editar.png'
 
 const endPoint = 'http://127.0.0.1:8000/api/Proveedor'
 const endPointUpdate = 'http://127.0.0.1:8000/api/updateProveedor'
-const endPointgetByNombre = 'http://127.0.0.1:8000/api/ProveedorN'
+const endPointGet = 'http://127.0.0.1:8000/api/Proveedor'
 
-const MostrarProveedores = (props)=>{
+const MostrarProveedores = ()=>{
     const [proveedores, setProveedores] = useState([])
-    const [nombreBusqueda, setNombreBusqueda] = useState('')
     const navigate = useNavigate()
+    const [parametroBusqueda, setParametroBusqueda] = useState('ID')
+    const [valorBusqueda, setValorBusqueda] = useState()
+    const [mensajeModal, setMensajeModal] = useState('')
+    const [tituloModal, setTituloModal] = useState('')
+    const [visible, setVisible] = useState(false)
 
     useEffect(()=>{
 
@@ -25,8 +29,8 @@ const MostrarProveedores = (props)=>{
         const response = await axios.get(endPoint)
         setProveedores(response.data)
 
-        console.log(sessionStorage.getItem('userName'))
-        console.log(sessionStorage.getItem('contrasenia'))
+        //console.log(sessionStorage.getItem('userName'))
+        //console.log(sessionStorage.getItem('contrasenia'))
         //console.log(response.data) //DEV
     }
 
@@ -40,34 +44,86 @@ const MostrarProveedores = (props)=>{
         getAllProveedores()
     }
 
-    const getByNombre = async (e)=>{
+    const getByValorBusqueda = async (e)=>{
         e.preventDefault()
 
-        const response = await axios.get(`${endPointgetByNombre}/${nombreBusqueda}`)
-
-        setProveedores(response.data)
+        if (parametroBusqueda == 'ID'){
+            const response = await axios.get(`${endPointGet}/${valorBusqueda}`)
+            
+            if (response.status != 200){
+                setTituloModal('Error')
+                setMensajeModal(response.data.Error)
+                setVisible(true)
+            }else{
+                const array = [response.data]
+                setProveedores(array)
+            }
+            
+          }else{
+            const response = await axios.get(`${endPointGet}N/${valorBusqueda}`)
+            console.log(response.data)
+            
+            const array = response.data
+    
+            if (array.length < 1){
+                setTituloModal('Error')
+                setMensajeModal('No hay proveedor con el nombre que ingresó.')
+                setVisible(true)
+            }else{
+                setProveedores(array)
+            }
+          }
     }
 
     return(
         <div>
 
+        <Modal
+        closeButton
+        blur
+        preventClose
+        className='bg-dark text-white'
+        open={visible}
+        onClose={()=>setVisible(false)}>
+            <Modal.Header>
+                <Text 
+                h4
+                className='text-white'>
+                    {tituloModal}
+                </Text>
+            </Modal.Header>
+            <Modal.Body>
+                {mensajeModal}
+            </Modal.Body>
+
+        </Modal>
+
         <div className='d-flex justify-content-start pt-2 pb-2'
         style={{backgroundColor: 'whitesmoke'}} >
+
            
             <h1 className='ms-4 me-4' >Proveedor</h1>
+
+            <select style={{height: '35px'}}
+            className='align-self-center me-2'
+            onChange={(e)=>setParametroBusqueda(e.target.value)}>
+                <option value="ID">ID</option>
+                <option value="Nombre">Nombre</option>
+            </select>
 
             <form 
             className='d-flex align-self-center' 
             style={{left: '300px'}} 
-            onSubmit={getByNombre}>
-                <Input
-                    underlined
-                    placeholder='nombre'
+            onSubmit={getByValorBusqueda}>
+                <input
+                    placeholder={`ingrese ${parametroBusqueda}`}
                     aria-label='aria-describedby'
-                    onChange={(e)=>setNombreBusqueda(e.target.value)}
-                    type='text'
+                    onChange={(e)=>setValorBusqueda(e.target.value)}
+                    type={parametroBusqueda == 'ID'? 'number':'text'}
                     className='form-control me-2'
                     required={true}
+                    title='Solo se aceptan letras, ejem: "La Colonia"'
+                    pattern={parametroBusqueda == 'Nombre'? '[A-Za-z ]{3,}':''}
                     />
                 <Button
                 auto
@@ -95,6 +151,14 @@ const MostrarProveedores = (props)=>{
             onClick={()=>getAllProveedores()}>
                 Llenar Tabla
             </Button>
+
+            <Button 
+            className='bg-dark text-light align-self-center'
+            color={'dark'}
+            bordered
+            onClick={()=>navigate('/Proveedores/addProveedor')}>
+                Registrar
+            </Button>
             
         </div>
 
@@ -104,7 +168,7 @@ const MostrarProveedores = (props)=>{
                     <tr>
                         <th>Id</th>
                         <th>Nombre</th>
-                        <th>Numero</th>
+                        <th>Número</th>
                         <th>Correo</th>
                         <th>Encargado</th>
                         <th>Estado</th>
@@ -162,13 +226,7 @@ const MostrarProveedores = (props)=>{
                 </tbody>
             </table>
 
-            <Button 
-            className='bg-dark text-light'
-            color={'dark'}
-            bordered
-            onClick={()=>navigate('/Proveedores/addProveedor')}>
-                Registrar
-            </Button>
+
         </div>
     )
 }

@@ -1,5 +1,5 @@
 import { useNavigate, useParams} from "react-router-dom";
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 import { Button, Input, Textarea, Modal, Text} from '@nextui-org/react'
 import axios from "axios";
 
@@ -18,6 +18,7 @@ function ActualizarCargo() {
   const [mensajeModal, setMensajeModal] = useState('')
   const [tituloModal, setTituloModal] = useState('')
   const [visible, setVisible] = useState(false)
+  const refButton = useRef()
 
   useEffect(()=>{
     getCargo()
@@ -49,13 +50,27 @@ function ActualizarCargo() {
     )
 }
 
+const verificar = (setear = () => {}, cadenaTexto)=>{
+    setear()
+    if (/(.)\1\1/.test(cadenaTexto)) {
+    refButton.current.disabled = "disabled"
+    setTituloModal('Error')
+    setMensajeModal('La informacion ingresada contiene tres caracteres repetidos seguidos. ' +
+     'No podra guardar hasta solucionar el error.')
+    setVisible(true)
+    }
+    else{
+        refButton.current.disabled = false
+    }
+}
+
   return (
     <div>
 
             <Modal
             closeButton
             blur
-            preventClose
+            //preventClose
             className='bg-dark text-white'
             open={visible}
             onClose={()=>setVisible(false)}>
@@ -78,23 +93,26 @@ function ActualizarCargo() {
 
             <form onSubmit={actualizar} className='formulario'>
                 <div className='atributo'>
-                    <Input
-                    underlined
-                    labelPlaceholder='Nombre'
+                    <label>Nombre del cargo:</label>
+                    <input
                     value={cargoNombre}
-                    onChange={(e)=> setCargoNombre(e.target.value)}
+                    onChange={(e)=>verificar(setCargoNombre(e.target.value), cargoNombre)}
                     type='text'
+                    pattern='[A-Za-z]{3,}'
+                    title='Solo se aceptan letras, Ejemplo: "Cocinero"'
                     className='form-control'
                     />
                 </div>
                 <div className='atributo '>
+                    <label>Descripcion del cargo:</label>
                     <Textarea
+                    aria-label='aria-describedby'
                     underlined
-                    labelPlaceholder='Descripcion'
+                    placeholder='Descripcion'
                     value={cargoDescripcion}
                     onChange={(e)=> setCargoDescripcion(e.target.value)}
                     type='text'
-                    className='form-control me-2 mb-3'
+                    className='form-control p-4'
                     /> 
                 </div>
                 <div className='d-flex'>
@@ -108,6 +126,7 @@ function ActualizarCargo() {
                     </Button>
 
                     <Button 
+                    ref={refButton}
                     auto
                     type='submit' 
                     color={'gradient'} 

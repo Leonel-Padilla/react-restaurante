@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useRef, useState} from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { Button, Input, Modal, Text, Textarea} from '@nextui-org/react'
@@ -15,6 +15,7 @@ function AgregarCargo() {
     const [mensajeModal, setMensajeModal] = useState('')
     const [tituloModal, setTituloModal] = useState('')
     const [visible, setVisible] = useState(false)
+    const refButton = useRef()
 
     const registrar = async (e)=>{
         e.preventDefault()
@@ -22,9 +23,6 @@ function AgregarCargo() {
         cargoDescripcion: cargoDescripcion, estado: cargoEstado})
 
         if (response.status !== 200){
-            /*console.log(response.data) //DEV
-            alert(response.data.Error)*/
-
             setTituloModal('Error')
             setMensajeModal(response.data.Error)
             setVisible(true)
@@ -32,12 +30,27 @@ function AgregarCargo() {
             navigate('/Cargos')
         }
     }
+
+
+    const verificar = (setear = () => {}, cadenaTexto)=>{
+        setear()
+        if (/(.)\1\1/.test(cadenaTexto)) {
+        refButton.current.disabled = "disabled"
+        setTituloModal('Error')
+        setMensajeModal('La informacion ingresada contiene tres caracteres repetidos seguidos. ' +
+         'No podra guardar hasta solucionar el error.')
+        setVisible(true)
+        }
+        else{
+            refButton.current.disabled = false
+        }
+    }
+
   return (
     <div>
             <Modal
             closeButton
             blur
-            preventClose
             className='bg-dark text-white'
             open={visible}
             onClose={()=>setVisible(false)}>
@@ -60,56 +73,47 @@ function AgregarCargo() {
           </div>
 
             <form onSubmit={registrar} className='formulario'>
+
                 <div className='atributo'>
+                    <label>Nombre del cargo:</label>
                     <input
-                    placeholder='Nombre'
+                    aria-label='aria-describedby'
                     value={cargoNombre}
-                    onChange={(e)=> setCargoNombre(e.target.value)}
+                    placeholder='Cajero'
+                    onChange={(e)=>verificar(setCargoNombre(e.target.value), cargoNombre)}
                     type='text'
-                    pattern='[A-Za-z]{3,}'
-                    title='Solo se aceptan letras, Ejemplo: "Cocinero"'
+                    pattern='[A-Za-z ]{3,}'
+                    title='Solo se aceptan letras, ejem: "Cajero"'
                     className='form-control'
                     />
                 </div>
 
                 <div className='atributo'>
+                    <label>Descripcion del cargo:</label>
                     <Textarea
+                    aria-label='aria-describedby'
                     underlined
-                    labelPlaceholder='Descripcion'
+                    placeholder='Responsable de caja'
                     value={cargoDescripcion}
                     onChange={(e)=> setCargoDescripcion(e.target.value)}
                     type='text'
-                    className='form-control p-3'
+                    className='form-control p-4'
                     />
                 </div>
-
-                <div className='atributo'>
-                    <label>Estado</label> <br/>
-                    <select
-                    value={cargoEstado}
-                    onChange={(e)=> setCargoEstado(e.target.value)}
-                    type='number'
-                    className='select'
-                    >
-                    <option>Habilitado</option>
-                    <option>Deshabilitado</option>
-                    </select>
-                </div>
-                
-                <div className='d-flex'>
+                <div className='d-flex mt-2'>
 
                     <Button 
                     color={'gradient'}
-                    className='align-self-end me-2 mt-2' 
+                    className='align-self-end me-3 ' 
                     auto 
                     onClick={()=>navigate('/Cargos')}
                     ghost>
                         Regresar
                     </Button>
 
-                    <Button 
+                    <Button
+                    ref={refButton}
                     auto
-                    className='align-self-end me-2 mt-2' 
                     type='submit' 
                     color={'gradient'} 
                     ghost>

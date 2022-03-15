@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useRef} from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { Button, Input, Modal, Text} from '@nextui-org/react'
@@ -17,6 +17,7 @@ const AgregarProveedor = ()=>{
     const [mensajeModal, setMensajeModal] = useState('')
     const [tituloModal, setTituloModal] = useState('')
     const [visible, setVisible] = useState(false)
+    const refButton = useRef()
 
 
     const registrar = async (e)=>{
@@ -27,14 +28,26 @@ const AgregarProveedor = ()=>{
         estado: proveedorEstado})
 
         if (response.status !== 200){
-            /*console.log(response.data) //DEV
-            alert(response.data.Error)*/
-
             setTituloModal('Error')
             setMensajeModal(response.data.Error)
             setVisible(true)
         }else{
             navigate('/Proveedores')
+        }
+    }
+
+
+    const verificar = (setear = () => {}, cadenaTexto)=>{
+        setear()
+        if (/(.)\1\1/.test(cadenaTexto)) {
+        refButton.current.disabled = "disabled"
+        setTituloModal('Error')
+        setMensajeModal('La información ingresada tiene caracteres repetidos al azar. ' +
+         'No podrá guardar hasta solucionar el error.')
+        setVisible(true)
+        }
+        else{
+            refButton.current.disabled = false
         }
     }
 
@@ -44,7 +57,6 @@ const AgregarProveedor = ()=>{
             <Modal
             closeButton
             blur
-            preventClose
             className='bg-dark text-white'
             open={visible}
             onClose={()=>setVisible(false)}>
@@ -64,24 +76,25 @@ const AgregarProveedor = ()=>{
             <div className='d-flex justify-content-center bg-dark mb-2'
             style={{backgroundColor: 'whitesmoke'}}>
                 <h1 className='text-white'>Registrar Proveedor</h1>
-                
             </div>
 
             <form onSubmit={registrar} className='formulario'>
                 <div className='atributo'>
-                    <Input
-                    underlined
-                    labelPlaceholder='Nombre'
+                    <label>Nombre Proveedor:</label>
+                    <input
+                    placeholder='Nombre'
                     value={proveedorNombre}
-                    onChange={(e)=> setProveedorNombre(e.target.value)}
+                    onChange={(e)=>verificar(setProveedorNombre(e.target.value), proveedorNombre)}
                     type='text'
+                    pattern='[A-Za-z ]{3,}'
+                    title='Solo se aceptan letras, ejem: "Diunsa"'
                     className='form-control'
                     />
                 </div>
                 <div className='atributo'>
-                    <Input
-                    underlined
-                    labelPlaceholder='Numero'
+                    <label>Número Telefónico:</label>
+                    <input
+                    placeholder='Numero'
                     value={proveedorNumero}
                     onChange={(e)=> setProveedorNumero(e.target.value)}
                     type='number'
@@ -89,9 +102,9 @@ const AgregarProveedor = ()=>{
                     />
                 </div>
                 <div className='atributo'>
-                    <Input
-                    underlined
-                    labelPlaceholder='Correo'
+                    <label>Correo Electrónico:</label>
+                    <input
+                    placeholder='Correo'
                     value={proveedorCorreo}
                     onChange={(e)=> setProveedorCorreo(e.target.value)}
                     type='email'
@@ -99,44 +112,32 @@ const AgregarProveedor = ()=>{
                     />
                 </div>
                 <div className='atributo'>
-                    <Input
-                    underlined
-                    labelPlaceholder='Encargado'
+                    <label>Nombre Encargado:</label>
+                    <input
+                    placeholder='Encargado'
                     value={proveedorEncargado}
-                    onChange={(e)=> setProveedorEncagado(e.target.value)}
+                    onChange={(e)=> verificar(setProveedorEncagado(e.target.value), proveedorEncargado)}
                     type='text'
+                    pattern='[A-Za-z ]{3,}'
+                    title='Solo se aceptan letras, ejem: "Diunsa"'
                     className='form-control'
                     />
                 </div>
                 <div className='atributo'>
-                    <Input
-                    underlined
-                    labelPlaceholder='RTN'
+                    <label>RTN Proveedor:</label>
+                    <input
+                    placeholder='RTN'
                     value={proveedorRTN}
                     onChange={(e)=> setProveedorRTN(e.target.value)}
-                    type='text'
+                    type='number'
                     className='form-control'
                     />
                 </div>
-                <div className='atributo'>
-                    <label>Estado</label> <br/>
-                    <select
-                    value={proveedorEstado}
-                    onChange={(e)=> setProveedorEstado(e.target.value)}
-                    type='number'
-                    className='select'
-                    >
-                    <option>Habilitado</option>
-                    <option>Deshabilitado</option>
-                    </select>
-                </div>
-                
 
-
-                <div className='d-flex'>
+                <div className='d-flex mt-2'>
                     <Button 
                     color={'gradient'}
-                    className='align-self-end me-2' 
+                    className='align-self-end me-3' 
                     auto 
                     onClick={()=>navigate('/Proveedores')}
                     ghost>
@@ -144,6 +145,7 @@ const AgregarProveedor = ()=>{
                     </Button>
 
                     <Button 
+                    ref={refButton}
                     auto
                     type='submit' 
                     color={'gradient'} 

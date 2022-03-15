@@ -2,31 +2,32 @@
 import React, {useState, useEffect} from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
-import { Button, Input,Tooltip } from '@nextui-org/react';
+import { Button, Input,Tooltip, Modal, Text } from '@nextui-org/react';
 import buscarLupa from '../../img/buscar_lupa.png';
 import lapizEditar from '../../img/lapiz_editar.png'
 
 
 const endPoint = 'http://127.0.0.1:8000/api/Cargo'
 const endPointUpdate = 'http://127.0.0.1:8000/api/updateCargo'
-const endPointgetByNombre = 'http://127.0.0.1:8000/api/CargoN'
+const endPointGet = 'http://127.0.0.1:8000/api/Cargo'
 
 
 function MostrarCargos() {
 
   const [cargos, setCargos] = useState([])
-  const [nombreBusqueda, setNombreBusqueda] = useState('')
   const navigate = useNavigate()
+  const [parametroBusqueda, setParametroBusqueda] = useState('ID')
+  const [valorBusqueda, setValorBusqueda] = useState()
+  const [mensajeModal, setMensajeModal] = useState('')
+  const [tituloModal, setTituloModal] = useState('')
+  const [visible, setVisible] = useState(false)
+  const [valorTooltip, setValorToolTip] = useState(false)
+  
 
   useEffect(()=>{
 
-    let suscrito = true
+    getAllCargos()    
 
-    if (suscrito){
-    getAllCargos()
-    }
-
-    return()=> suscrito = false 
   }, [])
 
 const getAllCargos = async ()=>{
@@ -44,35 +45,88 @@ const cambioEstado = async (cargo)=>{
       getAllCargos()
   }
 
-  const getByNombre = async (e)=>{
+  const getByValorBusqueda = async (e)=>{
       e.preventDefault()
 
-      const response = await axios.get(`${endPointgetByNombre}/${nombreBusqueda}`)
+      if (parametroBusqueda == 'ID'){
+        const response = await axios.get(`${endPointGet}/${valorBusqueda}`)
+        
+        if (response.status != 200){
+            setTituloModal('Error')
+            setMensajeModal(response.data.Error)
+            setVisible(true)
+        }else{
+            const array = [response.data]
+            setCargos(array)
+        }
+        
+      }else{
+        const response = await axios.get(`${endPointGet}N/${valorBusqueda}`)
+        console.log(response.data)
+        
+        const array = response.data
 
-      setCargos(response.data)
+        if (array.length < 1){
+            setTituloModal('Error')
+            setMensajeModal('No hay cargos con el nombre que ingresó.')
+            setVisible(true)
+        }else{
+            setCargos(array)
+        }
+      }
+      
   }
 
 
   return (
     <div>
+
+        <Modal
+        closeButton
+        blur
+        preventClose
+        className='bg-dark text-white'
+        open={visible}
+        onClose={()=>setVisible(false)}>
+            <Modal.Header>
+                <Text 
+                h4
+                className='text-white'>
+                    {tituloModal}
+                </Text>
+            </Modal.Header>
+            <Modal.Body>
+                {mensajeModal}
+            </Modal.Body>
+
+        </Modal>
+
         <div className='d-flex justify-content-start pt-2 pb-2'
         style={{backgroundColor: 'whitesmoke'}} >
            
             <h1 className='ms-4 me-4' >Cargos</h1>
 
+            <select style={{height: '35px'}}
+            className='align-self-center me-2'
+            onChange={(e)=>setParametroBusqueda(e.target.value)}>
+                <option value="ID">ID</option>
+                <option value="Nombre">Nombre</option>
+            </select>
+
             <form 
             className='d-flex align-self-center' 
             style={{left: '300px'}} 
-            onSubmit={getByNombre}>
-                <Input
-                    underlined
-                    placeholder='nombre'
-                    aria-label='aria-describedby'
-                    onChange={(e)=>setNombreBusqueda(e.target.value)}
-                    type='text'
-                    className='form-control me-2'
-                    required={true}
-                    />
+            onSubmit={getByValorBusqueda}>
+                <input
+                placeholder={`ingrese ${parametroBusqueda}`}
+                aria-label='aria-describedby'
+                onChange={(e)=>setValorBusqueda(e.target.value)}
+                type={parametroBusqueda == 'ID'? 'number':'text'}
+                className='form-control'
+                required={true}
+                title='Solo se aceptan letras, ejem: "Chef"'
+                pattern={parametroBusqueda == 'Nombre'? '[A-Za-z ]{3,}':''}
+                />
                 <Button
                 auto
                 className='ms-2'
@@ -82,6 +136,7 @@ const cambioEstado = async (cargo)=>{
                     Buscar
                 </Button>
             </form>
+
             <Button 
             color={'gradient'}
             bordered
@@ -100,6 +155,13 @@ const cambioEstado = async (cargo)=>{
                 Llenar Tabla
             </Button>
 
+            <Button 
+            className='bg-dark text-light align-self-center'
+            color={'dark'}
+            bordered
+            onClick={()=>navigate('/Cargos/addCargo')}>
+                Registrar
+            </Button>
         </div>
 
 
@@ -108,7 +170,7 @@ const cambioEstado = async (cargo)=>{
                     <tr>
                         <th>Id</th>
                         <th>Nombre</th>
-                        <th>Descripcion</th>
+                        <th>Descripción</th>
                         <th>Estado</th>
                         <th>Opciones</th>
                     </tr>
@@ -134,16 +196,22 @@ const cambioEstado = async (cargo)=>{
                                 <Tooltip
                                 placement='left'
                                 initialVisible={false}
-                                trigger='click' 
+                                trigger='hover' 
+                                visible = {valorTooltip}
                                 content={<div>
                                             <p>Está seguro que desea cambiar este registro?</p> 
 
+                                            <div style={{display: 'flex'}}>
                                             <Button 
-                                            className='bg-dark text-light'
+                                            auto
+                                            className='bg-dark text-light '
                                             color={'dark'}
                                             children={cargo.estado == 1 ? 'Deshabilitar' : 'Habilitar'}
-                                            onClick={()=>cambioEstado(cargo)}
-                                            ></Button>
+                                            onClick={()=>cambioEstado(cargo)}>
+                                            </Button>
+
+
+                                            </div>
                                             
                                         </div>}>
                                     <Button 
@@ -152,6 +220,8 @@ const cambioEstado = async (cargo)=>{
                                     children={cargo.estado == 1 ? 'Deshabilitar' : 'Habilitar'}
                                     color={'secondary'}
                                     ></Button>
+
+                                    
                                 </Tooltip>
 
                             </td>
@@ -160,13 +230,7 @@ const cambioEstado = async (cargo)=>{
                 </tbody>
             </table>
 
-            <Button 
-            className='bg-dark text-light'
-            color={'dark'}
-            bordered
-            onClick={()=>navigate('/Cargos/addCargo')}>
-                Registrar
-            </Button>
+            
         </div>
   )
 }

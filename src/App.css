@@ -39,6 +39,8 @@
 
 
 .atributo{
+  display: flex;
+  flex-direction: column;
   padding-top: 25px;
   padding-bottom: 5px;
 }
@@ -66,7 +68,7 @@ form{
   border: 1px solid rgb(218, 215, 215);
   border-radius: 4px;
   height: 40px;
-  width: 197px;
+  width: 213px;
 }
 
 link{
@@ -125,3 +127,6 @@ link{
   font-size: 20px;
 }
 
+label{
+  margin-bottom: 5px;
+}

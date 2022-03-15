@@ -1,5 +1,5 @@
 import { useNavigate, useParams} from "react-router-dom";
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 import { Button, Input, Modal, Text} from '@nextui-org/react'
 import axios from "axios";
 
@@ -21,6 +21,7 @@ const ActualizarProveedor = ()=>{
     const [mensajeModal, setMensajeModal] = useState('')
     const [tituloModal, setTituloModal] = useState('')
     const [visible, setVisible] = useState(false)
+    const refButton = useRef()
 
     useEffect(()=>{
         getProveedor()
@@ -56,13 +57,26 @@ const ActualizarProveedor = ()=>{
         }
     }
 
+    const verificar = (setear = () => {}, cadenaTexto)=>{
+        setear()
+        if (/(.)\1\1/.test(cadenaTexto)) {
+        refButton.current.disabled = "disabled"
+        setTituloModal('Error')
+        setMensajeModal('La información ingresada tiene caracteres repetidos al azar. ' +
+         'No podrá guardar hasta solucionar el error.')
+        setVisible(true)
+        }
+        else{
+            refButton.current.disabled = false
+        }
+    }
+
     return(
         <div>
 
             <Modal
             closeButton
             blur
-            preventClose
             className='bg-dark text-white'
             open={visible}
             onClose={()=>setVisible(false)}>
@@ -85,20 +99,22 @@ const ActualizarProveedor = ()=>{
             </div>
 
             <form onSubmit={actualizar} className='formulario'>
-                <div className='atributo'>
-                    <Input
-                    underlined
-                    labelPlaceholder='Nombre'
+            <div className='atributo'>
+                    <label>Nombre Proveedor:</label>
+                    <input
+                    placeholder='Nombre'
                     value={proveedorNombre}
-                    onChange={(e)=> setProveedorNombre(e.target.value)}
+                    onChange={(e)=>verificar(setProveedorNombre(e.target.value), proveedorNombre)}
                     type='text'
+                    pattern='[A-Za-z ]{3,}'
+                    title='Solo se aceptan letras, ejem: "Diunsa"'
                     className='form-control'
                     />
                 </div>
                 <div className='atributo'>
-                    <Input
-                    underlined
-                    labelPlaceholder='Numero'
+                    <label>Número Telefónico:</label>
+                    <input
+                    placeholder='Numero'
                     value={proveedorNumero}
                     onChange={(e)=> setProveedorNumero(e.target.value)}
                     type='number'
@@ -106,9 +122,9 @@ const ActualizarProveedor = ()=>{
                     />
                 </div>
                 <div className='atributo'>
-                    <Input
-                    underlined
-                    labelPlaceholder='Correo'
+                    <label>Correo Electrónico:</label>
+                    <input
+                    placeholder='Correo'
                     value={proveedorCorreo}
                     onChange={(e)=> setProveedorCorreo(e.target.value)}
                     type='email'
@@ -116,31 +132,33 @@ const ActualizarProveedor = ()=>{
                     />
                 </div>
                 <div className='atributo'>
-                    <Input
-                    underlined
-                    labelPlaceholder='Encargado'
+                    <label>Nombre Encargado:</label>
+                    <input
+                    placeholder='Encargado'
                     value={proveedorEncargado}
-                    onChange={(e)=> setProveedorEncagado(e.target.value)}
+                    onChange={(e)=> verificar(setProveedorEncagado(e.target.value), proveedorEncargado)}
                     type='text'
+                    pattern='[A-Za-z ]{3,}'
+                    title='Solo se aceptan letras, ejem: "Diunsa"'
                     className='form-control'
                     />
                 </div>
                 <div className='atributo'>
-                    <Input
-                    underlined
-                    labelPlaceholder='RTN'
+                    <label>RTN Proveedor:</label>
+                    <input
+                    placeholder='RTN'
                     value={proveedorRTN}
                     onChange={(e)=> setProveedorRTN(e.target.value)}
-                    type='text'
+                    type='number'
                     className='form-control'
                     />
-                </div>
+                </div>                
 
 
-                <div className='d-flex'>
+                <div className='d-flex mt-2'>
                     <Button 
                     color={'gradient'}
-                    className='align-self-end me-2' 
+                    className='align-self-end me-3' 
                     auto 
                     onClick={()=>navigate('/Proveedores')}
                     ghost>
@@ -148,6 +166,7 @@ const ActualizarProveedor = ()=>{
                     </Button>
 
                     <Button 
+                    ref={refButton}
                     auto
                     type='submit' 
                     color={'gradient'} 
