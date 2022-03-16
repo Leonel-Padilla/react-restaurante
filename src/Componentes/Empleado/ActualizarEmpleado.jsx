@@ -84,7 +84,7 @@ const ActualizarEmpleado = () =>{
     const actualizar = async (e)=>{
         e.preventDefault()
 
-        console.log(idDocumento)
+        /*console.log(idDocumento)
         console.log(numeroDocumento)
         console.log(empleadoNombre)
         console.log(empleadoNumero)
@@ -95,7 +95,7 @@ const ActualizarEmpleado = () =>{
         console.log(idCargo)
         console.log(fechaContratacion)
         console.log(fechaNacimiento)
-        console.log(empleadoEstado)
+        console.log(empleadoEstado)*/
 
         formatearCargo()
         formatearIdDocumento()
@@ -119,30 +119,26 @@ const ActualizarEmpleado = () =>{
         const response = await axios.get(endPointBuscarTodosDocumentos)
 
         setTodosDocumentos(response.data)
-
-        //console.log(response.data) //DEV
     }
 
     const getAllCargos = async ()=>{
         const response = await axios.get(endPointBuscarTodosCargos)
 
         setTodosCargos(response.data)
-
-        //console.log(response.data) //DEV
     }
     
     const verificarTipoDocumento = ()=> {
 
         switch (tipoDocumentoId){
-            case 'RTN': digitosNumero = 14 //setDigitosNumero(14)
+            case 'RTN': digitosNumero = 14 
                 break
-            case 'Identidad': digitosNumero = 13 //setDigitosNumero(13)
+            case 'Identidad': digitosNumero = 13 
                 break
-            case 'Pasaporte': digitosNumero = 8 //setDigitosNumero(8)
+            case 'Pasaporte': digitosNumero = 7 
                 break
-            case 'Visa': digitosNumero = 10 //setDigitosNumero(10)
+            case 'Visa': digitosNumero = 7 
                 break
-            case 'Licencia Conducir': digitosNumero = 9 //setDigitosNumero(9)
+            case 'Licencia Conducir': digitosNumero = 13 
                 break
         }
 
@@ -257,6 +253,8 @@ const ActualizarEmpleado = () =>{
                 <div className='atributo'>
                 <label>Numero documento:</label>
                 <input
+                required={true}
+                minLength={digitosNumero}
                 maxLength={digitosNumero}
                 placeholder='0801199110122'
                 value={numeroDocumento}

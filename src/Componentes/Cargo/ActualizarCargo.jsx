@@ -1,6 +1,6 @@
 import { useNavigate, useParams} from "react-router-dom";
 import React, {useState, useEffect, useRef} from 'react'
-import { Button, Input, Textarea, Modal, Text} from '@nextui-org/react'
+import { Button, Modal, Text} from '@nextui-org/react'
 import axios from "axios";
 
 
