@@ -126,6 +126,14 @@ const MostrarEmpleados = (props)=>{
             onClick={()=>getAllEmpleados()}>
                 Llenar Tabla
             </Button>
+
+            <Button 
+            className='bg-dark text-light align-self-center'
+            color={'dark'}
+            bordered
+            onClick={()=>navigate('/Empleados/addEmpleado')}>
+            Registrar
+            </Button>
         </div>
 
             
@@ -134,11 +142,13 @@ const MostrarEmpleados = (props)=>{
                 <tr>
                     <th>Id</th>
                     <th>Nombre</th>
-                    <th>Numero</th>
+                    <th>Usuario</th>
+                    <th>Telefono</th>
                     <th>Correo</th>
-                    <th>Direccion</th>
-                    <th>Estado</th>
+                    <th>Fecha contratación</th>
+                    <th>Tipo documento</th>
                     <th>Numero Documento</th>
+                    <th>Estado</th>
                     <th>Opciones</th>
                 </tr>
             </thead>
@@ -153,11 +163,14 @@ const MostrarEmpleados = (props)=>{
                     <tr key={empleado.id}>
                         <td>{empleado.id}</td>
                         <td>{empleado.empleadoNombre}</td>
+                        <td>{empleado.empleadoUsuario}</td>
                         <td>{empleado.empleadoNumero}</td>
                         <td>{empleado.empleadoCorreo}</td>
-                        <td>{empleado.empleadoDireccion}</td>
+                        <td>{empleado.fechaContratacion}</td>
+                        <td>{empleado.tipoDocumentoId}</td>
+                        <td>{empleado.numeroDocumento}</td>
                         <td>{empleado.estado == 1 ? 'Habilitado' : 'Deshabilitado'}</td>
-                        <td>{numeroDocumento}</td>
+                        
                         <td>
                             <Button
                             className='mb-1'
@@ -195,13 +208,7 @@ const MostrarEmpleados = (props)=>{
             </tbody>
         </table>
 
-        <Button 
-        className='bg-dark text-light'
-        color={'dark'}
-        bordered
-        onClick={()=>navigate('/Empleados/addEmpleado')}>
-            Registrar
-        </Button>
+        
 
         </div>
     )

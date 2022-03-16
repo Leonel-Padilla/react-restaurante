@@ -4,6 +4,11 @@ import { useNavigate } from 'react-router-dom'
 import { Button, Input, Modal, Text} from '@nextui-org/react'
 import { toHaveDisplayValue } from '@testing-library/jest-dom/dist/matchers'
 
+import Datepicker from 'react-datepicker'
+import 'react-datepicker/dist/react-datepicker.css'
+import subDays from "date-fns/subDays"
+import addDays from "date-fns/addDays"
+
 const endPointRegistrarEmpleado = 'http://127.0.0.1:8000/api/addEmpleado'
 const endPointRegistrarTipoDocumento = 'http://127.0.0.1:8000/api/addTipoDocumento'
 const endPointBuscarTipoDocumento = 'http://127.0.0.1:8000/api/TipoDocumentoND'
@@ -22,6 +27,7 @@ const AgregarEmpleado = () =>{
     const [empleadoNumeroDocumento, setEmpleadoNumeroDocumento] = useState('')
     const [documentoEstado, setDocumentoEstado] = useState(1)
     const navigate = useNavigate()
+    const [startDate, setStartDate] = useState(new Date());
 
     const [mensajeModal, setMensajeModal] = useState('')
     const [tituloModal, setTituloModal] = useState('')
@@ -135,80 +141,130 @@ const AgregarEmpleado = () =>{
             </div>
 
             <form onSubmit={registrar} className='formulario'>
+
                 <div className='atributo'>
-                    <Input
-                    underlined
-                    labelPlaceholder='Nombre'
-                    value={empleadoNombre}
-                    onChange={(e)=> setEmpleadoNombre(e.target.value)}
-                    type='text'
-                    className='form-control'
-                    />
+                <label>Nombre:</label>
+                <input
+                placeholder='Jose Perez'
+                pattern='[A-Za-z]{3,}'
+                maxLength={10}
+                value={empleadoNombre}
+                onChange={(e)=> setEmpleadoNombre(e.target.value)}
+                type='text'
+                className='form-control'
+                />
                 </div>
+
                 <div className='atributo'>
-                    <Input
-                    underlined
-                    labelPlaceholder='Numero'
-                    value={empleadoNumero}
-                    onChange={(e)=> setEmpleadoNumero(e.target.value)}
-                    type='number'
-                    className='form-control'
-                    />
+                <label>Numero telefonico:</label>
+                <input
+                placeholder='88922711'
+                value={empleadoNumero}
+                onChange={(e)=> setEmpleadoNumero(e.target.value)}
+                type='number'
+                className='form-control'
+                />
                 </div>
+
                 <div className='atributo'>
-                    <Input
-                    underlined
-                    labelPlaceholder='Correo'
-                    value={empleadoCorreo}
-                    onChange={(e)=> setEmpleadoCorreo(e.target.value)}
-                    type='email'
-                    className='form-control'
-                    />
+                <label>Correo electronico:</label>
+                <input
+                placeholder='ejem@gmail.com'
+                value={empleadoCorreo}
+                onChange={(e)=> setEmpleadoCorreo(e.target.value)}
+                type='email'
+                className='form-control'
+                />
                 </div>
+
                 <div className='atributo'>
-                    <Input
-                    underlined
-                    labelPlaceholder='Direccion'
-                    value={empleadoDireccion}
-                    onChange={(e)=> setEmpleadoDireccion(e.target.value)}
-                    type='text'
-                    className='form-control'
-                    />
+                <label>Direccion:</label>
+                <input
+                placeholder='Res. Las uvas'
+                value={empleadoDireccion}
+                onChange={(e)=> setEmpleadoDireccion(e.target.value)}
+                type='text'
+                className='form-control'/>
                 </div>
+
                 <div className='atributo'>
-                    <label>Estado</label> <br/>
-                    <select
-                    value={empleadoEstado}
-                    onChange={(e)=> setEmpleadoEstado(e.target.value)}
-                    type='number'
-                    className='select'
-                    >
-                    <option>Habilitado</option>
-                    <option>Deshabilitado</option>
-                    </select>
+                <label>Tipo Documentacion</label>
+                <select
+                value={empleadoNombreDocumento}
+                onChange={(e)=> setEmpleadoNombreDocumento(e.target.value)}
+                type='number'
+                className='select'
+                >
+                </select>
                 </div>
+
                 <div className='atributo'>
-                    <label>Tipo Documentacion</label> <br/>
-                    <select
-                    value={empleadoNombreDocumento}
-                    onChange={(e)=> setEmpleadoNombreDocumento(e.target.value)}
-                    type='number'
-                    className='select'
-                    >
-                        <option>Identidad</option>
-                        <option>Visa</option>
-                        <option>Pasaporte</option>
-                    </select>
+                <label>Numero documento:</label>
+                <input
+                maxLength={14}
+                value={empleadoNumeroDocumento}
+                onChange={(e)=> setEmpleadoNumeroDocumento(e.target.value)}
+                type='text'
+                className='form-control'
+                />
                 </div>
+
                 <div className='atributo'>
-                    <Input
-                    underlined
-                    labelPlaceholder='Numero Documento'
-                    value={empleadoNumeroDocumento}
-                    onChange={(e)=> setEmpleadoNumeroDocumento(e.target.value)}
-                    type='text'
-                    className='form-control'
-                    />
+                <label>Fecha Nacimiento:</label>
+                <Datepicker
+                 selected={startDate}
+                 onChange={(date) => setStartDate(date)}
+                 minDate={subDays(new Date(), 365)}
+                  />
+                </div>
+
+                <div className='atributo'>
+                <label>Fecha Contrato:</label>
+                <Datepicker
+                 selected={startDate}
+                 onChange={(date) => setStartDate(date)}
+                 maxDate={addDays(new Date(), 10)}
+                 />
+                </div>
+
+                <div className='atributo'>
+                <label>Usuario:</label>
+                <input
+                 placeholder='empleado1'
+                 //value={}
+                 //onChange={}
+                 type='text'
+                 className='form-control'
+                 />
+                </div>
+
+                <div className='atributo'>
+                <label>Contraseña:</label>
+                <input
+                 //value={}
+                 //onChange={}
+                 type='password'
+                 className='form-control'
+                 />
+                </div>
+
+                <div className='atributo'>
+                <label>Confirmar contraseña:</label>
+                <input
+                 //value={}
+                 //onChange={}
+                 type='password'
+                 className='form-control'
+                 />
+                </div>
+
+                <div className='atributo'>
+                <label>Cargo actual</label>
+                <select
+                //value={}
+                //onChange={}
+                className='select'> 
+                </select>
                 </div>
 
                 <div className='d-flex'>
@@ -229,6 +285,8 @@ const AgregarEmpleado = () =>{
                         Guardar
                     </Button>
                 </div>
+
+
             </form>
     </div>
     )

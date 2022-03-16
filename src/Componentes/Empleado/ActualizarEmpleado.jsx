@@ -3,6 +3,11 @@ import React, {useState, useEffect} from 'react'
 import { Button, Input, Text, Modal} from '@nextui-org/react'
 import axios from "axios";
 
+import Datepicker from 'react-datepicker'
+import 'react-datepicker/dist/react-datepicker.css'
+import subDays from "date-fns/subDays"
+import addDays from "date-fns/addDays"
+
 const ActualizarEmpleado = () =>{
     const [empleadoNombre, setEmpleadoNombre] = useState('')
     const [empleadoNumero, setEmpleadoNumero] = useState('')
@@ -13,6 +18,7 @@ const ActualizarEmpleado = () =>{
     const [mensajeModal, setMensajeModal] = useState('')
     const [tituloModal, setTituloModal] = useState('')
     const [visible, setVisible] = useState(false)
+    const [startDate, setStartDate] = useState(new Date());
 
     const [empleadoIdDocumento, setEmpleadoIdDocumento] = useState(0)
     const [empleadoNombreDocumento, setEmpleadoNombreDocumento] = useState('RTN')
@@ -85,7 +91,6 @@ const ActualizarEmpleado = () =>{
 
     return(
         <div>
-
             <Modal
             closeButton
             blur
@@ -113,72 +118,122 @@ const ActualizarEmpleado = () =>{
 
             <form onSubmit={actualizar} className='formulario'>
                 <div className='atributo'>
-                    <Input
-                    underlined
-                    labelPlaceholder='Nombre'
-                    value={empleadoNombre}
-                    onChange={(e)=> setEmpleadoNombre(e.target.value)}
-                    type='text'
-                    className='form-control'
-                    />
+                <label>Nombre:</label>
+                <input
+                placeholder='Jose Perez'
+                pattern='[A-Za-z]{3,}'
+                value={empleadoNombre}
+                onChange={(e)=> setEmpleadoNombre(e.target.value)}
+                type='text'
+                className='form-control'
+                />
                 </div>
+
                 <div className='atributo'>
-                    <Input
-                    underlined
-                    labelPlaceholder='Numero'
-                    value={empleadoNumero}
-                    onChange={(e)=> setEmpleadoNumero(e.target.value)}
-                    type='number'
-                    className='form-control'
-                    />
+                <label>Numero telefonico:</label>
+                <input
+                placeholder='88922711'
+                value={empleadoNumero}
+                onChange={(e)=> setEmpleadoNumero(e.target.value)}
+                type='number'
+                className='form-control'
+                />
                 </div>
+
                 <div className='atributo'>
-                    <Input
-                    underlined
-                    labelPlaceholder='Correo'
-                    value={empleadoCorreo}
-                    onChange={(e)=> setEmpleadoCorreo(e.target.value)}
-                    type='email'
-                    className='form-control'
-                    />
+                <label>Correo electronico:</label>
+                <input
+                placeholder='ejem@gmail.com'
+                value={empleadoCorreo}
+                onChange={(e)=> setEmpleadoCorreo(e.target.value)}
+                type='email'
+                className='form-control'
+                />
                 </div>
+
                 <div className='atributo'>
-                    <Input
-                    underlined
-                    labelPlaceholder='Direccion'
-                    value={empleadoDireccion}
-                    onChange={(e)=> setEmpleadoDireccion(e.target.value)}
-                    type='text'
-                    className='form-control'
-                    />
+                <label>Direccion:</label>
+                <input
+                placeholder='Res. Las uvas'
+                value={empleadoDireccion}
+                onChange={(e)=> setEmpleadoDireccion(e.target.value)}
+                type='text'
+                className='form-control'/>
                 </div>
+
                 <div className='atributo'>
-                    <label>Tipo Documentacion</label> <br/>
-                    <select
-                    value={empleadoNombreDocumento}
-                    onChange={(e)=> setEmpleadoNombreDocumento(e.target.value)}
-                    type='number'
-                    className='select'
-                    >
-                        <option>RTN</option>
-                        <option>Identidad</option>
-                        <option>Pasaporte</option>
-                    </select>
+                <label>Tipo Documentacion</label>
+                <select
+                value={empleadoNombreDocumento}
+                onChange={(e)=> setEmpleadoNombreDocumento(e.target.value)}
+                type='number'
+                className='select'
+                >
+                </select>
                 </div>
+
                 <div className='atributo'>
-                    <Input
-                    underlined
-                    labelPlaceholder='Numero Documento'
-                    value={empleadoNumeroDocumento}
-                    onChange={(e)=> setEmpleadoNumeroDocumento(e.target.value)}
-                    type='text'
-                    className='form-control'
-                    />
+                <label>Numero documento:</label>
+                <input
+                placeholder='0801199110122'
+                //value={empleadoNumeroDocumento}
+                //onChange={(e)=> setEmpleadoNumeroDocumento(e.target.value)}
+                type='text'
+                className='form-control'
+                />
                 </div>
+
+                <div className='atributo'>
+                <label>Nuevo usuario:</label>
+                <input
+                 placeholder='empleado1'
+                 //value={}
+                 //onChange={}
+                 type='text'
+                 className='form-control'
+                 />
+                </div>
+
+                <div className='atributo'>
+                <label>Nueva contraseña:</label>
+                <input
+                 //value={}
+                 //onChange={}
+                 type='password'
+                 className='form-control'
+                 />
+                </div>
+
+
+                <div className='atributo'>
+                <label>Confirmar nueva contraseña:</label>
+                <input
+                 //value={}
+                 //onChange={}
+                 type='password'
+                 className='form-control'
+                 />
+                </div>
+                
+                <div className='atributo'>
+                <label>Cargo actual</label>
+                <select
+                //value={}
+                //onChange={}
+                className='select'> 
+                </select>
+                </div>
+                
+
+                
+
+               
+
+               
+
 
 
                 <div className="d-flex">
-
                     <Button 
                     color={'gradient'}
                     className='align-self-end me-2' 
@@ -194,7 +249,6 @@ const ActualizarEmpleado = () =>{
                     ghost>
                         Guardar
                     </Button>
-
                 </div>
             </form>
 
