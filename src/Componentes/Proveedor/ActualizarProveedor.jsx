@@ -35,40 +35,41 @@ const ActualizarProveedor = ()=>{
         setProveedorCorreo(response.data.proveedorCorreo)
         setProveedorEncagado(response.data.proveedorEncargado)
         setProveedorRTN(response.data.proveedorRTN)
-
-        //console.log(response.data)    //DEV
     }
 
     const actualizar = async (e)=>{
         e.preventDefault()
-        const response = await axios.put(`${endPointUpdate}/${id}`, {proveedorNombre: proveedorNombre, 
-            proveedorNumero: proveedorNumero, proveedorCorreo: proveedorCorreo,
-            proveedorEncargado: proveedorEncargado,  proveedorRTN: proveedorRTN, 
-            estado: proveedorEstado})
 
-        if (response.status !== 200){
-            /*console.log(response.data) //DEV
-            alert(response.data.Error)*/
+        const datos = [proveedorNombre, proveedorCorreo, proveedorEncargado]
+        let contador = 0
+
+        datos.map((dato)=>{
+            if (/(.)\1\1/.test(dato)) {
+                contador++
+            }
+        })
+
+        if (contador > 0){
             setTituloModal('Error')
-            setMensajeModal(response.data.Error)
+            setMensajeModal('La información ingresada contiene mas de dos caracteres repetidos seguidos.')
             setVisible(true)
         }else{
-            navigate('/Proveedores')
+            const response = await axios.put(`${endPointUpdate}/${id}`, {proveedorNombre: proveedorNombre, 
+                proveedorNumero: proveedorNumero, proveedorCorreo: proveedorCorreo,
+                proveedorEncargado: proveedorEncargado,  proveedorRTN: proveedorRTN, 
+                estado: proveedorEstado})
+    
+            if (response.status !== 200){
+                setTituloModal('Error')
+                setMensajeModal(response.data.Error)
+                setVisible(true)
+            }else{
+                navigate('/Proveedores')
+            }
         }
-    }
 
-    const verificar = (setear = () => {}, cadenaTexto)=>{
-        setear()
-        if (/(.)\1\1/.test(cadenaTexto)) {
-        refButton.current.disabled = "disabled"
-        setTituloModal('Error')
-        setMensajeModal('La información ingresada tiene caracteres repetidos al azar. ' +
-         'No podrá guardar hasta solucionar el error.')
-        setVisible(true)
-        }
-        else{
-            refButton.current.disabled = false
-        }
+
+
     }
 
     return(
@@ -104,7 +105,7 @@ const ActualizarProveedor = ()=>{
                     <input
                     placeholder='Nombre'
                     value={proveedorNombre}
-                    onChange={(e)=>verificar(setProveedorNombre(e.target.value), proveedorNombre)}
+                    onChange={(e)=>setProveedorNombre(e.target.value)}
                     type='text'
                     pattern='[A-Za-z ]{3,}'
                     title='Solo se aceptan letras, ejem: "Diunsa"'
@@ -136,7 +137,7 @@ const ActualizarProveedor = ()=>{
                     <input
                     placeholder='Encargado'
                     value={proveedorEncargado}
-                    onChange={(e)=> verificar(setProveedorEncagado(e.target.value), proveedorEncargado)}
+                    onChange={(e)=>setProveedorEncagado(e.target.value)}
                     type='text'
                     pattern='[A-Za-z ]{3,}'
                     title='Solo se aceptan letras, ejem: "Diunsa"'

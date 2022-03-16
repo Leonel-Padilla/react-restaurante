@@ -35,19 +35,37 @@ function ActualizarCargo() {
 
   const actualizar = async (e)=>{
     e.preventDefault()
-    const response = await axios.put(`${endPointUpdate}/${id}`, {cargoNombre: cargoNombre,
-      cargoDescripcion: cargoDescripcion, estado: cargoEstado})
 
-    if (response.status !== 200){
-        /*console.log(response.data) //DEV
-        alert(response.data.Error)*/
+    const datos = [cargoNombre, cargoDescripcion]
+    let contador = 0
 
+    datos.map((dato)=>{
+        if (/(.)\1\1/.test(dato)) {
+            
+            contador++
+        
+        }
+    })
+
+
+    if (contador > 0){
         setTituloModal('Error')
-        setMensajeModal(response.data.Error)
+        setMensajeModal('La información ingresada contiene mas de dos caracteres repetidos seguidos.')
         setVisible(true)
-    }else(
-      navigate('/Cargos')
-    )
+    }else{
+        const response = await axios.put(`${endPointUpdate}/${id}`, {cargoNombre: cargoNombre,
+            cargoDescripcion: cargoDescripcion, estado: cargoEstado})
+      
+          if (response.status !== 200){
+      
+              setTituloModal('Error')
+              setMensajeModal(response.data.Error)
+              setVisible(true)
+          }else(
+            navigate('/Cargos')
+          )
+    }
+    
 }
 
 const verificar = (setear = () => {}, cadenaTexto)=>{
@@ -96,7 +114,7 @@ const verificar = (setear = () => {}, cadenaTexto)=>{
                     <label>Nombre del cargo:</label>
                     <input
                     value={cargoNombre}
-                    onChange={(e)=>verificar(setCargoNombre(e.target.value), cargoNombre)}
+                    onChange={(e)=>setCargoNombre(e.target.value)}
                     type='text'
                     pattern='[A-Za-z]{3,}'
                     title='Solo se aceptan letras, Ejemplo: "Cocinero"'

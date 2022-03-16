@@ -124,7 +124,6 @@ const cambioEstado = async (cargo)=>{
                 type={parametroBusqueda == 'ID'? 'number':'text'}
                 className='form-control'
                 required={true}
-                title='Solo se aceptan letras, ejem: "Chef"'
                 pattern={parametroBusqueda == 'Nombre'? '[A-Za-z ]{3,}':''}
                 />
                 <Button
