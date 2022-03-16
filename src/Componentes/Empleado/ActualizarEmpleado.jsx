@@ -8,86 +8,163 @@ import 'react-datepicker/dist/react-datepicker.css'
 import subDays from "date-fns/subDays"
 import addDays from "date-fns/addDays"
 
+
+const endpointGetEmpleado = 'http://127.0.0.1:8000/api/Empleado'
+const endPointActualizarEmpleado = 'http://127.0.0.1:8000/api/updateEmpleado'
+const endPointBuscarTodosCargos = 'http://127.0.0.1:8000/api/Cargo'
+const endPointGetCargoById = 'http://127.0.0.1:8000/api/Cargo'
+const endPointBuscarTodosDocumentos = 'http://127.0.0.1:8000/api/TipoDocumento'
+const endPointGetDocumentoById = 'http://127.0.0.1:8000/api/TipoDocumento'
+
 const ActualizarEmpleado = () =>{
+    const [tipoDocumentoId, setTipoDocumentoId] = useState()
+    const [numeroDocumento, setNumeroDocumento] = useState('')
     const [empleadoNombre, setEmpleadoNombre] = useState('')
     const [empleadoNumero, setEmpleadoNumero] = useState('')
     const [empleadoCorreo, setEmpleadoCorreo] = useState('')
+    const [empleadoUsuario, setEmpleadoUsuario] = useState('')
+    const [empleadoContrasenia, setEmpleadoContrasenia] = useState('')
     const [empleadoDireccion, setEmpleadoDireccion] = useState('')
-    const [empleadoEstado, setEmpleadoEstado] = useState(1)
+    const [cargoActualId, setCargoActual] = useState()
+    const [fechaContratacion, setFechaContratacion] = useState()
+    const [fechaNacimiento, setFechaNacimiento] = useState()
+    const [empleadoEstado, setEmpleadoEstado] = useState()
+    let digitosNumero = 14
+    let idDocumento = 1
+    let idCargo = 1
+    
+    const [todosDocumentos, setTodosDocumentos] = useState([])
+    const [todosCargos, setTodosCargos] = useState([])
 
+    const navigate = useNavigate()
+
+    const [startDate, setStartDate] = useState(new Date());
     const [mensajeModal, setMensajeModal] = useState('')
     const [tituloModal, setTituloModal] = useState('')
     const [visible, setVisible] = useState(false)
-    const [startDate, setStartDate] = useState(new Date());
 
-    const [empleadoIdDocumento, setEmpleadoIdDocumento] = useState(0)
-    const [empleadoNombreDocumento, setEmpleadoNombreDocumento] = useState('RTN')
-    const [empleadoNumeroDocumento, setEmpleadoNumeroDocumento] = useState('')
-    const [documentoEstado, setDocumentoEstado] = useState(1)
     const {id} = useParams()
-    const navigate = useNavigate()
 
     useEffect(()=>{
+        getAllDocumentos()
+        getAllCargos()
         getEmpleadoById()
+        
     }, [])
 
-    const endpointGetEmpleado = 'http://127.0.0.1:8000/api/Empleado'
-    const endpointGetTipoDocumento = 'http://127.0.0.1:8000/api/TipoDocumento'
-    const endPointActualizarTipoDocumento = 'http://127.0.0.1:8000/api/updateTipoDocumento'
-    const endPointActualizarEmpleado = 'http://127.0.0.1:8000/api/updateEmpleado'
+
 
     const getEmpleadoById = async ()=>{
 
         const response = await axios.get(`${endpointGetEmpleado}/${id}`)
 
+        const response1 = await axios.get(`${endPointGetDocumentoById}/${response.data.tipoDocumentoId}`)
+
+        const response2 = await axios.get(`${endPointGetCargoById}/${response.data.cargoActualId}`)
+
+        setTipoDocumentoId(response1.data.nombreDocumento)
+        setCargoActual(response2.data.cargoNombre)
+        setNumeroDocumento(response.data.numeroDocumento)
         setEmpleadoNombre(response.data.empleadoNombre)
         setEmpleadoNumero(response.data.empleadoNumero)
         setEmpleadoCorreo(response.data.empleadoCorreo)
         setEmpleadoDireccion(response.data.empleadoDireccion)
         setEmpleadoEstado(response.data.estado)
+        setEmpleadoUsuario(response.data.empleadoUsuario)
+        setEmpleadoContrasenia(response.data.empleadoContrasenia)
+        setFechaContratacion(response.data.fechaContratacion)
+        setFechaNacimiento(response.data.fechaNacimiento)
 
-        getTipoDocumentoById(response.data.tipoDocumentoId)
 
         //console.log(response.data)   //DEV
     }
 
-    const getTipoDocumentoById = async (id) =>{
-        const response = await axios.get(`${endpointGetTipoDocumento}/${id}`)
-
-        setEmpleadoIdDocumento(response.data.id)
-        setEmpleadoNombreDocumento(response.data.nombreDocumento)
-        setEmpleadoNumeroDocumento(response.data.numeroDocumento)
-    }
 
 
     const actualizar = async (e)=>{
         e.preventDefault()
 
+        console.log(idDocumento)
+        console.log(numeroDocumento)
+        console.log(empleadoNombre)
+        console.log(empleadoNumero)
+        console.log(empleadoCorreo)
+        console.log(empleadoUsuario)
+        console.log(empleadoContrasenia)
+        console.log(empleadoDireccion)
+        console.log(idCargo)
+        console.log(fechaContratacion)
+        console.log(fechaNacimiento)
+        console.log(empleadoEstado)
+
+        formatearCargo()
+        formatearIdDocumento()
+
         const response = await axios.put(`${endPointActualizarEmpleado}/${id}`, 
-            {tipoDocumentoId: empleadoIdDocumento, empleadoNombre: empleadoNombre, empleadoNumero: empleadoNumero, 
-            empleadoCorreo: empleadoCorreo, empleadoDireccion: empleadoDireccion, estado: empleadoEstado})
+        {tipoDocumentoId: idDocumento, numeroDocumento: numeroDocumento, empleadoNombre: empleadoNombre, empleadoNumero: empleadoNumero,
+        empleadoCorreo: empleadoCorreo, empleadoUsuario: empleadoUsuario, empleadoContrasenia: empleadoContrasenia,
+        empleadoDireccion: empleadoDireccion, cargoActualId: idCargo, fechaContratacion: fechaContratacion, 
+        fechaNacimiento: fechaNacimiento, estado: empleadoEstado})
 
         if (response.status !== 200){
-            /*console.log(response.data) //DEV
-            alert(response.data.Error)*/
             setTituloModal('Error')
             setMensajeModal(response.data.Error)
             setVisible(true)
         }else{
-            const response1 = await axios.put(`${endPointActualizarTipoDocumento}/${empleadoIdDocumento}`, 
-            {nombreDocumento: empleadoNombreDocumento, numeroDocumento: empleadoNumeroDocumento, estado: documentoEstado})
-
-            if (response1.status !== 200){
-                setTituloModal('Error')
-                setMensajeModal(response1.data.Error)
-                setVisible(true)
-                /*console.log(response1.data)
-                alert(response1.data.Error)*/
-            }else{
-                navigate('/Empleados')
-            }
+            navigate('/Empleados')
         }
     }
+
+    const getAllDocumentos = async ()=>{
+        const response = await axios.get(endPointBuscarTodosDocumentos)
+
+        setTodosDocumentos(response.data)
+
+        //console.log(response.data) //DEV
+    }
+
+    const getAllCargos = async ()=>{
+        const response = await axios.get(endPointBuscarTodosCargos)
+
+        setTodosCargos(response.data)
+
+        //console.log(response.data) //DEV
+    }
+    
+    const verificarTipoDocumento = ()=> {
+
+        switch (tipoDocumentoId){
+            case 'RTN': digitosNumero = 14 //setDigitosNumero(14)
+                break
+            case 'Identidad': digitosNumero = 13 //setDigitosNumero(13)
+                break
+            case 'Pasaporte': digitosNumero = 8 //setDigitosNumero(8)
+                break
+            case 'Visa': digitosNumero = 10 //setDigitosNumero(10)
+                break
+            case 'Licencia Conducir': digitosNumero = 9 //setDigitosNumero(9)
+                break
+        }
+
+    }
+
+    const formatearCargo = ()=>{
+        todosCargos.map((cargo)=>{
+            if (cargo.cargoNombre == cargoActualId){
+                idCargo = cargo.id
+            }
+        })
+    }
+
+
+    const formatearIdDocumento = ()=>{
+        todosDocumentos.map((documento)=>{
+            if(documento.nombreDocumento == tipoDocumentoId){
+                idDocumento = documento.id
+            }
+        })
+    }
+
 
     return(
         <div>
@@ -121,7 +198,7 @@ const ActualizarEmpleado = () =>{
                 <label>Nombre:</label>
                 <input
                 placeholder='Jose Perez'
-                pattern='[A-Za-z]{3,}'
+                pattern='[A-Za-z ]{3,}'
                 value={empleadoNombre}
                 onChange={(e)=> setEmpleadoNombre(e.target.value)}
                 type='text'
@@ -162,22 +239,28 @@ const ActualizarEmpleado = () =>{
                 </div>
 
                 <div className='atributo'>
-                <label>Tipo Documentacion</label>
+                <label>Tipo Documento</label>
                 <select
-                value={empleadoNombreDocumento}
-                onChange={(e)=> setEmpleadoNombreDocumento(e.target.value)}
+                value={tipoDocumentoId}
+                onChange={(e)=> setTipoDocumentoId(e.target.value)}
                 type='number'
                 className='select'
                 >
+                    {todosDocumentos.map((documento)=> {
+                        verificarTipoDocumento()
+                        return(<option key={documento.id}>{documento.nombreDocumento}</option>)
+                    })
+                    }
                 </select>
                 </div>
 
                 <div className='atributo'>
                 <label>Numero documento:</label>
                 <input
+                maxLength={digitosNumero}
                 placeholder='0801199110122'
-                //value={empleadoNumeroDocumento}
-                //onChange={(e)=> setEmpleadoNumeroDocumento(e.target.value)}
+                value={numeroDocumento}
+                onChange={(e)=> setNumeroDocumento(e.target.value)}
                 type='text'
                 className='form-control'
                 />
@@ -187,8 +270,8 @@ const ActualizarEmpleado = () =>{
                 <label>Nuevo usuario:</label>
                 <input
                  placeholder='empleado1'
-                 //value={}
-                 //onChange={}
+                 value={empleadoUsuario}
+                 onChange={(e)=>setEmpleadoUsuario(e.target.value)}
                  type='text'
                  className='form-control'
                  />
@@ -197,15 +280,15 @@ const ActualizarEmpleado = () =>{
                 <div className='atributo'>
                 <label>Nueva contraseña:</label>
                 <input
-                 //value={}
-                 //onChange={}
+                 value={empleadoContrasenia}
+                 onChange={(e)=>setEmpleadoContrasenia(e.target.value)}
                  type='password'
                  className='form-control'
                  />
                 </div>
 
 
-                <div className='atributo'>
+                {/* <div className='atributo'>
                 <label>Confirmar nueva contraseña:</label>
                 <input
                  //value={}
@@ -213,25 +296,17 @@ const ActualizarEmpleado = () =>{
                  type='password'
                  className='form-control'
                  />
-                </div>
+                </div> */}
                 
                 <div className='atributo'>
                 <label>Cargo actual</label>
                 <select
-                //value={}
-                //onChange={}
+                value={cargoActualId}
+                onChange={(e)=>setCargoActual(e.target.value)}
                 className='select'> 
+                    {todosCargos.map((cargo)=><option key={cargo.id}>{cargo.cargoNombre}</option>)}
                 </select>
                 </div>
-                
-
-                
-
-               
-
-               
-
-
 
                 <div className="d-flex">
                     <Button 

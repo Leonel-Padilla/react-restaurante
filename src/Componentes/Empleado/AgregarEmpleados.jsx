@@ -9,90 +9,79 @@ import 'react-datepicker/dist/react-datepicker.css'
 import subDays from "date-fns/subDays"
 import addDays from "date-fns/addDays"
 
+
 const endPointRegistrarEmpleado = 'http://127.0.0.1:8000/api/addEmpleado'
-const endPointRegistrarTipoDocumento = 'http://127.0.0.1:8000/api/addTipoDocumento'
-const endPointBuscarTipoDocumento = 'http://127.0.0.1:8000/api/TipoDocumentoND'
+const endPointBuscarTodosCargos = 'http://127.0.0.1:8000/api/Cargo'
 const endPointBuscarTodosDocumentos = 'http://127.0.0.1:8000/api/TipoDocumento'
-const endPointEliminarTipoDocumento = 'http://127.0.0.1:8000/api/deleteTipoDocumento'
 
 const AgregarEmpleado = () =>{
+    const [tipoDocumentoId, setTipoDocumentoId] = useState()
+    const [numeroDocumento, setNumeroDocumento] = useState('')
     const [empleadoNombre, setEmpleadoNombre] = useState('')
     const [empleadoNumero, setEmpleadoNumero] = useState('')
     const [empleadoCorreo, setEmpleadoCorreo] = useState('')
+    const [empleadoUsuario, setEmpleadoUsuario] = useState('')
+    const [empleadoContrasenia, setEmpleadoContrasenia] = useState('')
     const [empleadoDireccion, setEmpleadoDireccion] = useState('')
+    const [cargoActualId, setCargoActual] = useState()
+    const [fechaContratacion, setFechaContratacion] = useState()
+    const [fechaNacimiento, setFechaNacimiento] = useState()
     const [empleadoEstado, setEmpleadoEstado] = useState(1)
-
+    let digitosNumero = 14
+    let idDocumento = 1
+    let idCargo = 1
+    
     const [todosDocumentos, setTodosDocumentos] = useState([])
-    const [empleadoNombreDocumento, setEmpleadoNombreDocumento] = useState('RTN')
-    const [empleadoNumeroDocumento, setEmpleadoNumeroDocumento] = useState('')
-    const [documentoEstado, setDocumentoEstado] = useState(1)
-    const navigate = useNavigate()
-    const [startDate, setStartDate] = useState(new Date());
+    const [todosCargos, setTodosCargos] = useState([])
 
+    const navigate = useNavigate()
+
+    const [startDate, setStartDate] = useState(new Date());
     const [mensajeModal, setMensajeModal] = useState('')
     const [tituloModal, setTituloModal] = useState('')
     const [visible, setVisible] = useState(false)
 
 
     useEffect(()=>{
-
         getAllDocumentos()
+        getAllCargos()
     },[])
     
     const registrar = async (e)=>{
         e.preventDefault()
-        //getAllDocumentos()
+        /*console.log(tipoDocumentoId)
+        console.log(numeroDocumento)
+        console.log(empleadoNombre)
+        console.log(empleadoNumero)
+        console.log(empleadoCorreo)
+        console.log(empleadoUsuario)
+        console.log(empleadoContrasenia)
+        console.log(empleadoDireccion)
+        console.log(cargoActualId)
+        console.log(fechaContratacion)
+        console.log(fechaNacimiento)
+        console.log(empleadoEstado)*/
+            
+        formatearCargo()
+        formatearIdDocumento()
 
-        let igualdad = false
-        todosDocumentos.map((documento)=>{
-            if (documento.numeroDocumento == empleadoNumeroDocumento){
-                igualdad = true
-            }
-        })
+        const response1 = await axios.post(endPointRegistrarEmpleado, {tipoDocumentoId: idDocumento,
+            numeroDocumento: numeroDocumento, empleadoNombre: empleadoNombre, empleadoNumero: empleadoNumero,
+            empleadoCorreo: empleadoCorreo, empleadoUsuario: empleadoUsuario,
+            empleadoContrasenia: empleadoContrasenia, empleadoDireccion: empleadoDireccion, 
+            cargoActualId: idCargo, fechaContratacion: fechaContratacion,
+            fechaNacimiento: fechaNacimiento, estado: empleadoEstado})
+    
+        if (response1.status !== 200){
+            setTituloModal('Error')
+            setMensajeModal(response1.data.Error)
+            setVisible(true)
 
-        if (igualdad){
-                setTituloModal('Error')
-                setMensajeModal('Ya hay un registro con ese numero de documento')
-                setVisible(true)
         }else{
-            const response = await axios.post(endPointRegistrarTipoDocumento, {nombreDocumento: empleadoNombreDocumento,
-                numeroDocumento: empleadoNumeroDocumento, estado: documentoEstado})
-    
-            if (response.status !== 200){
-                //console.log(response.data) //DEV
-                setTituloModal('Error')
-                setMensajeModal(response.data.Error)
-                setVisible(true)
-                
-            }else{
-                
-                const responseDocumento = await axios.get(`${endPointBuscarTipoDocumento}/${empleadoNumeroDocumento}`)
-    
-                const response1 = await axios.post(endPointRegistrarEmpleado, {tipoDocumentoId: responseDocumento.data.id,
-                    empleadoNombre: empleadoNombre, empleadoNumero: empleadoNumero, empleadoCorreo: empleadoCorreo,
-                    empleadoDireccion: empleadoDireccion, estado: empleadoEstado})
-    
-                if (response1.status !== 200){
-                    const response = await axios.delete(`${endPointEliminarTipoDocumento}/${responseDocumento.data.id}`)
+            navigate('/Empleados')
 
-                    setTituloModal('Error')
-                    setMensajeModal(response1.data.Error)
-                    setVisible(true)
-
-                }else{
-                    /*setTituloModal('Exito')
-                    setMensajeModal('Registrado con Exito')
-                    setVisible(true)
-                    console.log(response.status)
-                    console.log(tituloModal)
-                    console.log(mensajeModal)
-                    console.log(visible)*/
-
-                    navigate('/Empleados')
-
-                }
-            }
         }
+
     }
 
     const getAllDocumentos = async ()=>{
@@ -100,16 +89,49 @@ const AgregarEmpleado = () =>{
 
         setTodosDocumentos(response.data)
 
-        //console.log(response.data) //DEV
+        console.log(response.data) //DEV
     }
 
-    const onClose = ()=>{
-        if (tituloModal == 'Error'){
-            setVisible(false)
-        }else{
-            setVisible(false)
-            navigate('/Empleados')
+    const getAllCargos = async ()=>{
+        const response = await axios.get(endPointBuscarTodosCargos)
+
+        setTodosCargos(response.data)
+
+        console.log(response.data) //DEV
+    }
+    
+    const verificarTipoDocumento = ()=> {
+
+        switch (tipoDocumentoId){
+            case 'RTN': digitosNumero = 14 //setDigitosNumero(14)
+                break
+            case 'Identidad': digitosNumero = 13 //setDigitosNumero(13)
+                break
+            case 'Pasaporte': digitosNumero = 8 //setDigitosNumero(8)
+                break
+            case 'Visa': digitosNumero = 10 //setDigitosNumero(10)
+                break
+            case 'Licencia Conducir': digitosNumero = 9 //setDigitosNumero(9)
+                break
         }
+
+    }
+
+    const formatearCargo = ()=>{
+        todosCargos.map((cargo)=>{
+            if (cargo.cargoNombre == cargoActualId){
+                idCargo = cargo.id
+            }
+        })
+    }
+
+
+    const formatearIdDocumento = ()=>{
+        todosDocumentos.map((documento)=>{
+            if(documento.nombreDocumento == tipoDocumentoId){
+                idDocumento = documento.id
+            }
+        })
     }
 
     return(
@@ -121,7 +143,6 @@ const AgregarEmpleado = () =>{
             className='bg-dark text-white'
             open={visible}
             onClose={()=>setVisible(false)}>
-            {/*onClose={()=>onClose()}>*/}
                 <Modal.Header>
                     <Text 
                     h4
@@ -146,8 +167,7 @@ const AgregarEmpleado = () =>{
                 <label>Nombre:</label>
                 <input
                 placeholder='Jose Perez'
-                pattern='[A-Za-z]{3,}'
-                maxLength={10}
+                pattern='[A-Za-z ]{3,}'
                 value={empleadoNombre}
                 onChange={(e)=> setEmpleadoNombre(e.target.value)}
                 type='text'
@@ -190,20 +210,26 @@ const AgregarEmpleado = () =>{
                 <div className='atributo'>
                 <label>Tipo Documentacion</label>
                 <select
-                value={empleadoNombreDocumento}
-                onChange={(e)=> setEmpleadoNombreDocumento(e.target.value)}
+                value={tipoDocumentoId}
+                onChange={(e)=> setTipoDocumentoId(e.target.value)}
                 type='number'
                 className='select'
                 >
+                    {todosDocumentos.map((documento)=>{
+                        verificarTipoDocumento()
+                        return( <option key={documento.id}>{documento.nombreDocumento}</option>)
+                    })}
+
                 </select>
                 </div>
 
                 <div className='atributo'>
                 <label>Numero documento:</label>
                 <input
-                maxLength={14}
-                value={empleadoNumeroDocumento}
-                onChange={(e)=> setEmpleadoNumeroDocumento(e.target.value)}
+                minLength={digitosNumero}
+                //maxLength={digitosNumero}
+                value={numeroDocumento}
+                onChange={(e)=> setNumeroDocumento(e.target.value)}
                 type='text'
                 className='form-control'
                 />
@@ -211,28 +237,42 @@ const AgregarEmpleado = () =>{
 
                 <div className='atributo'>
                 <label>Fecha Nacimiento:</label>
-                <Datepicker
-                 selected={startDate}
-                 onChange={(date) => setStartDate(date)}
+                <input
+                type={'date'}
+                //value={fechaNacimiento}
+                onChange={(e)=> setFechaNacimiento(e.target.value)}
+                ></input>
+                {/* <Datepicker
+                 dateFormat="yyyy/MM/dd"
+                 selected={fechaNacimiento}
+                 onChange={(date) => setFechaNacimiento(date)}
                  minDate={subDays(new Date(), 365)}
-                  />
+                  /> */}
+
+                
                 </div>
 
                 <div className='atributo'>
                 <label>Fecha Contrato:</label>
-                <Datepicker
-                 selected={startDate}
-                 onChange={(date) => setStartDate(date)}
+                <input
+                type={'date'}
+                //value={fechaContratacion}
+                onChange={(e)=> setFechaContratacion(e.target.value)}
+                ></input>
+                {/* <Datepicker
+                 dateFormat="yyyy/MM/dd"
+                 selected={fechaContratacion}
+                 onChange={(date) => setFechaContratacion(date)}
                  maxDate={addDays(new Date(), 10)}
-                 />
+                 /> */}
                 </div>
 
                 <div className='atributo'>
                 <label>Usuario:</label>
                 <input
                  placeholder='empleado1'
-                 //value={}
-                 //onChange={}
+                 value={empleadoUsuario}
+                 onChange={(e)=>setEmpleadoUsuario(e.target.value)}
                  type='text'
                  className='form-control'
                  />
@@ -241,14 +281,14 @@ const AgregarEmpleado = () =>{
                 <div className='atributo'>
                 <label>Contraseña:</label>
                 <input
-                 //value={}
-                 //onChange={}
+                 value={empleadoContrasenia}
+                 onChange={(e)=>setEmpleadoContrasenia(e.target.value)}
                  type='password'
                  className='form-control'
                  />
                 </div>
 
-                <div className='atributo'>
+                {/* <div className='atributo'>
                 <label>Confirmar contraseña:</label>
                 <input
                  //value={}
@@ -256,15 +296,17 @@ const AgregarEmpleado = () =>{
                  type='password'
                  className='form-control'
                  />
-                </div>
+                </div> */}
 
                 <div className='atributo'>
                 <label>Cargo actual</label>
                 <select
-                //value={}
-                //onChange={}
+                value={cargoActualId}
+                onChange={(e)=>setCargoActual(e.target.value)}
                 className='select'> 
+                    {todosCargos.map((cargo)=> <option key={cargo.id}>{cargo.cargoNombre}</option>)}
                 </select>
+
                 </div>
 
                 <div className='d-flex'>

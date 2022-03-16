@@ -123,9 +123,8 @@ const verificar = (setear = () => {}, cadenaTexto)=>{
                 </div>
                 <div className='atributo '>
                     <label>Descripcion del cargo:</label>
-                    <Textarea
+                    <textarea
                     aria-label='aria-describedby'
-                    underlined
                     placeholder='Descripcion'
                     value={cargoDescripcion}
                     onChange={(e)=> setCargoDescripcion(e.target.value)}

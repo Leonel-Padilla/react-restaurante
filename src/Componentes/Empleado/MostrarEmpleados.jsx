@@ -1,40 +1,34 @@
 import React, {useState, useEffect} from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
-import { Button, getTokenValue, Input,Tooltip } from '@nextui-org/react';
+import { Button, Tooltip, Modal, Text } from '@nextui-org/react';
 import buscarLupa from '../../img/buscar_lupa.png';
 import lapizEditar from '../../img/lapiz_editar.png'
 
 const endPoint = 'http://127.0.0.1:8000/api/Empleado'
 const endPointUpdate = 'http://127.0.0.1:8000/api/updateEmpleado'
-const endPointGetEmpleadosNombre = 'http://127.0.0.1:8000/api/EmpleadoN'
-const endPointGetTipoDocumento = 'http://127.0.0.1:8000/api/TipoDocumento'
+const endPointGetEmpleados = 'http://127.0.0.1:8000/api/Empleado'
 const endPointBuscarTodosDocumentos = 'http://127.0.0.1:8000/api/TipoDocumento'
 
-const MostrarEmpleados = (props)=>{
+const MostrarEmpleados = ()=>{
     const [empleados, setEmpleados] = useState([])
-    const [nombreBusqueda, setNombreBusqueda] = useState('')
     const navigate = useNavigate()
     const [todosDocumentos, setTodosDocumentos] = useState([])
-    let numeroDocumento = ''
-
-
+    const [parametroBusqueda, setParametroBusqueda] = useState('ID')
+    const [valorBusqueda, setValorBusqueda] = useState()
+    const [mensajeModal, setMensajeModal] = useState('')
+    const [tituloModal, setTituloModal] = useState('')
+    const [visible, setVisible] = useState(false)
+    let tipoDocumento = ''
 
     useEffect(()=>{
         getAllEmpleados()
         getAllDocumentos()
-
-        return function cleanup(){
-            setEmpleados(0)
-            setTodosDocumentos(0)
-        }
     },[])
 
-    
-    
 
     const getAllEmpleados = async ()=>{
-        
+    
         const response = await axios.get(endPoint)
         setEmpleados(response.data)
         
@@ -43,29 +37,52 @@ const MostrarEmpleados = (props)=>{
     const cambioEstado = async (empleado)=>{
 
         await axios.put(`${endPointUpdate}/${empleado.id}`, {tipoDocumentoId:empleado.tipoDocumentoId,
-        empleadoNombre: empleado.empleadoNombre, empleadoNumero: empleado.empleadoNumero, 
-        empleadoCorreo: empleado.empleadoCorreo, empleadoDireccion: empleado.empleadoDireccion,
-        estado: empleado.estado == 1? 0 : 1})
+        numeroDocumento: empleado.numeroDocumento, empleadoNombre: empleado.empleadoNombre, empleadoNumero: empleado.empleadoNumero,
+        empleadoCorreo: empleado.empleadoCorreo, empleadoUsuario: empleado.empleadoUsuario,
+        empleadoContrasenia: empleado.empleadoContrasenia, empleadoDireccion: empleado.empleadoDireccion, 
+        cargoActualId: empleado.cargoActualId, fechaContratacion: empleado.fechaContratacion,
+        fechaNacimiento: empleado.fechaNacimiento, estado: empleado.estado == 1? 0 : 1})
 
         getAllEmpleados()
     }
 
-    const GetByNombre = async (e)=>{
+    const GetByValorBusqueda = async (e)=>{
         e.preventDefault()
-        
-        const response = await axios.get(`${endPointGetEmpleadosNombre}/${nombreBusqueda}`)
-            
-        
-        setEmpleados(response.data)
+
+        if (parametroBusqueda == 'ID'){
+          const response = await axios.get(`${endPointGetEmpleados}/${valorBusqueda}`)
+          console.log(response.data)
+          
+          if (response.status != 200){
+              setTituloModal('Error')
+              setMensajeModal(response.data.Error)
+              setVisible(true)
+          }else{
+              const array = [response.data]
+              setEmpleados(array)
+          }
+          
+        }else{
+          const response = await axios.get(`${endPointGetEmpleados}N/${valorBusqueda}`)
+          console.log(response.data)
+          
+          const array = response.data
+  
+          if (array.length < 1){
+              setTituloModal('Error')
+              setMensajeModal('No hay Empleados con el nombre que ingresó.')
+              setVisible(true)
+          }else{
+              setEmpleados(array)
+          }
+        }
     }
 
 
     const getNumeroDocumento = (empleado)=>{
         todosDocumentos.map((documento)=>{
             if (documento.id == empleado.tipoDocumentoId){
-                //console.log(documento.numeroDocumento) //DEV
-                //return documento.numeroDocumento
-                numeroDocumento = documento.numeroDocumento
+                tipoDocumento = documento.nombreDocumento
             }
         })
     }
@@ -74,33 +91,59 @@ const MostrarEmpleados = (props)=>{
 
         const response = await axios.get(endPointBuscarTodosDocumentos)
         setTodosDocumentos(response.data)
-        
 
-        //console.log(response.data) //DEV
     }
 
 
     return(
         <div>
+
+
+        <Modal
+        closeButton
+        blur
+        preventClose
+        className='bg-dark text-white'
+        open={visible}
+        onClose={()=>setVisible(false)}>
+            <Modal.Header>
+                <Text 
+                h4
+                className='text-white'>
+                    {tituloModal}
+                </Text>
+            </Modal.Header>
+            <Modal.Body>
+                {mensajeModal}
+            </Modal.Body>
+
+        </Modal>
         
         <div className='d-flex justify-content-start pt-2 pb-2'
         style={{backgroundColor: 'whitesmoke'}} >
             
             <h1 className='ms-4 me-4' >Empleado</h1>
 
+            <select style={{height: '35px'}}
+            className='align-self-center me-2'
+            onChange={(e)=>setParametroBusqueda(e.target.value)}>
+                <option value="ID">ID</option>
+                <option value="Nombre">Nombre</option>
+            </select>
+
             <form 
             className='d-flex align-self-center' 
             style={{left: '300px'}} 
-            onSubmit={GetByNombre}>
-                <Input
-                    underlined
-                    placeholder='nombre'
-                    aria-label='aria-describedby'
-                    onChange={(e)=>setNombreBusqueda(e.target.value)}
-                    type='text'
-                    className='form-control me-2'
-                    required={true}
-                    />
+            onSubmit={GetByValorBusqueda}>
+                <input
+                placeholder={`ingrese ${parametroBusqueda}`}
+                aria-label='aria-describedby'
+                onChange={(e)=>setValorBusqueda(e.target.value)}
+                type={parametroBusqueda == 'ID'? 'number': 'text'}
+                className='form-control me-2'
+                required={true}
+                pattern={parametroBusqueda == 'Nombre'? '[A-Za-z ]{3,}':''}
+                />
                 <Button
                 auto
                 className='ms-2'
@@ -183,11 +226,12 @@ const MostrarEmpleados = (props)=>{
                             <Tooltip
                             placement='left'
                             initialVisible={false}
-                            trigger='click' 
+                            trigger='hover' 
                             content={<div>
                                         <p>Está seguro que desea cambiar este registro?</p> 
 
                                         <Button 
+                                        auto
                                         className='bg-dark text-light'
                                         color={'dark'}
                                         children={empleado.estado == 1 ? 'Deshabilitar' : 'Habilitar'}

@@ -96,9 +96,8 @@ function AgregarCargo() {
 
                 <div className='atributo'>
                     <label>Descripcion del cargo:</label>
-                    <Textarea
+                    <textarea
                     aria-label='aria-describedby'
-                    underlined
                     placeholder='Responsable de caja'
                     value={cargoDescripcion}
                     onChange={(e)=> setCargoDescripcion(e.target.value)}
