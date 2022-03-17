@@ -103,7 +103,9 @@ const AgregarProveedor = ()=>{
                     placeholder='Numero'
                     value={proveedorNumero}
                     onChange={(e)=> setProveedorNumero(e.target.value)}
-                    type='number'
+                    type='text'
+                    pattern='^[0-9]+$'
+                    maxLength={8}
                     className='form-control'
                     />
                 </div>
@@ -135,7 +137,9 @@ const AgregarProveedor = ()=>{
                     placeholder='RTN'
                     value={proveedorRTN}
                     onChange={(e)=> setProveedorRTN(e.target.value)}
-                    type='number'
+                    type='text'
+                    pattern='^[0-9]+$'
+                    maxLength={14}
                     className='form-control'
                     />
                 </div>

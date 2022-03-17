@@ -4,12 +4,6 @@ import { useNavigate } from 'react-router-dom'
 import { Button, Input, Modal, Text} from '@nextui-org/react'
 import { toHaveDisplayValue } from '@testing-library/jest-dom/dist/matchers'
 
-import Datepicker from 'react-datepicker'
-import 'react-datepicker/dist/react-datepicker.css'
-import subDays from "date-fns/subDays"
-import addDays from "date-fns/addDays"
-
-
 const endPointRegistrarEmpleado = 'http://127.0.0.1:8000/api/addEmpleado'
 const endPointBuscarTodosCargos = 'http://127.0.0.1:8000/api/Cargo'
 const endPointBuscarTodosDocumentos = 'http://127.0.0.1:8000/api/TipoDocumento'
@@ -176,7 +170,9 @@ const AgregarEmpleado = () =>{
                 placeholder='88922711'
                 value={empleadoNumero}
                 onChange={(e)=> setEmpleadoNumero(e.target.value)}
-                type='number'
+                type='text'
+                pattern='^[0-9]+$'
+                maxLength={8}
                 className='form-control'
                 />
                 </div>

@@ -207,7 +207,9 @@ const ActualizarEmpleado = () =>{
                 placeholder='88922711'
                 value={empleadoNumero}
                 onChange={(e)=> setEmpleadoNumero(e.target.value)}
-                type='number'
+                type='text'
+                pattern='^[0-9]+$'
+                maxLength={8}
                 className='form-control'
                 />
                 </div>

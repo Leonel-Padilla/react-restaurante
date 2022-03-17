@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { Button, Tooltip, Modal, Text } from '@nextui-org/react';
 import buscarLupa from '../../img/buscar_lupa.png';
 import lapizEditar from '../../img/lapiz_editar.png'
+import moment from 'moment';
 
 const endPoint = 'http://127.0.0.1:8000/api/Empleado'
 const endPointUpdate = 'http://127.0.0.1:8000/api/updateEmpleado'
@@ -209,7 +210,7 @@ const MostrarEmpleados = ()=>{
                         <td>{empleado.empleadoUsuario}</td>
                         <td>{empleado.empleadoNumero}</td>
                         <td>{empleado.empleadoCorreo}</td>
-                        <td>{empleado.fechaContratacion}</td>
+                        <td>{moment(empleado.fechaContratacion).format("DD/MM/yy")}</td>
                         <td>{empleado.tipoDocumentoId}</td>
                         <td>{empleado.numeroDocumento}</td>
                         <td>{empleado.estado == 1 ? 'Habilitado' : 'Deshabilitado'}</td>

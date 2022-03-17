@@ -7,7 +7,7 @@ import Cargo from './Componentes/Cargo/Cargo'
 import Sidebar from './Componentes/Login_Menu/Sidebar';
 import MenuLogin from './Componentes/Login_Menu/MenuLogin';
 import Sucursal from './Componentes/Sucursal/Sucursal';
-//import Cliente from './Componentes/Cliente/Cliente';
+import Cliente from './Componentes/Cliente/Cliente';
 
 
 
@@ -33,7 +33,7 @@ function App() {
           <Route path='/Proveedores/*' element={<Proveedor></Proveedor>}></Route>
           <Route path='/Cargos/*' element={<Cargo></Cargo>}></Route>
           <Route path='/Sucursales/*' element={<Sucursal></Sucursal>}></Route>
-          
+          <Route path='/Clientes/*' element={<Cliente></Cliente>}></Route>
         </Routes>
       </section>
     </div>
