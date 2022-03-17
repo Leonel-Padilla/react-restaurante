@@ -136,7 +136,7 @@ const ActualizarEmpleado = () =>{
                 break
             case 'Pasaporte': digitosNumero = 7 
                 break
-            case 'Visa': digitosNumero = 7 
+            case 'Visa': digitosNumero = 13
                 break
             case 'Licencia Conducir': digitosNumero = 13 
                 break
@@ -151,7 +151,6 @@ const ActualizarEmpleado = () =>{
             }
         })
     }
-
 
     const formatearIdDocumento = ()=>{
         todosDocumentos.map((documento)=>{

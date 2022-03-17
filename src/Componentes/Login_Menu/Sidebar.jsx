@@ -18,13 +18,13 @@ function Sidebar () {
                 <Collapse.Group>
                 <Collapse 
                 title = {<Text h6 className="text-white">Usuario</Text>}
-                subtitle={`${sessionStorage.getItem('userName')} ${sessionStorage.getItem('id')}`}
+                subtitle={`${sessionStorage.getItem('userName')}`}
                 contentLeft={
                 <Avatar size="md" squared icon={<img src={User}/>} />}>
                     <Button light color={'default'} onClick={()=>{
                         sessionStorage.removeItem('userName')
                         sessionStorage.removeItem('id')
-                        console.log(sessionStorage.getItem('userName'))
+                        //console.log(sessionStorage.getItem('userName'))
                         navigate("/")
                     }} className="text-white"> 
                         Cerrar Sesión</Button>

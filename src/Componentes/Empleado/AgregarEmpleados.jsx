@@ -30,6 +30,16 @@ const AgregarEmpleado = () =>{
     let digitosNumero = 14
     let idDocumento = 1
     let idCargo = 1
+    let fechaHoy = new Date()
+
+    let valor = fechaHoy.getDate()
+    fechaHoy.setDate(valor+10)
+
+    let fechaEdad = new Date()
+    let valor2 = fechaEdad.getFullYear()
+    fechaEdad.setFullYear(valor2-18)
+
+    
     
     const [todosDocumentos, setTodosDocumentos] = useState([])
     const [todosCargos, setTodosCargos] = useState([])
@@ -43,6 +53,8 @@ const AgregarEmpleado = () =>{
 
 
     useEffect(()=>{
+        //console.log(`${fechaHoy.getFullYear()}-${fechaHoy.getMonth() < 9? '0':''}${fechaHoy.getMonth()+1}-${fechaHoy.getDate()}`)
+        //console.log(`${fechaEdad.getFullYear()}-${fechaEdad.getMonth() < 9? '0':''}${fechaEdad.getMonth()+1}-${fechaEdad.getDate()}`)
         getAllDocumentos()
         getAllCargos()
     },[])
@@ -67,7 +79,6 @@ const AgregarEmpleado = () =>{
 
         }else{
             navigate('/Empleados')
-
         }
 
     }
@@ -93,7 +104,7 @@ const AgregarEmpleado = () =>{
                 break
             case 'Pasaporte': digitosNumero = 7 
                 break
-            case 'Visa': digitosNumero = 7 
+            case 'Visa': digitosNumero = 13 
                 break
             case 'Licencia Conducir': digitosNumero = 13 
                 break
@@ -223,6 +234,7 @@ const AgregarEmpleado = () =>{
                 <div className='atributo'>
                 <label>Fecha Nacimiento:</label>
                 <input
+                max={`${fechaEdad.getFullYear()}-${fechaEdad.getMonth() < 9? '0':''}${fechaEdad.getMonth()+1}-${fechaEdad.getDate()}`}
                 type={'date'}
                 //value={fechaNacimiento}
                 onChange={(e)=> setFechaNacimiento(e.target.value)}
@@ -240,6 +252,7 @@ const AgregarEmpleado = () =>{
                 <div className='atributo'>
                 <label>Fecha Contrato:</label>
                 <input
+                max={`${fechaHoy.getFullYear()}-${fechaHoy.getMonth() < 9? '0':''}${fechaHoy.getMonth()+1}-${fechaHoy.getDate()}`}
                 type={'date'}
                 //value={fechaContratacion}
                 onChange={(e)=> setFechaContratacion(e.target.value)}

@@ -6,10 +6,9 @@ import axios from 'axios';
 
 
 
-const endPointGetEmpleadoByUN = 'http://127.0.0.1:8000/api/Empleado'
+const endPointGetEmpleado = 'http://127.0.0.1:8000/api/Empleado'
 
 function MenuLogin () {
-    //const [visible, setVisible] = useState(true);
     const [nombreUsuario, setNombre] = useState('')
     const [contrasenia, setcontrasenia] = useState('')
     const navigate = useNavigate()
@@ -27,32 +26,29 @@ function MenuLogin () {
             setMensajeModal('Credenciales Invalidas. Ingrese Usuario y contraseña.')
             setVisible(true)
         }else{
-            const response = await axios.get(`${endPointGetEmpleadoByUN}U/${nombreUsuario}`)
+            const response = await axios.get(`${endPointGetEmpleado}U/${nombreUsuario}`)
 
             const array = response.data
-            //console.log(response.data)
       
             if (array.length < 1){
                 setTituloModal('Error')
                 setMensajeModal('Credenciales Invalidas. Intente nuevamente.')
                 setVisible(true)
             }else{
-                /*setUsuario(response.data[0])
-                console.log(usuario)*/
-                // console.log(response.data[0].empleadoUsuario)
-                // console.log(response.data[0].empleadoContrasenia)
-                // console.log('////'+nombreUsuario)
-                // console.log(contrasenia)
 
-                sessionStorage.setItem('userName', response.data[0].empleadoUsuario)
-                sessionStorage.setItem('id', response.data[0].id)
-                
+                const response1 = await axios.get(`${endPointGetEmpleado}/${response.data[0].id}`)
 
-                if (response.data[0].empleadoUsuario === nombreUsuario && response.data[0].empleadoContrasenia === contrasenia){
+                /*console.log(response1.data.empleadoUsuario)
+                console.log(response1.data.empleadoContrasenia)*/
+                sessionStorage.setItem('userName', response1.data.empleadoUsuario)
+                sessionStorage.setItem('id', response1.data.id)
+
+
+                if (response1.data.empleadoUsuario === nombreUsuario && response1.data.empleadoContrasenia === contrasenia){
                     navigate('/MenuPrincipal')
                 }else{
                     setTituloModal('Error')
-                    setMensajeModal('Credenciales Invalidas. Intente nuevamente 22.')
+                    setMensajeModal('Credenciales Invalidas. Intente nuevamente.')
                     setVisible(true)
                 }
             }
@@ -101,7 +97,7 @@ function MenuLogin () {
                     className='ms-4'
                     placeholder='Contraseña'
                     value={contrasenia}
-                    type="contrasenia"
+                    type="password"
                     onChange={(e)=>setcontrasenia(e.target.value)}
                     aria-label='aria-labelledby'
                     />
