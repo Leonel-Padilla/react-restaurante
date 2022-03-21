@@ -14,14 +14,14 @@ const endPointGet = 'http://127.0.0.1:8000/api/Cargo'
 
 function MostrarCargos() {
 
-  const [cargos, setCargos] = useState([])
-  const navigate = useNavigate()
-  const [parametroBusqueda, setParametroBusqueda] = useState('ID')
-  const [valorBusqueda, setValorBusqueda] = useState()
-  const [mensajeModal, setMensajeModal] = useState('')
-  const [tituloModal, setTituloModal] = useState('')
-  const [visible, setVisible] = useState(false)
-  const [valorTooltip, setValorToolTip] = useState(false)
+  const [cargos, setCargos]                         = useState([])
+  const navigate                                    = useNavigate()
+  const [parametroBusqueda, setParametroBusqueda]   = useState('Seleccione')
+  const [valorBusqueda, setValorBusqueda]           = useState()
+  const [mensajeModal, setMensajeModal]             = useState('')
+  const [tituloModal, setTituloModal]               = useState('')
+  const [visible, setVisible]                       = useState(false)
+  const [valorTooltip, setValorToolTip]             = useState(false)
   
 
   useEffect(()=>{
@@ -37,45 +37,52 @@ const getAllCargos = async ()=>{
     //console.log(response.data) //DEV
 }
 
+//
 const cambioEstado = async (cargo)=>{
 
   await axios.put(`${endPointUpdate}/${cargo.id}`, {cargoNombre: cargo.cargoNombre,
       cargoDescripcion: cargo.cargoDescripcion, estado: cargo.estado == 1? 0 : 1})
 
       getAllCargos()
-  }
-
+}
+    //
   const getByValorBusqueda = async (e)=>{
       e.preventDefault()
 
-      if (parametroBusqueda == 'ID'){
-        const response = await axios.get(`${endPointGet}/${valorBusqueda}`)
-        
-        if (response.status != 200){
-            setTituloModal('Error')
-            setMensajeModal(response.data.Error)
-            setVisible(true)
-        }else{
-            const array = [response.data]
-            setCargos(array)
-        }
-        
-      }else{
-        const response = await axios.get(`${endPointGet}N/${valorBusqueda}`)
-        console.log(response.data)
-        
-        const array = response.data
+    if (parametroBusqueda.includes('Seleccione')){
+        setTituloModal('Error')
+        setMensajeModal('Seleccione un parametro de busqueda.')
+        setVisible(true)
+    }else{
 
-        if (array.length < 1){
-            setTituloModal('Error')
-            setMensajeModal('No hay cargos con el nombre que ingresó.')
-            setVisible(true)
-        }else{
-            setCargos(array)
+        if (parametroBusqueda == 'ID'){
+            const response = await axios.get(`${endPointGet}/${valorBusqueda}`)
+            
+            if (response.status != 200){
+                setTituloModal('Error')
+                setMensajeModal(response.data.Error)
+                setVisible(true)
+            }else{
+                const array = [response.data]
+                setCargos(array)
+            }
+            
+          }else{
+            const response = await axios.get(`${endPointGet}N/${valorBusqueda}`)
+            console.log(response.data)
+            
+            const array = response.data
+    
+            if (array.length < 1){
+                setTituloModal('Error')
+                setMensajeModal('No hay cargos con el nombre que ingresó.')
+                setVisible(true)
+            }else{
+                setCargos(array)
+            }
         }
-      }
-      
-  }
+    } 
+}
 
 
   return (
@@ -109,6 +116,7 @@ const cambioEstado = async (cargo)=>{
             <select style={{height: '35px'}}
             className='align-self-center me-2'
             onChange={(e)=>setParametroBusqueda(e.target.value)}>
+                <option>Seleccione Tipo Busqueda</option>
                 <option value="ID">ID</option>
                 <option value="Nombre">Nombre</option>
             </select>
@@ -124,7 +132,7 @@ const cambioEstado = async (cargo)=>{
                 type={parametroBusqueda == 'ID'? 'number':'text'}
                 className='form-control'
                 required={true}
-                pattern={parametroBusqueda == 'Nombre'? '[A-Za-z ]{3,}':''}
+                //pattern={parametroBusqueda == 'Nombre'? '[A-Za-z ]{3,}':''}
                 />
                 <Button
                 auto

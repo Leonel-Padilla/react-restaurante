@@ -8,6 +8,8 @@ import Sidebar from './Componentes/Login_Menu/Sidebar';
 import MenuLogin from './Componentes/Login_Menu/MenuLogin';
 import Sucursal from './Componentes/Sucursal/Sucursal';
 import Cliente from './Componentes/Cliente/Cliente';
+import Insumo from './Componentes/Insumo/Insumo'
+import Mesa from './Componentes/Mesa/Mesa'
 
 
 
@@ -34,6 +36,8 @@ function App() {
           <Route path='/Cargos/*' element={<Cargo></Cargo>}></Route>
           <Route path='/Sucursales/*' element={<Sucursal></Sucursal>}></Route>
           <Route path='/Clientes/*' element={<Cliente></Cliente>}></Route>
+          <Route path='/Insumos/*' element={<Insumo></Insumo>}></Route>
+          <Route path='/Mesas/*' element={<Mesa></Mesa>}></Route>
         </Routes>
       </section>
     </div>

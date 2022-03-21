@@ -9,18 +9,18 @@ const endPointBuscarTodosCargos = 'http://127.0.0.1:8000/api/Cargo'
 const endPointBuscarTodosDocumentos = 'http://127.0.0.1:8000/api/TipoDocumento'
 
 const AgregarEmpleado = () =>{
-    const [tipoDocumentoId, setTipoDocumentoId] = useState()
-    const [numeroDocumento, setNumeroDocumento] = useState('')
-    const [empleadoNombre, setEmpleadoNombre] = useState('')
-    const [empleadoNumero, setEmpleadoNumero] = useState('')
-    const [empleadoCorreo, setEmpleadoCorreo] = useState('')
-    const [empleadoUsuario, setEmpleadoUsuario] = useState('')
+    const [tipoDocumentoId, setTipoDocumentoId]         = useState('Seleccione')
+    const [numeroDocumento, setNumeroDocumento]         = useState('')
+    const [empleadoNombre, setEmpleadoNombre]           = useState('')
+    const [empleadoNumero, setEmpleadoNumero]           = useState('')
+    const [empleadoCorreo, setEmpleadoCorreo]           = useState('')
+    const [empleadoUsuario, setEmpleadoUsuario]         = useState('')
     const [empleadoContrasenia, setEmpleadoContrasenia] = useState('')
-    const [empleadoDireccion, setEmpleadoDireccion] = useState('')
-    const [cargoActualId, setCargoActual] = useState()
-    const [fechaContratacion, setFechaContratacion] = useState()
-    const [fechaNacimiento, setFechaNacimiento] = useState()
-    const [empleadoEstado, setEmpleadoEstado] = useState(1)
+    const [empleadoDireccion, setEmpleadoDireccion]     = useState('')
+    const [cargoActualId, setCargoActual]               = useState('Seleccione')
+    const [fechaContratacion, setFechaContratacion]     = useState()
+    const [fechaNacimiento, setFechaNacimiento]         = useState()
+    const [empleadoEstado, setEmpleadoEstado]           = useState(1)
     let digitosNumero = 14
     let idDocumento = 1
     let idCargo = 1
@@ -32,48 +32,55 @@ const AgregarEmpleado = () =>{
     let fechaEdad = new Date()
     let valor2 = fechaEdad.getFullYear()
     fechaEdad.setFullYear(valor2-18)
-
-    
     
     const [todosDocumentos, setTodosDocumentos] = useState([])
-    const [todosCargos, setTodosCargos] = useState([])
+    const [todosCargos, setTodosCargos]         = useState([])
+    const navigate                              = useNavigate()
 
-    const navigate = useNavigate()
+    const [startDate, setStartDate]         = useState(new Date());
+    const [mensajeModal, setMensajeModal]   = useState('')
+    const [tituloModal, setTituloModal]     = useState('')
+    const [visible, setVisible]             = useState(false)
 
-    const [startDate, setStartDate] = useState(new Date());
-    const [mensajeModal, setMensajeModal] = useState('')
-    const [tituloModal, setTituloModal] = useState('')
-    const [visible, setVisible] = useState(false)
+    /*if (sessionStorage.getItem('userName') == null){
+        navigate('/')
+    }*/
 
 
     useEffect(()=>{
-        //console.log(`${fechaHoy.getFullYear()}-${fechaHoy.getMonth() < 9? '0':''}${fechaHoy.getMonth()+1}-${fechaHoy.getDate()}`)
-        //console.log(`${fechaEdad.getFullYear()}-${fechaEdad.getMonth() < 9? '0':''}${fechaEdad.getMonth()+1}-${fechaEdad.getDate()}`)
         getAllDocumentos()
         getAllCargos()
     },[])
     
     const registrar = async (e)=>{
         e.preventDefault()
-        
-        formatearCargo()
-        formatearIdDocumento()
 
-        const response1 = await axios.post(endPointRegistrarEmpleado, {tipoDocumentoId: idDocumento,
-            numeroDocumento: numeroDocumento, empleadoNombre: empleadoNombre, empleadoNumero: empleadoNumero,
-            empleadoCorreo: empleadoCorreo, empleadoUsuario: empleadoUsuario,
-            empleadoContrasenia: empleadoContrasenia, empleadoDireccion: empleadoDireccion, 
-            cargoActualId: idCargo, fechaContratacion: fechaContratacion,
-            fechaNacimiento: fechaNacimiento, estado: empleadoEstado})
-    
-        if (response1.status !== 200){
+        if (tipoDocumentoId.includes('Seleccione') || cargoActualId.includes('Seleccion')){
             setTituloModal('Error')
-            setMensajeModal(response1.data.Error)
+            setMensajeModal('Debe seleccionar un Cargo Actual y un Tipo Documento')
             setVisible(true)
-
         }else{
-            navigate('/Empleados')
+                    
+            formatearCargo()
+            formatearIdDocumento()
+
+            const response1 = await axios.post(endPointRegistrarEmpleado, {tipoDocumentoId: idDocumento,
+                numeroDocumento: numeroDocumento, empleadoNombre: empleadoNombre, empleadoNumero: empleadoNumero,
+                empleadoCorreo: empleadoCorreo, empleadoUsuario: empleadoUsuario,
+                empleadoContrasenia: empleadoContrasenia, empleadoDireccion: empleadoDireccion, 
+                cargoActualId: idCargo, fechaContratacion: fechaContratacion,
+                fechaNacimiento: fechaNacimiento, estado: empleadoEstado})
+        
+            if (response1.status !== 200){
+                setTituloModal('Error')
+                setMensajeModal(response1.data.Error)
+                setVisible(true)
+
+            }else{
+                navigate('/Empleados')
+            }
         }
+
 
     }
 
@@ -199,13 +206,14 @@ const AgregarEmpleado = () =>{
                 </div>
 
                 <div className='atributo'>
-                <label>Tipo Documentacion</label>
+                <label>Tipo Documento</label>
                 <select
                 value={tipoDocumentoId}
                 onChange={(e)=> setTipoDocumentoId(e.target.value)}
                 type='number'
                 className='select'
-                >
+                >   
+                    <option>Seleccione Tipo Documento</option>
                     {todosDocumentos.map((documento)=>{
                         verificarTipoDocumento()
                         return( <option key={documento.id}>{documento.nombreDocumento}</option>)
@@ -232,17 +240,8 @@ const AgregarEmpleado = () =>{
                 <input
                 max={`${fechaEdad.getFullYear()}-${fechaEdad.getMonth() < 9? '0':''}${fechaEdad.getMonth()+1}-${fechaEdad.getDate()}`}
                 type={'date'}
-                //value={fechaNacimiento}
                 onChange={(e)=> setFechaNacimiento(e.target.value)}
                 ></input>
-                {/* <Datepicker
-                 dateFormat="yyyy/MM/dd"
-                 selected={fechaNacimiento}
-                 onChange={(date) => setFechaNacimiento(date)}
-                 minDate={subDays(new Date(), 365)}
-                  /> */}
-
-                
                 </div>
 
                 <div className='atributo'>
@@ -253,12 +252,6 @@ const AgregarEmpleado = () =>{
                 //value={fechaContratacion}
                 onChange={(e)=> setFechaContratacion(e.target.value)}
                 ></input>
-                {/* <Datepicker
-                 dateFormat="yyyy/MM/dd"
-                 selected={fechaContratacion}
-                 onChange={(date) => setFechaContratacion(date)}
-                 maxDate={addDays(new Date(), 10)}
-                 /> */}
                 </div>
 
                 <div className='atributo'>
@@ -298,6 +291,7 @@ const AgregarEmpleado = () =>{
                 value={cargoActualId}
                 onChange={(e)=>setCargoActual(e.target.value)}
                 className='select'> 
+                    <option>Seleccione Cargo Actual</option>
                     {todosCargos.map((cargo)=> <option key={cargo.id}>{cargo.cargoNombre}</option>)}
                 </select>
 

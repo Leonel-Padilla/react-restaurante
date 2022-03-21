@@ -12,7 +12,7 @@ const endPointGet = 'http://127.0.0.1:8000/api/Proveedor'
 const MostrarProveedores = ()=>{
     const [proveedores, setProveedores] = useState([])
     const navigate = useNavigate()
-    const [parametroBusqueda, setParametroBusqueda] = useState('ID')
+    const [parametroBusqueda, setParametroBusqueda] = useState('Seleccione')
     const [valorBusqueda, setValorBusqueda] = useState()
     const [mensajeModal, setMensajeModal] = useState('')
     const [tituloModal, setTituloModal] = useState('')
@@ -25,13 +25,8 @@ const MostrarProveedores = ()=>{
     }, [])
 
     const getAllProveedores = async ()=>{
-        
         const response = await axios.get(endPoint)
         setProveedores(response.data)
-
-        //console.log(sessionStorage.getItem('userName'))
-        //console.log(sessionStorage.getItem('contrasenia'))
-        //console.log(response.data) //DEV
     }
 
     const cambioEstado = async (proveedor)=>{
@@ -47,32 +42,39 @@ const MostrarProveedores = ()=>{
     const getByValorBusqueda = async (e)=>{
         e.preventDefault()
 
-        if (parametroBusqueda == 'ID'){
-            const response = await axios.get(`${endPointGet}/${valorBusqueda}`)
-            
-            if (response.status != 200){
-                setTituloModal('Error')
-                setMensajeModal(response.data.Error)
-                setVisible(true)
-            }else{
-                const array = [response.data]
-                setProveedores(array)
+        if (parametroBusqueda.includes('Seleccione')){
+            setTituloModal('Error')
+            setMensajeModal('Seleccione un parametro de busqueda.')
+            setVisible(true)
+        }else{
+            if (parametroBusqueda == 'ID'){
+                const response = await axios.get(`${endPointGet}/${valorBusqueda}`)
+                
+                if (response.status != 200){
+                    setTituloModal('Error')
+                    setMensajeModal(response.data.Error)
+                    setVisible(true)
+                }else{
+                    const array = [response.data]
+                    setProveedores(array)
+                }
+                
+              }else{
+                const response = await axios.get(`${endPointGet}N/${valorBusqueda}`)
+                console.log(response.data)
+                
+                const array = response.data
+        
+                if (array.length < 1){
+                    setTituloModal('Error')
+                    setMensajeModal('No hay proveedor con el nombre que ingresó.')
+                    setVisible(true)
+                }else{
+                    setProveedores(array)
+                }
             }
-            
-          }else{
-            const response = await axios.get(`${endPointGet}N/${valorBusqueda}`)
-            console.log(response.data)
-            
-            const array = response.data
-    
-            if (array.length < 1){
-                setTituloModal('Error')
-                setMensajeModal('No hay proveedor con el nombre que ingresó.')
-                setVisible(true)
-            }else{
-                setProveedores(array)
-            }
-          }
+        }
+
     }
 
     return(
@@ -107,6 +109,7 @@ const MostrarProveedores = ()=>{
             <select style={{height: '35px'}}
             className='align-self-center me-2'
             onChange={(e)=>setParametroBusqueda(e.target.value)}>
+                <option>Seleccione Tipo Busqueda</option>
                 <option value="ID">ID</option>
                 <option value="Nombre">Nombre</option>
             </select>
@@ -116,14 +119,13 @@ const MostrarProveedores = ()=>{
             style={{left: '300px'}} 
             onSubmit={getByValorBusqueda}>
                 <input
-                    placeholder={`ingrese ${parametroBusqueda}`}
+                    placeholder={parametroBusqueda.includes('Seleccione')? '': `${parametroBusqueda}`}
                     aria-label='aria-describedby'
                     onChange={(e)=>setValorBusqueda(e.target.value)}
                     type={parametroBusqueda == 'ID'? 'number':'text'}
                     className='form-control me-2'
                     required={true}
-                    title='Solo se aceptan letras, ejem: "La Colonia"'
-                    pattern={parametroBusqueda == 'Nombre'? '[A-Za-z ]{3,}':''}
+                    //pattern={parametroBusqueda == 'Nombre'? '[A-Za-z ]{3,}':''}
                     />
                 <Button
                 auto

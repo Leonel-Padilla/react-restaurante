@@ -25,12 +25,9 @@ function AgregarCargo() {
 
         datos.map((dato)=>{
             if (/(.)\1\1/.test(dato)) {
-                
                 contador++
-            
             }
         })
-
 
         if (contador > 0){
             setTituloModal('Error')

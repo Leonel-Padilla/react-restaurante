@@ -54,7 +54,25 @@ function Sidebar () {
                     <Button light color={'default'} onClick={()=>navigate('/Empleados')}className="text-white"> 
                         Mostrar Empleados</Button>
                     <Button light color={'default'} onClick={()=>navigate('/Empleados/addEmpleado')}className="text-white"> 
-                        Registrar Empleados</Button>
+                        Registrar Empleado</Button>
+                </Collapse>
+                <Collapse 
+                title = {<Text h6 className="text-white">Insumo</Text>}
+                contentLeft={
+                <Avatar size="md" icon={<img src={Gerente}/>}/>}>
+                    <Button light color={'default'} onClick={()=>navigate('/Insumos')}className="text-white"> 
+                        Mostrar Insumos</Button>
+                    <Button light color={'default'} onClick={()=>navigate('/Insumos/addInsumo')}className="text-white"> 
+                        Registrar Insumo</Button>
+                </Collapse>
+                <Collapse 
+                title = {<Text h6 className="text-white">Mesa</Text>}
+                contentLeft={
+                <Avatar size="md" icon={<img src={Gerente}/>}/>}>
+                    <Button light color={'default'} onClick={()=>navigate('/Mesas')}className="text-white"> 
+                        Mostrar Mesas</Button>
+                    <Button light color={'default'} onClick={()=>navigate('/Mesas/addMesa')}className="text-white"> 
+                        Registrar Mesa</Button>
                 </Collapse>
                 <Collapse 
                 title = {<Text h6 className="text-white">Proveedor</Text>}

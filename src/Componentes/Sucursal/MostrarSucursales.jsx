@@ -6,72 +6,102 @@ import { Button, Input, Tooltip, Modal, Text } from '@nextui-org/react';
 import buscarLupa from '../../img/buscar_lupa.png';
 import lapizEditar from '../../img/lapiz_editar.png'
 
-const endPoint = 'http://127.0.0.1:8000/api/Sucursal'
-const endPointUpdate = 'http://127.0.0.1:8000/api/updateSucursal'
-const endPointGet = 'http://127.0.0.1:8000/api/Sucursal'
+const endPoint                  = 'http://127.0.0.1:8000/api/Sucursal'
+const endPointUpdate            = 'http://127.0.0.1:8000/api/updateSucursal'
+const endPointGet               = 'http://127.0.0.1:8000/api/Sucursal'
+const endPointGetAllEmpleados   = 'http://127.0.0.1:8000/api/Empleado'
 
 function MostrarSucursales() { 
 
-    const [sucursales, setSucursales] = useState([])
-    const navigate = useNavigate()
-    const [parametroBusqueda, setParametroBusqueda] = useState('ID')
-    const [valorBusqueda, setValorBusqueda] = useState()
-    const [mensajeModal, setMensajeModal] = useState('')
-    const [tituloModal, setTituloModal] = useState('')
-    const [visible, setVisible] = useState(false)
-    const [valorTooltip, setValorToolTip] = useState(false)
+    const [sucursales, setSucursales]               = useState([])
+    const [empleados, setEmpleados]                 = useState([])
+    const navigate                                  = useNavigate()
+    const [parametroBusqueda, setParametroBusqueda] = useState('Seleccione')
+    const [valorBusqueda, setValorBusqueda]         = useState()
+    const [mensajeModal, setMensajeModal]           = useState('')
+    const [tituloModal, setTituloModal]             = useState('')
+    const [visible, setVisible]                     = useState(false)
+    const [valorTooltip, setValorToolTip]           = useState(false)
+    let encargado = ''
 
     useEffect(()=>{
 
         getAllSucursales()    
+        getAllEmpleados()
     
       }, [])
 
+    //
     const getAllSucursales = async ()=>{
     
         const response = await axios.get(endPoint)
         setSucursales(response.data)
-        //console.log(response.data) //DEV
     }
 
+    //
     const cambioEstado = async (sucursal)=>{
 
-        await axios.put(`${endPointUpdate}/${sucursal.id}`, {sucursalDireccion: sucursal.sucursalDireccion, estado: sucursal.estado == 1? 0 : 1})
+        await axios.put(`${endPointUpdate}/${sucursal.id}`, {empleadoId: sucursal.empleadoId, sucursalNombre: sucursal.sucursalNombre,
+            sucursalDireccion: sucursal.sucursalDireccion, estado: sucursal.estado == 1? 0 : 1})
       
             getAllSucursales()
-        }
-
-    const getByValorBusqueda = async (e)=>{
-    e.preventDefault()
-
-    if (parametroBusqueda == 'ID'){
-        const response = await axios.get(`${endPointGet}/${valorBusqueda}`)
-        
-        if (response.status != 200){
-            setTituloModal('Error')
-            setMensajeModal(response.data.Error)
-            setVisible(true)
-        }else{
-            const array = [response.data]
-            setSucursales(array)
-        }
-
-    }else{
-
-        const response = await axios.get(`${endPointGet}N/${valorBusqueda}`)
-        console.log(response.data)
-        
-        const array = response.data
-
-        if (array.length < 1){
-            setTituloModal('Error')
-            setMensajeModal('No hay sucursales con el encargado que ingresó.')
-            setVisible(true)
-        }else{
-            setSucursales(array)
-        }
     }
-}
+
+    //
+    const getByValorBusqueda = async (e)=>{
+        e.preventDefault()
+  
+      if (parametroBusqueda.includes('Seleccione')){
+          setTituloModal('Error')
+          setMensajeModal('Seleccione un parametro de busqueda.')
+          setVisible(true)
+      }else{
+        if (parametroBusqueda == 'ID'){
+            const response = await axios.get(`${endPointGet}/${valorBusqueda}`)
+            
+            if (response.status != 200){
+                setTituloModal('Error')
+                setMensajeModal(response.data.Error)
+                setVisible(true)
+            }else{
+                const array = [response.data]
+                setSucursales(array)
+            }
+    
+        }else{
+    
+            const response = await axios.get(`${endPointGet}N/${valorBusqueda}`)
+            console.log(response.data)
+            
+            const array = response.data
+    
+            if (array.length < 1){
+                setTituloModal('Error')
+                setMensajeModal('No hay sucursales con el encargado que ingresó.')
+                setVisible(true)
+            }else{
+                setSucursales(array)
+            }
+        }
+      }
+
+    }
+
+    //
+    const getAllEmpleados = async ()=>{
+        const resposne = await axios.get(endPointGetAllEmpleados)
+        setEmpleados(resposne.data)
+    }
+
+    //
+    const getEncargado = (sucursal)=>{
+        empleados.map((empleado)=>{
+            if (sucursal.empleadoId == empleado.id){
+                encargado = empleado.empleadoNombre
+            }
+        })
+    }
+
     return (
         <div>
 
@@ -102,9 +132,11 @@ function MostrarSucursales() {
 
             <select style={{height: '35px'}}
             className='align-self-center me-2'
-            onChange={(e)=>setParametroBusqueda(e.target.value)}>
-                <option value="ID">ID</option>
-                <option value="Encargado">Encargado</option>
+            onChange={(e)=>setParametroBusqueda(e.target.value)}
+            >
+                <option>Seleccione tipo busqueda</option>
+                <option>ID</option>
+                <option>Nombre</option>
             </select>
 
             <form 
@@ -112,13 +144,13 @@ function MostrarSucursales() {
             style={{left: '300px'}} 
             onSubmit={getByValorBusqueda}>
                 <input
-                placeholder={`ingrese ${parametroBusqueda}`}
+                    placeholder={parametroBusqueda.includes('Seleccione')? '': `${parametroBusqueda}`}
                 aria-label='aria-describedby'
                 onChange={(e)=>setValorBusqueda(e.target.value)}
                 type={parametroBusqueda == 'ID'? 'number':'text'}
                 className='form-control'
                 required={true}
-                pattern={parametroBusqueda == 'Encargado'? '[A-Za-z ]{3,}':''}
+                //pattern={parametroBusqueda == 'Encargado'? '[A-Za-z ]{3,}':''}
                 />
                 <Button
                 auto
@@ -162,18 +194,28 @@ function MostrarSucursales() {
                 <thead className='bg-dark text-white'> 
                     <tr>
                         <th>Id</th>
+                        <th>Nombre Sucursal</th>
                         <th>Dirección</th>
                         <th>Encargado</th>
+                        <th>Estado</th>
                         <th>Opciones</th>
                     </tr>
                 </thead>
 
                 <tbody>
-                    {sucursales.map(sucursal => 
+                    {sucursales.map(sucursal =>{
+
+                        getEncargado(sucursal)
+                        
+
+                        return(
                         
                         <tr key={sucursal.id}>
                             <td>{sucursal.id}</td>
+                            <td>{sucursal.sucursalNombre}</td>
                             <td>{sucursal.sucursalDireccion}</td>
+                            {/* <td>{sucursal.empleadoId}</td> */}
+                            <td>{encargado}</td>
                             <td>{sucursal.estado == 1 ? 'Habilitado' : 'Deshabilitado'}</td>
                             <td>
                                 <Button
@@ -217,7 +259,7 @@ function MostrarSucursales() {
 
                             </td>
                         </tr>
-                    )}
+                    )})}
                 </tbody>
             </table>
 

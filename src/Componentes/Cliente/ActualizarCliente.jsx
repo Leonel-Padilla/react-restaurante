@@ -1,15 +1,73 @@
-import React, {useRef, useState} from 'react'
+import React, {useEffect, useRef, useState} from 'react'
 import axios from 'axios'
-import { useNavigate } from 'react-router-dom'
-import { Button, Input, Modal, Text, Textarea} from '@nextui-org/react'
+import { useNavigate, useParams } from 'react-router-dom'
+import { Button, Modal, Text} from '@nextui-org/react'
+
+
+const endPointGetCliente = 'http://127.0.0.1:8000/api/Cliente'
+const endPointUpdateCliente = 'http://127.0.0.1:8000/api/updateCliente'
 
 const ActualizarCliente = () =>{
-    const navigate = useNavigate()
-    const [mensajeModal, setMensajeModal] = useState('')
-    const [tituloModal, setTituloModal] = useState('')
-    const [visible, setVisible] = useState(false)
-    const Actualizar =(e)=>{ 
+    const [clienteNombre, setClienteNombre] = useState('')
+    const [clienteNumero, setClienteNumero] = useState('')
+    const [clienteCorreo, setClienteCorreo]  = useState('')
+    const [clienteRTN, setClienteRTN]       = useState('')
+    const [clienteEstado, setClienteEstado] = useState(1)
+    const {id} = useParams()
+
+
+    const navigate                          = useNavigate()
+    const [mensajeModal, setMensajeModal]   = useState('')
+    const [tituloModal, setTituloModal]     = useState('')
+    const [visible, setVisible]             = useState(false)
+
+
+    useEffect(()=>{
+        getClienteById()
+    },[])
+
+    //
+    const Actualizar = async (e)=>{ 
+        e.preventDefault()
+        
+        const datos = [clienteNombre, clienteCorreo]
+        let contador = 0
+
+        datos.map((dato)=>{
+            if (/(.)\1\1/.test(dato)) {
+                contador++
+            }
+        })
+
+        if (contador > 0){
+            setTituloModal('Error')
+            setMensajeModal('La información ingresada contiene mas de dos caracteres repetidos seguidos.')
+            setVisible(true)
+        }else{
+            const response = await axios.put(`${endPointUpdateCliente}/${id}`, {clienteNombre: clienteNombre, 
+            clienteNumero: clienteNumero, clienteCorreo: clienteCorreo, clienteRTN: clienteRTN, estado: clienteEstado})
+            
+                if (response.status !== 200){
+                    setTituloModal('Error')
+                    setMensajeModal(response.data.Error)
+                    setVisible(true)
+                }else{
+                    navigate('/Clientes')
+                }
+        }
+
     }
+
+    //
+    const getClienteById = async ()=>{
+        const response = await axios.get(`${endPointGetCliente}/${id}`)
+
+        setClienteNombre(response.data.clienteNombre)
+        setClienteNumero(response.data.clienteNumero)
+        setClienteCorreo(response.data.clienteCorreo)
+        setClienteRTN(response.data.clienteRTN)
+    }
+
 
     return (
         <div>
@@ -41,9 +99,9 @@ const ActualizarCliente = () =>{
                     <label>Nombre:</label>
                     <input
                     aria-label='aria-describedby'
-                    //value={cargoNombre}
+                    value={clienteNombre}
                     placeholder='Juan Perez'
-                    //onChange={(e)=>setCargoNombre(e.target.value)}
+                    onChange={(e)=>setClienteNombre(e.target.value)}
                     type='text'
                     pattern='[A-Za-z ]{3,}'
                     title='Solo se aceptan letras, ejem: "Cajero"'
@@ -55,8 +113,8 @@ const ActualizarCliente = () =>{
                 <label>Numero telefónico:</label>
                 <input
                 placeholder='88922711'
-                //value={}
-                //onChange={}
+                value={clienteNumero}
+                onChange={(e)=>setClienteNumero(e.target.value)}
                 type='number'
                 className='form-control'
                 />
@@ -66,8 +124,8 @@ const ActualizarCliente = () =>{
                 <label>Correo electronico:</label>
                 <input
                 placeholder='ejem@gmail.com'
-                //value={}
-                //onChange={}
+                value={clienteCorreo}
+                onChange={(e)=>setClienteCorreo(e.target.value)}
                 type='email'
                 className='form-control'
                 />
@@ -77,8 +135,8 @@ const ActualizarCliente = () =>{
                 <label>RTN:</label>
                 <input
                 maxLength={14}
-                //value={}
-                //onChange={}
+                value={clienteRTN}
+                onChange={(e)=>setClienteRTN(e.target.value)}
                 placeholder='08019999176681'
                 type='text'
                 className='form-control'

@@ -9,39 +9,39 @@ import subDays from "date-fns/subDays"
 import addDays from "date-fns/addDays"
 
 
-const endpointGetEmpleado = 'http://127.0.0.1:8000/api/Empleado'
-const endPointActualizarEmpleado = 'http://127.0.0.1:8000/api/updateEmpleado'
-const endPointBuscarTodosCargos = 'http://127.0.0.1:8000/api/Cargo'
-const endPointGetCargoById = 'http://127.0.0.1:8000/api/Cargo'
+const endpointGetEmpleado           = 'http://127.0.0.1:8000/api/Empleado'
+const endPointActualizarEmpleado    = 'http://127.0.0.1:8000/api/updateEmpleado'
+const endPointBuscarTodosCargos     = 'http://127.0.0.1:8000/api/Cargo'
+const endPointGetCargoById          = 'http://127.0.0.1:8000/api/Cargo'
 const endPointBuscarTodosDocumentos = 'http://127.0.0.1:8000/api/TipoDocumento'
-const endPointGetDocumentoById = 'http://127.0.0.1:8000/api/TipoDocumento'
+const endPointGetDocumentoById      = 'http://127.0.0.1:8000/api/TipoDocumento'
 
 const ActualizarEmpleado = () =>{
-    const [tipoDocumentoId, setTipoDocumentoId] = useState()
-    const [numeroDocumento, setNumeroDocumento] = useState('')
-    const [empleadoNombre, setEmpleadoNombre] = useState('')
-    const [empleadoNumero, setEmpleadoNumero] = useState('')
-    const [empleadoCorreo, setEmpleadoCorreo] = useState('')
-    const [empleadoUsuario, setEmpleadoUsuario] = useState('')
+    const [tipoDocumentoId, setTipoDocumentoId]         = useState()
+    const [numeroDocumento, setNumeroDocumento]         = useState('')
+    const [empleadoNombre, setEmpleadoNombre]           = useState('')
+    const [empleadoNumero, setEmpleadoNumero]           = useState('')
+    const [empleadoCorreo, setEmpleadoCorreo]           = useState('')
+    const [empleadoUsuario, setEmpleadoUsuario]         = useState('')
     const [empleadoContrasenia, setEmpleadoContrasenia] = useState('')
-    const [empleadoDireccion, setEmpleadoDireccion] = useState('')
-    const [cargoActualId, setCargoActual] = useState()
-    const [fechaContratacion, setFechaContratacion] = useState()
-    const [fechaNacimiento, setFechaNacimiento] = useState()
-    const [empleadoEstado, setEmpleadoEstado] = useState()
+    const [empleadoDireccion, setEmpleadoDireccion]     = useState('')
+    const [cargoActualId, setCargoActual]               = useState()
+    const [fechaContratacion, setFechaContratacion]     = useState()
+    const [fechaNacimiento, setFechaNacimiento]         = useState()
+    const [empleadoEstado, setEmpleadoEstado]           = useState()
     let digitosNumero = 14
     let idDocumento = 1
     let idCargo = 1
     
     const [todosDocumentos, setTodosDocumentos] = useState([])
-    const [todosCargos, setTodosCargos] = useState([])
+    const [todosCargos, setTodosCargos]         = useState([])
 
     const navigate = useNavigate()
 
-    const [startDate, setStartDate] = useState(new Date());
-    const [mensajeModal, setMensajeModal] = useState('')
-    const [tituloModal, setTituloModal] = useState('')
-    const [visible, setVisible] = useState(false)
+    const [startDate, setStartDate]         = useState(new Date());
+    const [mensajeModal, setMensajeModal]   = useState('')
+    const [tituloModal, setTituloModal]     = useState('')
+    const [visible, setVisible]             = useState(false)
 
     const {id} = useParams()
 
@@ -83,19 +83,6 @@ const ActualizarEmpleado = () =>{
 
     const actualizar = async (e)=>{
         e.preventDefault()
-
-        /*console.log(idDocumento)
-        console.log(numeroDocumento)
-        console.log(empleadoNombre)
-        console.log(empleadoNumero)
-        console.log(empleadoCorreo)
-        console.log(empleadoUsuario)
-        console.log(empleadoContrasenia)
-        console.log(empleadoDireccion)
-        console.log(idCargo)
-        console.log(fechaContratacion)
-        console.log(fechaNacimiento)
-        console.log(empleadoEstado)*/
 
         formatearCargo()
         formatearIdDocumento()

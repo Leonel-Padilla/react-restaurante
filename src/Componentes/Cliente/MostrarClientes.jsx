@@ -14,14 +14,14 @@ const endPointGet = 'http://127.0.0.1:8000/api/Cliente'
 
 function MostrarClientes() {
 
-  const [clientes, setClientes] = useState([])
-  const navigate = useNavigate()
-  const [parametroBusqueda, setParametroBusqueda] = useState('ID')
-  const [valorBusqueda, setValorBusqueda] = useState()
-  const [mensajeModal, setMensajeModal] = useState('')
-  const [tituloModal, setTituloModal] = useState('')
-  const [visible, setVisible] = useState(false)
-  const [valorTooltip, setValorToolTip] = useState(false)
+  const [clientes, setClientes]                     = useState([])
+  const navigate                                    = useNavigate()
+  const [parametroBusqueda, setParametroBusqueda]   = useState('Seleccione')
+  const [valorBusqueda, setValorBusqueda]           = useState()
+  const [mensajeModal, setMensajeModal]             = useState('')
+  const [tituloModal, setTituloModal]               = useState('')
+  const [visible, setVisible]                       = useState(false)
+  const [valorTooltip, setValorToolTip]             = useState(false)
   
 
   useEffect(()=>{
@@ -37,6 +37,7 @@ const getAllClientes = async ()=>{
     //console.log(response.data) //DEV
 }
 
+//
 const cambioEstado = async (cliente)=>{
 
   await axios.put(`${endPointUpdate}/${cliente.id}`, {clienteNombre: cliente.clienteNombre,
@@ -46,35 +47,42 @@ const cambioEstado = async (cliente)=>{
       getAllClientes()
   }
 
+  //
   const getByValorBusqueda = async (e)=>{
-      e.preventDefault()
-
-      if (parametroBusqueda == 'ID'){
-        const response = await axios.get(`${endPointGet}/${valorBusqueda}`)
-        
-        if (response.status != 200){
-            setTituloModal('Error')
-            setMensajeModal(response.data.Error)
-            setVisible(true)
-        }else{
-            const array = [response.data]
-            setClientes(array)
-        }
-        
-      }else{
-        const response = await axios.get(`${endPointGet}N/${valorBusqueda}`)
-        console.log(response.data)
-        
-        const array = response.data
-
-        if (array.length < 1){
-            setTituloModal('Error')
-            setMensajeModal('No hay clientes con el nombre que ingresó.')
-            setVisible(true)
-        }else{
-            setClientes(array)
-        }
-      }
+    e.preventDefault()
+  
+    if (parametroBusqueda.includes('Seleccione')){
+        setTituloModal('Error')
+        setMensajeModal('Seleccione un parametro de busqueda.')
+        setVisible(true)
+    }else{
+        if (parametroBusqueda == 'ID'){
+            const response = await axios.get(`${endPointGet}/${valorBusqueda}`)
+            
+            if (response.status != 200){
+                setTituloModal('Error')
+                setMensajeModal(response.data.Error)
+                setVisible(true)
+            }else{
+                const array = [response.data]
+                setClientes(array)
+            }
+            
+          }else{
+            const response = await axios.get(`${endPointGet}N/${valorBusqueda}`)
+            console.log(response.data)
+            
+            const array = response.data
+    
+            if (array.length < 1){
+                setTituloModal('Error')
+                setMensajeModal('No hay clientes con el nombre que ingresó.')
+                setVisible(true)
+            }else{
+                setClientes(array)
+            }
+          }
+    }
       
   }
 
@@ -109,8 +117,9 @@ const cambioEstado = async (cliente)=>{
             <select style={{height: '35px'}}
             className='align-self-center me-2'
             onChange={(e)=>setParametroBusqueda(e.target.value)}>
-                <option value="ID">ID</option>
-                <option value="Nombre">Nombre</option>
+                <option>Seleccione tipo busqueda</option>
+                <option>ID</option>
+                <option>Nombre</option>
             </select>
 
             <form 
@@ -118,13 +127,13 @@ const cambioEstado = async (cliente)=>{
             style={{left: '300px'}} 
             onSubmit={getByValorBusqueda}>
                 <input
-                placeholder={`ingrese ${parametroBusqueda}`}
+                placeholder={parametroBusqueda.includes('Seleccione')? '': `${parametroBusqueda}`}
                 aria-label='aria-describedby'
                 onChange={(e)=>setValorBusqueda(e.target.value)}
                 type={parametroBusqueda == 'ID'? 'number':'text'}
                 className='form-control'
                 required={true}
-                pattern={parametroBusqueda == 'Nombre'? '[A-Za-z ]{3,}':''}
+                //pattern={parametroBusqueda == 'Nombre'? '[A-Za-z ]{3,}':''}
                 />
                 <Button
                 auto
@@ -172,6 +181,7 @@ const cambioEstado = async (cliente)=>{
                         <th>Número</th>
                         <th>Correo</th>
                         <th>RTN</th>
+                        <th>Estado</th>
                         <th>Opciones</th>
                     </tr>
                 </thead>
