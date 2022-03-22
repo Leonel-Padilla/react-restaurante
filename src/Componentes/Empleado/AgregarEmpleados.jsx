@@ -4,27 +4,32 @@ import { useNavigate } from 'react-router-dom'
 import { Button, Input, Modal, Text} from '@nextui-org/react'
 import { toHaveDisplayValue } from '@testing-library/jest-dom/dist/matchers'
 
-const endPointRegistrarEmpleado = 'http://127.0.0.1:8000/api/addEmpleado'
-const endPointBuscarTodosCargos = 'http://127.0.0.1:8000/api/Cargo'
-const endPointBuscarTodosDocumentos = 'http://127.0.0.1:8000/api/TipoDocumento'
+const endPointRegistrarEmpleado         = 'http://127.0.0.1:8000/api/addEmpleado'
+const endPointBuscarTodosCargos         = 'http://127.0.0.1:8000/api/Cargo'
+const endPointBuscarTodosDocumentos     = 'http://127.0.0.1:8000/api/TipoDocumento'
+const endPointBuscarEmpleado            = 'http://127.0.0.1:8000/api/Empleado'
+const endPointRegistrarCargoEmpleado    = 'http://127.0.0.1:8000/api/addCargoHistorial' 
+const endPointRegistrarSueldoHistorico  = 'http://127.0.0.1:8000/api/addSueldoHistorial'
 
 const AgregarEmpleado = () =>{
-    const [tipoDocumentoId, setTipoDocumentoId]         = useState('Seleccione')
-    const [numeroDocumento, setNumeroDocumento]         = useState('')
-    const [empleadoNombre, setEmpleadoNombre]           = useState('')
-    const [empleadoNumero, setEmpleadoNumero]           = useState('')
-    const [empleadoCorreo, setEmpleadoCorreo]           = useState('')
-    const [empleadoUsuario, setEmpleadoUsuario]         = useState('')
-    const [empleadoContrasenia, setEmpleadoContrasenia] = useState('')
-    const [empleadoDireccion, setEmpleadoDireccion]     = useState('')
-    const [cargoActualId, setCargoActual]               = useState('Seleccione')
-    const [fechaContratacion, setFechaContratacion]     = useState()
-    const [fechaNacimiento, setFechaNacimiento]         = useState()
-    const [empleadoEstado, setEmpleadoEstado]           = useState(1)
-    let digitosNumero = 14
-    let idDocumento = 1
-    let idCargo = 1
-    let fechaHoy = new Date()
+    const [tipoDocumentoId, setTipoDocumentoId]             = useState('Seleccione')
+    const [numeroDocumento, setNumeroDocumento]             = useState('')
+    const [empleadoNombre, setEmpleadoNombre]               = useState('')
+    const [empleadoNumero, setEmpleadoNumero]               = useState('')
+    const [empleadoCorreo, setEmpleadoCorreo]               = useState('')
+    const [empleadoUsuario, setEmpleadoUsuario]             = useState('')
+    const [empleadoContrasenia, setEmpleadoContrasenia]     = useState('')
+    const [empleadoContrasenia2, setEmpleadoContrasenia2]   = useState('')
+    const [empleadoDireccion, setEmpleadoDireccion]         = useState('')
+    const [cargoActualId, setCargoActual]                   = useState('Seleccione')
+    const [fechaContratacion, setFechaContratacion]         = useState()
+    const [fechaNacimiento, setFechaNacimiento]             = useState()
+    const [empleadoSueldo, setEmpleadoSueldo]               = useState(0)
+    const [empleadoEstado, setEmpleadoEstado]               = useState(1)
+    let digitosNumero   = 14
+    let idDocumento     = 1
+    let idCargo         = 1
+    let fechaHoy        = new Date()
 
     let valor = fechaHoy.getDate()
     fechaHoy.setDate(valor+10)
@@ -60,42 +65,76 @@ const AgregarEmpleado = () =>{
             setMensajeModal('Debe seleccionar un Cargo Actual y un Tipo Documento')
             setVisible(true)
         }else{
-                    
-            formatearCargo()
-            formatearIdDocumento()
 
-            const response1 = await axios.post(endPointRegistrarEmpleado, {tipoDocumentoId: idDocumento,
-                numeroDocumento: numeroDocumento, empleadoNombre: empleadoNombre, empleadoNumero: empleadoNumero,
-                empleadoCorreo: empleadoCorreo, empleadoUsuario: empleadoUsuario,
-                empleadoContrasenia: empleadoContrasenia, empleadoDireccion: empleadoDireccion, 
-                cargoActualId: idCargo, fechaContratacion: fechaContratacion,
-                fechaNacimiento: fechaNacimiento, estado: empleadoEstado})
-        
-            if (response1.status !== 200){
+            const datos = [empleadoNombre, empleadoUsuario]
+            let contador = 0
+    
+            datos.map((dato)=>{
+                if (/(.)\1\1/.test(dato)) {
+                    contador++
+                }
+            })
+    
+    
+            if (contador > 0){
                 setTituloModal('Error')
-                setMensajeModal(response1.data.Error)
+                setMensajeModal('La información ingresada contiene mas de dos caracteres repetidos seguidos.')
                 setVisible(true)
-
             }else{
-                navigate('/Empleados')
+                
+                if (empleadoContrasenia != empleadoContrasenia2){
+                    setTituloModal('Error')
+                    setMensajeModal('Las contraseñas no coinciden')
+                    setVisible(true)
+                }else{
+                    formatearCargo()
+                    formatearIdDocumento()
+        
+                    const response = await axios.post(endPointRegistrarEmpleado, {tipoDocumentoId: idDocumento,
+                        numeroDocumento: numeroDocumento, empleadoNombre: empleadoNombre, empleadoNumero: empleadoNumero,
+                        empleadoCorreo: empleadoCorreo, empleadoUsuario: empleadoUsuario, empleadoContrasenia: empleadoContrasenia, 
+                        empleadoDireccion: empleadoDireccion, empleadoSueldo: empleadoSueldo, cargoActualId: idCargo,
+                        fechaContratacion: fechaContratacion, fechaNacimiento: fechaNacimiento, estado: empleadoEstado})
+                
+                    if (response.status !== 200){
+                        setTituloModal('Error')
+                        setMensajeModal(response.data.Error)
+                        setVisible(true)
+        
+                    }else{
+                        const response1 = await axios.get(`${endPointBuscarEmpleado}ND/${numeroDocumento}`)
+
+                        const response2 = await axios.post(endPointRegistrarCargoEmpleado, {empleadoId: response1.data[0].id,
+                        cargoId: idCargo, fechaInicio: fechaContratacion, estado: 1})
+
+                            
+                        const response3 = await axios.post(endPointRegistrarSueldoHistorico, {empleadoId: response1.data[0].id,
+                        sueldo: empleadoSueldo, fechaInicio: fechaContratacion, estado: 1})
+                        navigate('/Empleados')
+
+                    }
+                }
             }
+                    
+
         }
-
-
     }
 
+    //
     const getAllDocumentos = async ()=>{
         const response = await axios.get(endPointBuscarTodosDocumentos)
 
         setTodosDocumentos(response.data)
     }
-
+    
+    //
     const getAllCargos = async ()=>{
         const response = await axios.get(endPointBuscarTodosCargos)
 
         setTodosCargos(response.data)
     }
     
+    //
     const verificarTipoDocumento = ()=> {
 
         switch (tipoDocumentoId){
@@ -113,6 +152,7 @@ const AgregarEmpleado = () =>{
 
     }
 
+    //
     const formatearCargo = ()=>{
         todosCargos.map((cargo)=>{
             if (cargo.cargoNombre == cargoActualId){
@@ -121,7 +161,7 @@ const AgregarEmpleado = () =>{
         })
     }
 
-
+    //
     const formatearIdDocumento = ()=>{
         todosDocumentos.map((documento)=>{
             if(documento.nombreDocumento == tipoDocumentoId){
@@ -253,6 +293,18 @@ const AgregarEmpleado = () =>{
                 onChange={(e)=> setFechaContratacion(e.target.value)}
                 ></input>
                 </div>
+                
+                <div className='atributo'>
+                <label>Sueldo:</label>
+                <input
+                value={empleadoSueldo}
+                onChange={(e)=> setEmpleadoSueldo(e.target.value)}
+                type='number'
+                pattern='^[0-9]+$'
+                maxLength={8}
+                className='form-control'
+                />
+                </div>
 
                 <div className='atributo'>
                 <label>Usuario:</label>
@@ -275,15 +327,15 @@ const AgregarEmpleado = () =>{
                  />
                 </div>
 
-                {/* <div className='atributo'>
+                <div className='atributo'>
                 <label>Confirmar contraseña:</label>
                 <input
-                 //value={}
-                 //onChange={}
+                 value={empleadoContrasenia2}
+                 onChange={(e)=>setEmpleadoContrasenia2(e.target.value)}
                  type='password'
                  className='form-control'
                  />
-                </div> */}
+                </div>
 
                 <div className='atributo'>
                 <label>Cargo actual</label>

@@ -41,7 +41,7 @@ const MostrarEmpleados = ()=>{
         numeroDocumento: empleado.numeroDocumento, empleadoNombre: empleado.empleadoNombre, empleadoNumero: empleado.empleadoNumero,
         empleadoCorreo: empleado.empleadoCorreo, empleadoUsuario: empleado.empleadoUsuario,
         empleadoContrasenia: empleado.empleadoContrasenia, empleadoDireccion: empleado.empleadoDireccion, 
-        cargoActualId: empleado.cargoActualId, fechaContratacion: empleado.fechaContratacion,
+        empleadoSueldo: empleado.empleadoSueldo, cargoActualId: empleado.cargoActualId, fechaContratacion: empleado.fechaContratacion,
         fechaNacimiento: empleado.fechaNacimiento, estado: empleado.estado == 1? 0 : 1})
 
         getAllEmpleados()
