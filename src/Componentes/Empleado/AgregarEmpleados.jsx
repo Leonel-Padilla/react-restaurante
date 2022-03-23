@@ -270,6 +270,7 @@ const AgregarEmpleado = () =>{
                 minLength={digitosNumero}
                 maxLength={digitosNumero}
                 value={numeroDocumento}
+                pattern = {tipoDocumentoId == "Visa" ? "^[A]" : ""}
                 onChange={(e)=> setNumeroDocumento(e.target.value)}
                 type='text'
                 className='form-control'
