@@ -29,14 +29,17 @@ const AgregarEmpleado = () =>{
     let digitosNumero   = 14
     let idDocumento     = 1
     let idCargo         = 1
-    let fechaHoy        = new Date()
 
-    let valor = fechaHoy.getDate()
-    fechaHoy.setDate(valor+10)
+    let fechaHoy = new Date()
+
+    let fechaMin = new Date()
+    let valor = fechaMin.getDate()
+    fechaMin.setDate(valor-10)
 
     let fechaEdad = new Date()
     let valor2 = fechaEdad.getFullYear()
     fechaEdad.setFullYear(valor2-18)
+
     
     const [todosDocumentos, setTodosDocumentos] = useState([])
     const [todosCargos, setTodosCargos]         = useState([])
@@ -144,9 +147,9 @@ const AgregarEmpleado = () =>{
                 break
             case 'Pasaporte': digitosNumero = 7 
                 break
-            case 'Visa': digitosNumero = 13 
+            case 'Visa': digitosNumero = 9 
                 break
-            case 'Licencia Conducir': digitosNumero = 13 
+            case 'Licencia Conducir': digitosNumero = 9
                 break
         }
 
@@ -270,7 +273,8 @@ const AgregarEmpleado = () =>{
                 minLength={digitosNumero}
                 maxLength={digitosNumero}
                 value={numeroDocumento}
-                pattern = {tipoDocumentoId == "Visa" ? "^[A]" : ""}
+                pattern={tipoDocumentoId == 'Visa' || tipoDocumentoId == 'Pasaporte'? '^[A-Z][0-9]+$':
+                tipoDocumentoId == 'RTN' || tipoDocumentoId == 'Identidad'? '^[0-1][0-9]+$': '^[1][0-9]+$'}
                 onChange={(e)=> setNumeroDocumento(e.target.value)}
                 type='text'
                 className='form-control'
@@ -280,7 +284,7 @@ const AgregarEmpleado = () =>{
                 <div className='atributo'>
                 <label>Fecha Nacimiento:</label>
                 <input
-                max={`${fechaEdad.getFullYear()}-${fechaEdad.getMonth() < 9? '0':''}${fechaEdad.getMonth()+1}-${fechaEdad.getDate()}`}
+                max={`${fechaEdad.getFullYear()}-${fechaEdad.getMonth() < 9? '0':''}${fechaEdad.getMonth()+1}-${fechaEdad.getDate() < 10? '0':''}${fechaEdad.getDate()}`}
                 type={'date'}
                 onChange={(e)=> setFechaNacimiento(e.target.value)}
                 ></input>
@@ -289,7 +293,8 @@ const AgregarEmpleado = () =>{
                 <div className='atributo'>
                 <label>Fecha Contrato:</label>
                 <input
-                max={`${fechaHoy.getFullYear()}-${fechaHoy.getMonth() < 9? '0':''}${fechaHoy.getMonth()+1}-${fechaHoy.getDate()}`}
+                max={`${fechaHoy.getFullYear()}-${fechaHoy.getMonth() < 9? '0':''}${fechaHoy.getMonth()+1}-${fechaHoy.getDate() < 10? '0':''}${fechaHoy.getDate()}`}
+                min={`${fechaMin.getFullYear()}-${fechaMin.getMonth() < 9? '0':''}${fechaMin.getMonth()+1}-${fechaMin.getDate() < 10? '0':''}${fechaMin.getDate()}`}
                 type={'date'}
                 onChange={(e)=> setFechaContratacion(e.target.value)}
                 ></input>

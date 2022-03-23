@@ -7,23 +7,28 @@ import axios from 'axios';
 
 
 const endPointGetEmpleado = 'http://127.0.0.1:8000/api/Empleado'
+const endPointUpdateEmpleado = 'http://127.0.0.1:8000/api/updateEmpleado'
+let contador = 0
 
 function MenuLogin () {
-    const [nombreUsuario, setNombre] = useState('')
+    const navigate                      = useNavigate()
+    const [nombreUsuario, setNombre]    = useState('')
     const [contrasenia, setcontrasenia] = useState('')
-    const navigate = useNavigate()
+    const [empleado, setEmpleado]       = useState()
 
-    const [mensajeModal, setMensajeModal] = useState('')
-    const [tituloModal, setTituloModal] = useState('')
-    const [visible, setVisible] = useState(false)
+
+    const [mensajeModal, setMensajeModal]   = useState('')
+    const [tituloModal, setTituloModal]     = useState('')
+    const [visible, setVisible]             = useState(false)
 
 
 
     const validar = async ()=>{
+        console.log(contador)
 
         if (nombreUsuario == '' || contrasenia == ''){
             setTituloModal('Error')
-            setMensajeModal('Credenciales Invalidas. Ingrese Usuario y contraseña.')
+            setMensajeModal('Credenciales Invalidas. Ingrese Usuario y contraseña. Vacio')
             setVisible(true)
         }else{
             const response = await axios.get(`${endPointGetEmpleado}U/${nombreUsuario}`)
@@ -32,24 +37,49 @@ function MenuLogin () {
       
             if (array.length < 1){
                 setTituloModal('Error')
-                setMensajeModal('Credenciales Invalidas. Intente nuevamente.')
+                setMensajeModal('Credenciales Invalidas. Intente nuevamente. No esta')
                 setVisible(true)
             }else{
-
+                
                 const response1 = await axios.get(`${endPointGetEmpleado}/${response.data[0].id}`)
+                setEmpleado(response1.data)
 
-                /*console.log(response1.data.empleadoUsuario)
-                console.log(response1.data.empleadoContrasenia)*/
-                sessionStorage.setItem('userName', response1.data.empleadoUsuario)
-                sessionStorage.setItem('id', response1.data.id)
+                localStorage.setItem('usuario', `${response1.data.id}`)
 
+                if (response1.data.estado != 1){
+                    setTituloModal('Error')
+                    setMensajeModal('Usuario Deshabilitado.')
+                    setVisible(true)
 
-                if (response1.data.empleadoUsuario === nombreUsuario && response1.data.empleadoContrasenia === contrasenia){
+                    contador = 0
+                }else if (response1.data.empleadoUsuario === nombreUsuario && response1.data.empleadoContrasenia === contrasenia){
+                    contador = 0
+                    sessionStorage.setItem('userName', response1.data.empleadoUsuario)
+                    sessionStorage.setItem('id', response1.data.id)
                     navigate('/MenuPrincipal')
                 }else{
-                    setTituloModal('Error')
-                    setMensajeModal('Credenciales Invalidas. Intente nuevamente.')
-                    setVisible(true)
+                    if (contador == 2){
+                        setTituloModal('Error')
+                        setMensajeModal('El usuario Se bloquerá, muchos intentos fallidos')
+                        setVisible(true)
+                            console.log(empleado)
+                            const response2 = await axios.put(`${endPointUpdateEmpleado}/${localStorage.getItem('usuario')}`, {tipoDocumentoId:
+                            empleado.tipoDocumentoId, numeroDocumento: empleado.numeroDocumento, empleadoNombre: empleado.empleadoNombre, empleadoNumero: empleado.empleadoNumero,
+                            empleadoCorreo: empleado.empleadoCorreo, empleadoUsuario: empleado.empleadoUsuario,
+                            empleadoContrasenia: empleado.empleadoContrasenia, empleadoDireccion: empleado.empleadoDireccion, 
+                            empleadoSueldo: empleado.empleadoSueldo, cargoActualId: empleado.cargoActualId, fechaContratacion: empleado.fechaContratacion,
+                            fechaNacimiento: empleado.fechaNacimiento, estado: empleado.estado = 0})
+
+                            contador = 0
+                            console.log(response2.data) //
+                            localStorage.removeItem('usuario')
+                    }else{
+                        contador++
+                        setTituloModal('Error')
+                        setMensajeModal('Credenciales Invalidas. Intente nuevamente. Malas')
+                        setVisible(true)
+                        console.log(contador)
+                    }
                 }
             }
         }

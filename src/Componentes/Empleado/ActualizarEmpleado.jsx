@@ -108,12 +108,6 @@ const ActualizarEmpleado = () =>{
     const actualizar = async (e)=>{
         e.preventDefault()
 
-        /*const fecha1 = new Date(fechaContratacion)
-        const fecha2 = new Date(fechaFin)
-        if (fecha1 >= fec){
-
-        }else*/
-
         if (tipoDocumentoId.includes('Seleccione') || cargoActualId.includes('Seleccion')){
             setTituloModal('Error')
             setMensajeModal('Debe seleccionar un Cargo Actual y un Tipo Documento')
@@ -231,9 +225,9 @@ const ActualizarEmpleado = () =>{
                 break
             case 'Pasaporte': digitosNumero = 7 
                 break
-            case 'Visa': digitosNumero = 13
+            case 'Visa': digitosNumero = 9
                 break
-            case 'Licencia Conducir': digitosNumero = 13 
+            case 'Licencia Conducir': digitosNumero = 9
                 break
         }
 
@@ -258,13 +252,13 @@ const ActualizarEmpleado = () =>{
         })
     }
         //
-        const formatearCargoNombre = (empleadoCargo)=>{
-            todosCargos.map((cargo)=>{
-                if (cargo.id == empleadoCargo.cargoId){
-                    empleadoCargoNombre = cargo.cargoNombre
-                }
-            })
-        }
+    const formatearCargoNombre = (empleadoCargo)=>{
+        todosCargos.map((cargo)=>{
+            if (cargo.id == empleadoCargo.cargoId){
+                empleadoCargoNombre = cargo.cargoNombre
+            }
+        })
+    }
     //
     const formatearIdDocumento = ()=>{
         todosDocumentos.map((documento)=>{
@@ -341,7 +335,7 @@ const ActualizarEmpleado = () =>{
                         </tbody>
                     </table>
                 </div>
-                :               //ELSE
+                :                               //ELSE
                 <div className="Sueldos">
                     <table className="table mt-2 text-white">
                         <thead>
@@ -459,12 +453,12 @@ const ActualizarEmpleado = () =>{
                 <label>Tipo Documento</label>
                 <select
                 value={tipoDocumentoId}
-                onChange={(e)=> setTipoDocumentoId(e.target.value)}
+                onChange={(e)=>setTipoDocumentoId(e.target.value)}
                 type='number'
                 className='select'
                 >
                     {todosDocumentos.map((documento)=> {
-                        verificarTipoDocumento()
+
                         return(<option key={documento.id}>{documento.nombreDocumento}</option>)
                     })
                     }
@@ -475,18 +469,14 @@ const ActualizarEmpleado = () =>{
                 <label>Número documento:</label>
                 <input
                 required={true}
+                value={numeroDocumento}
                 minLength={digitosNumero}
                 maxLength={digitosNumero}
-                placeholder='0801199110122'
-                value={numeroDocumento}
-                /*visa*/
-                /*pattern ="^[A-Za-Z]"*/
-                /*RTN*/
-                /*pattern="^[0-1]+$"*/
-                /*identidad*/
-                /*pattern="^[0-1]+$"*/
+                pattern={tipoDocumentoId == 'Visa' || tipoDocumentoId == 'Pasaporte'? '^[A-Z][0-9]+$':
+                    tipoDocumentoId == 'RTN' || tipoDocumentoId == 'Identidad'? '^[0-1][0-9]+$': '^[1][0-9]+$'}
 
-                title = {tipoDocumentoId == "Visa" ? "[a]" : "algo mas"}
+                title = {tipoDocumentoId == 'Visa' || tipoDocumentoId == 'Pasaporte'? 'ejem: A12345678':
+                tipoDocumentoId == 'Identidad'? 'ejem: 0801456789123': tipoDocumentoId == 'RTN'?'01234567891234': 'ejem: 191234569'}
                 onChange={(e)=> setNumeroDocumento(e.target.value)}
                 type='text'
                 className='form-control'
