@@ -136,7 +136,7 @@ function MostrarSucursales() {
             >
                 <option>Seleccione tipo busqueda</option>
                 <option>ID</option>
-                <option>Nombre</option>
+                <option>Nombre Sucursal</option>
             </select>
 
             <form 

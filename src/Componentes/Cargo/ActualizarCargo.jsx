@@ -117,17 +117,21 @@ const verificar = (setear = () => {}, cadenaTexto)=>{
                     onChange={(e)=>setCargoNombre(e.target.value)}
                     type='text'
                     pattern='[A-Za-z]{3,}'
+                    maxLength={30}
                     title='Solo se aceptan letras, Ejemplo: "Cocinero"'
                     className='form-control'
                     />
                 </div>
+                
                 <div className='atributo '>
-                    <label>Descripcion del cargo:</label>
+                    <label>Descripción del cargo:</label>
                     <textarea
-                    aria-label='aria-describedby'
-                    placeholder='Descripcion'
                     value={cargoDescripcion}
                     onChange={(e)=> setCargoDescripcion(e.target.value)}
+                    aria-label='aria-describedby'
+                    placeholder='Descripcion'
+                    maxLength={100}
+                    title='Solo se aceptan letras, Ejemplo: "Cocinero"'
                     type='text'
                     className='form-control p-4'
                     /> 

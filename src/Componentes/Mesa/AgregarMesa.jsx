@@ -113,6 +113,7 @@ const AgregarMesa = () =>{
                     onChange={(e)=>setCantidadAsientos(e.target.value)}
                     type='text'
                     pattern='[0-9]{1,}'
+                    maxLength={3}
                     title='numeros del 0-9"'
                     className='form-control'
                     />

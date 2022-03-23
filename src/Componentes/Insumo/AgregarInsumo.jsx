@@ -120,6 +120,7 @@ const AgregarInsumo = () =>{
                     onChange={(e)=>setInsumoNombre(e.target.value)}
                     type='text'
                     pattern='[A-Za-z ]{3,}'
+                    maxLength={40}
                     title='Solo se aceptan letras, ejem: "Pan"'
                     className='form-control'
                     />
@@ -140,11 +141,12 @@ const AgregarInsumo = () =>{
                 </div>
 
                 <div className='atributo'>
-                    <label>Descripcion del insumo:</label>
+                    <label>Descripción del insumo:</label>
                     <textarea
                     aria-label='aria-describedby'
                     placeholder='Producto necesita estar refrigerado'
                     value={insumoDescripcion}
+                    maxLength={100}
                     onChange={(e)=>setInsumoDescripcion(e.target.value)}
                     type='text'
                     className='form-control p-4'
@@ -160,19 +162,21 @@ const AgregarInsumo = () =>{
                     onChange={(e)=>setCantidad(e.target.value)}
                     type='text'
                     pattern='[0-9]{1,}'
+                    maxLength={3}
                     title='numeros del 0-9"'
                     className='form-control'
                     />
                 </div>
 
                 <div className='atributo'>
-                    <label>Cantidad minima:</label>
+                    <label>Cantidad mínima:</label>
                     <input
                     aria-label='aria-describedby'
                     placeholder='numeros del 0-9'
                     value={cantidadMin}
                     onChange={(e)=>setCantidadMin(e.target.value)}
                     type='text'
+                    maxLength={3}
                     pattern='[0-9]{1,}'
                     title='numeros del 0-9"'
                     className='form-control'
@@ -187,6 +191,7 @@ const AgregarInsumo = () =>{
                     value={cantidadMax}
                     onChange={(e)=>setCantidadMax(e.target.value)}
                     type='text'
+                    maxLength={3}
                     pattern='[0-9]{1,}'
                     title='numeros del 0-9"'
                     className='form-control'

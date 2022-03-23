@@ -59,6 +59,7 @@ const ActualizarMesa = ()=>{
                     placeholder='numeros del 0-9'
                     //onChange={(e)=>setCargoNombre(e.target.value)}
                     type='text'
+                    maxLength={3}
                     pattern='[0-9]{1,}'
                     title='numeros del 0-9"'
                     className='form-control'

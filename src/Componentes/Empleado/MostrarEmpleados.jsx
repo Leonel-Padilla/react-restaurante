@@ -207,11 +207,11 @@ const MostrarEmpleados = ()=>{
                     <th>Id</th>
                     <th>Nombre</th>
                     <th>Usuario</th>
-                    <th>Telefono</th>
+                    <th>Teléfono</th>
                     <th>Correo</th>
                     <th>Fecha contratación</th>
                     <th>Tipo documento</th>
-                    <th>Numero Documento</th>
+                    <th>Número Documento</th>
                     <th>Estado</th>
                     <th>Opciones</th>
                 </tr>

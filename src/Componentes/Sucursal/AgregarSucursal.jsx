@@ -128,6 +128,7 @@ function AgregarSucursal() {
                     value={sucursalNombre}
                     onChange={(e)=>setSucursalNombre(e.target.value)}
                     type='text'
+                    maxLength={40}
                     pattern='[A-Za-z ]{3,}'
                     title='Solo se aceptan letras'
                     className='form-control'
@@ -140,6 +141,7 @@ function AgregarSucursal() {
                     underlined
                     placeholder='Colonia Las Uvas'
                     value={sucursalDireccion}
+                    maxLength={100}
                     onChange={(e)=> setSucursalDireccion(e.target.value)}
                     type='text'
                     className='form-control p-4'

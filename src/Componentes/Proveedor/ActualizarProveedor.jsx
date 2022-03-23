@@ -107,6 +107,7 @@ const ActualizarProveedor = ()=>{
                     value={proveedorNombre}
                     onChange={(e)=>setProveedorNombre(e.target.value)}
                     type='text'
+                    maxLength={50}
                     pattern='[A-Za-z ]{3,}'
                     title='Solo se aceptan letras, ejem: "Diunsa"'
                     className='form-control'
@@ -121,16 +122,18 @@ const ActualizarProveedor = ()=>{
                     type='text'
                     pattern='^[0-9]+$'
                     maxLength={8}
+                    title='Solo se aceptan numeros, ejem: "2292567"'
                     className='form-control'
                     />
                 </div>
                 <div className='atributo'>
-                    <label>Correo Electrónico:</label>
+                    <label>Correo electrónico:</label>
                     <input
                     placeholder='Correo'
                     value={proveedorCorreo}
                     onChange={(e)=> setProveedorCorreo(e.target.value)}
                     type='email'
+                    maxLength={50}
                     className='form-control'
                     />
                 </div>
@@ -141,6 +144,7 @@ const ActualizarProveedor = ()=>{
                     value={proveedorEncargado}
                     onChange={(e)=>setProveedorEncagado(e.target.value)}
                     type='text'
+                    maxLength={50}
                     pattern='[A-Za-z ]{3,}'
                     title='Solo se aceptan letras, ejem: "Diunsa"'
                     className='form-control'

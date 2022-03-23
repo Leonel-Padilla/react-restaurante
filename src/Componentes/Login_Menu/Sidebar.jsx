@@ -7,6 +7,8 @@ import Sucursal from "../../img/tienda.png"
 import Cliente from "../../img/cliente.png"
 import User from "../../img/user.png"
 import Background from '../../img/Restaurante.jpg'
+import Insumo from '../../img/insumo.png'
+import Mesa from '../../img/mesa.png'
 import { useNavigate } from "react-router-dom";
 
 
@@ -59,7 +61,7 @@ function Sidebar () {
                 <Collapse 
                 title = {<Text h6 className="text-white">Insumo</Text>}
                 contentLeft={
-                <Avatar size="md" icon={<img src={Gerente}/>}/>}>
+                <Avatar size="md" icon={<img src={Insumo}/>}/>}>
                     <Button light color={'default'} onClick={()=>navigate('/Insumos')}className="text-white"> 
                         Mostrar Insumos</Button>
                     <Button light color={'default'} onClick={()=>navigate('/Insumos/addInsumo')}className="text-white"> 
@@ -68,7 +70,7 @@ function Sidebar () {
                 <Collapse 
                 title = {<Text h6 className="text-white">Mesa</Text>}
                 contentLeft={
-                <Avatar size="md" icon={<img src={Gerente}/>}/>}>
+                <Avatar size="md" icon={<img src={Mesa}/>}/>}>
                     <Button light color={'default'} onClick={()=>navigate('/Mesas')}className="text-white"> 
                         Mostrar Mesas</Button>
                     <Button light color={'default'} onClick={()=>navigate('/Mesas/addMesa')}className="text-white"> 

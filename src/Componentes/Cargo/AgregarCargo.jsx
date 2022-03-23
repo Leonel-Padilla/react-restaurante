@@ -83,6 +83,7 @@ function AgregarCargo() {
                     aria-label='aria-describedby'
                     value={cargoNombre}
                     placeholder='Cajero'
+                    maxLength={30}
                     onChange={(e)=>setCargoNombre(e.target.value)}
                     type='text'
                     pattern='[A-Za-z ]{3,}'
@@ -92,10 +93,11 @@ function AgregarCargo() {
                 </div>
 
                 <div className='atributo'>
-                    <label>Descripcion del cargo:</label>
+                    <label>Descripción del cargo:</label>
                     <textarea
                     aria-label='aria-describedby'
                     placeholder='Responsable de caja'
+                    maxLength={100}
                     value={cargoDescripcion}
                     onChange={(e)=> setCargoDescripcion(e.target.value)}
                     type='text'

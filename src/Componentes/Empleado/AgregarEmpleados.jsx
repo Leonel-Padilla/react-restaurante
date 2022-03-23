@@ -204,6 +204,7 @@ const AgregarEmpleado = () =>{
                 <input
                 placeholder='Jose Perez'
                 pattern='[A-Za-z ]{3,}'
+                maxLength={50}
                 value={empleadoNombre}
                 onChange={(e)=> setEmpleadoNombre(e.target.value)}
                 type='text'
@@ -212,7 +213,7 @@ const AgregarEmpleado = () =>{
                 </div>
 
                 <div className='atributo'>
-                <label>Numero telefonico:</label>
+                <label>Número telefónico:</label>
                 <input
                 placeholder='88922711'
                 value={empleadoNumero}
@@ -225,7 +226,7 @@ const AgregarEmpleado = () =>{
                 </div>
 
                 <div className='atributo'>
-                <label>Correo electronico:</label>
+                <label>Correo electrónico:</label>
                 <input
                 placeholder='ejem@gmail.com'
                 value={empleadoCorreo}
@@ -236,7 +237,7 @@ const AgregarEmpleado = () =>{
                 </div>
 
                 <div className='atributo'>
-                <label>Direccion:</label>
+                <label>Dirección:</label>
                 <input
                 placeholder='Res. Las uvas'
                 value={empleadoDireccion}
@@ -263,7 +264,7 @@ const AgregarEmpleado = () =>{
                 </div>
 
                 <div className='atributo'>
-                <label>Numero documento:</label>
+                <label>Número documento:</label>
                 <input
                 required={true}
                 minLength={digitosNumero}
@@ -289,7 +290,6 @@ const AgregarEmpleado = () =>{
                 <input
                 max={`${fechaHoy.getFullYear()}-${fechaHoy.getMonth() < 9? '0':''}${fechaHoy.getMonth()+1}-${fechaHoy.getDate()}`}
                 type={'date'}
-                //value={fechaContratacion}
                 onChange={(e)=> setFechaContratacion(e.target.value)}
                 ></input>
                 </div>
@@ -313,6 +313,7 @@ const AgregarEmpleado = () =>{
                  value={empleadoUsuario}
                  onChange={(e)=>setEmpleadoUsuario(e.target.value)}
                  type='text'
+                 maxLength={20}
                  className='form-control'
                  />
                 </div>
@@ -323,6 +324,8 @@ const AgregarEmpleado = () =>{
                  value={empleadoContrasenia}
                  onChange={(e)=>setEmpleadoContrasenia(e.target.value)}
                  type='password'
+                 maxLength={50}
+                 pattern='^(?=\w*\d)(?=\w*[A-Z])(?=\w*[a-z])\S{5,16}$'
                  className='form-control'
                  />
                 </div>
@@ -333,6 +336,8 @@ const AgregarEmpleado = () =>{
                  value={empleadoContrasenia2}
                  onChange={(e)=>setEmpleadoContrasenia2(e.target.value)}
                  type='password'
+                 maxLength={50}
+                 pattern='^(?=\w*\d)(?=\w*[A-Z])(?=\w*[a-z])\S{5,16}$'
                  className='form-control'
                  />
                 </div>

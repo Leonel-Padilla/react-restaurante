@@ -85,7 +85,8 @@ const AgregarCliente =()=>{
                     placeholder='Juan Perez'
                     onChange={(e)=>setClienteNombre(e.target.value)}
                     type='text'
-                    pattern='[A-Za-z ]{3,}'
+                    pattern='[A-Za-z]{3,}'
+                    maxLength={40}
                     title='Solo se aceptan letras, ejem: "Juan"'
                     className='form-control'
                     />
@@ -97,7 +98,10 @@ const AgregarCliente =()=>{
                 placeholder='88922711'
                 value={clienteNumero}
                 onChange={(e)=>setClienteNumero(e.target.value)}
-                type='number'
+                pattern='[0-9]{8,}'
+                maxLength={8}
+                title='Solo se aceptan numeros del 0-9 y la longitud del numero debe ser igual a 8, ejem: "2252667"'
+                type='text'
                 className='form-control'
                 />
                 </div>
@@ -108,6 +112,7 @@ const AgregarCliente =()=>{
                 placeholder='ejem@gmail.com'
                 value={clienteCorreo}
                 onChange={(e)=>setClienteCorreo(e.target.value)}
+                maxLength={50}
                 type='email'
                 className='form-control'
                 />
@@ -118,6 +123,7 @@ const AgregarCliente =()=>{
                 <input
                 maxLength={14}
                 value={clienteRTN}
+                pattern='[0-9]{14,}'
                 onChange={(e)=>setClienteRTN(e.target.value)}
                 placeholder='08019999176681'
                 type='text'

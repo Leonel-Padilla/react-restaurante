@@ -137,6 +137,7 @@ return (
                     value={sucursalNombre}
                     onChange={(e)=>setSucursalNombre(e.target.value)}
                     type='text'
+                    maxLength={40}
                     pattern='[A-Za-z ]{3,}'
                     title='Solo se aceptan letras'
                     className='form-control'
@@ -147,6 +148,7 @@ return (
                     <Textarea
                     aria-label='aria-describedby'
                     underlined
+                    maxLength={100}
                     placeholder='Colonia Las Uvas'
                     value={sucursalDireccion}
                     onChange={(e)=> setSucursalDireccion(e.target.value)}

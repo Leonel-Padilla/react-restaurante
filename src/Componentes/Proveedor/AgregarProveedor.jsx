@@ -92,6 +92,7 @@ const AgregarProveedor = ()=>{
                     value={proveedorNombre}
                     onChange={(e)=>setProveedorNombre(e.target.value)}
                     type='text'
+                    maxLength={50}
                     pattern='[A-Za-z ]{3,}'
                     title='Solo se aceptan letras, ejem: "Diunsa"'
                     className='form-control'
@@ -110,12 +111,13 @@ const AgregarProveedor = ()=>{
                     />
                 </div>
                 <div className='atributo'>
-                    <label>Correo Electrónico:</label>
+                    <label>Correo electrónico:</label>
                     <input
                     placeholder='Correo'
                     value={proveedorCorreo}
                     onChange={(e)=> setProveedorCorreo(e.target.value)}
                     type='email'
+                    maxLength={50}
                     className='form-control'
                     />
                 </div>
@@ -127,6 +129,7 @@ const AgregarProveedor = ()=>{
                     onChange={(e)=>setProveedorEncagado(e.target.value)}
                     type='text'
                     pattern='[A-Za-z ]{3,}'
+                    maxLength={50}
                     title='Solo se aceptan letras, ejem: "Diunsa"'
                     className='form-control'
                     />

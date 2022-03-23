@@ -17,6 +17,7 @@ const MostrarMesas = ()=>{
     const [valorBusqueda, setValorBusqueda]           = useState('')
     const [sucursales, setSucursales]                 = useState([]) 
     let sucursalNombre                                = ''
+    let sucursalId                                    = 0 
 
     const [mesas, setMesas]                 = useState([])
     const [mensajeModal, setMensajeModal]   = useState('')
@@ -44,6 +45,14 @@ const MostrarMesas = ()=>{
         getAllMesas()
     }
 
+    const formatearSucursalNombre = (nombreSucursal)=>{
+        sucursales.map((sucursal)=>{
+            if (sucursal.sucursalNombre == nombreSucursal){
+                sucursalId = sucursal.id
+            }
+        })
+    }
+
   //
   const getByValorBusqueda = async (e)=>{
     e.preventDefault()
@@ -66,19 +75,19 @@ const MostrarMesas = ()=>{
             }
             
           }else{
-              alert('Este método de busqueda está en proceso')
-            /*const response = await axios.get(`${endPointGet}N/${valorBusqueda}`)
+            formatearSucursalNombre(valorBusqueda)
+            const response = await axios.get(`${endPointGetMesas}N/${sucursalId}`)
             console.log(response.data)
-            
+
             const array = response.data
-    
+
             if (array.length < 1){
                 setTituloModal('Error')
-                setMensajeModal('No hay clientes con el nombre que ingresó.')
+                setMensajeModal('No hay sucursales con el nombre que ingresó.')
                 setVisible(true)
             }else{
-                setClientes(array)
-            }*/
+                setMesas(array)
+            }
           }
     }
       
@@ -192,7 +201,7 @@ const MostrarMesas = ()=>{
                     <tr>
                         <th>Id Mesa</th>
                         <th>Cantidad de asientos</th>
-                        <th>sucursal</th>
+                        <th>Sucursal nombre</th>
                         <th>Estado</th>
                         <th>Opciones</th>
                     </tr>

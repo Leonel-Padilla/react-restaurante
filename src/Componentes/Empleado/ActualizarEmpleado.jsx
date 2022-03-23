@@ -411,6 +411,7 @@ const ActualizarEmpleado = () =>{
                 <input
                 placeholder='Jose Perez'
                 pattern='[A-Za-z ]{3,}'
+                maxLength={50}
                 value={empleadoNombre}
                 onChange={(e)=> setEmpleadoNombre(e.target.value)}
                 type='text'
@@ -419,7 +420,7 @@ const ActualizarEmpleado = () =>{
                 </div>
 
                 <div className='atributo'>
-                <label>Numero telefonico:</label>
+                <label>Número telefónico:</label>
                 <input
                 placeholder='88922711'
                 value={empleadoNumero}
@@ -432,23 +433,25 @@ const ActualizarEmpleado = () =>{
                 </div>
 
                 <div className='atributo'>
-                <label>Correo electronico:</label>
+                <label>Correo electrónico:</label>
                 <input
                 placeholder='ejem@gmail.com'
                 value={empleadoCorreo}
                 onChange={(e)=> setEmpleadoCorreo(e.target.value)}
                 type='email'
+                maxLength={50}
                 className='form-control'
                 />
                 </div>
 
                 <div className='atributo'>
-                <label>Direccion:</label>
+                <label>Dirección:</label>
                 <input
                 placeholder='Res. Las uvas'
                 value={empleadoDireccion}
                 onChange={(e)=> setEmpleadoDireccion(e.target.value)}
                 type='text'
+                maxLength={100}
                 className='form-control'/>
                 </div>
 
@@ -469,7 +472,7 @@ const ActualizarEmpleado = () =>{
                 </div>
 
                 <div className='atributo'>
-                <label>Numero documento:</label>
+                <label>Número documento:</label>
                 <input
                 required={true}
                 minLength={digitosNumero}
@@ -501,6 +504,7 @@ const ActualizarEmpleado = () =>{
                  value={empleadoUsuario}
                  onChange={(e)=>setEmpleadoUsuario(e.target.value)}
                  type='text'
+                 maxLength={20}
                  className='form-control'
                  />
                 </div>
@@ -511,6 +515,7 @@ const ActualizarEmpleado = () =>{
                  value={empleadoContrasenia}
                  onChange={(e)=>setEmpleadoContrasenia(e.target.value)}
                  type='password'
+                 maxLength={50}
                  className='form-control'
                  />
                 </div>
@@ -521,6 +526,7 @@ const ActualizarEmpleado = () =>{
                  value={empleadoContrasenia2}
                  onChange={(e)=>setEmpleadoContrasenia2(e.target.value)}
                  type='password'
+                 maxLength={50}
                  className='form-control'
                  />
                 </div>
