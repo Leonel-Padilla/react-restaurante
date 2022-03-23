@@ -479,6 +479,14 @@ const ActualizarEmpleado = () =>{
                 maxLength={digitosNumero}
                 placeholder='0801199110122'
                 value={numeroDocumento}
+                /*visa*/
+                /*pattern ="^[A-Za-Z]"*/
+                /*RTN*/
+                /*pattern="^[0-1]+$"*/
+                /*identidad*/
+                /*pattern="^[0-1]+$"*/
+
+                title = {tipoDocumentoId == "Visa" ? "[a]" : "algo mas"}
                 onChange={(e)=> setNumeroDocumento(e.target.value)}
                 type='text'
                 className='form-control'
