@@ -22,6 +22,18 @@ function MenuLogin () {
     const [tituloModal, setTituloModal]     = useState('')
     const [visible, setVisible]             = useState(false)
 
+    let fechaHoy = new Date()
+    /*let valor = fechaHoy.getDate()
+    fechaHoy.setDate(valor+1)*/
+    let valor = fechaHoy.getMinutes()
+    fechaHoy.setMinutes(valor+1)
+
+    let fechaBloqueoU = `${fechaHoy.getFullYear()}-${fechaHoy.getMonth() < 9? '0':''}${fechaHoy.getMonth()+1}-${fechaHoy.getDate() < 10? '0':''}${fechaHoy.getDate()} ${fechaHoy.getHours() < 10? '0':''}${fechaHoy.getHours()}:${fechaHoy.getMinutes() < 10? '0':''}${fechaHoy.getMinutes()}`
+
+    //console.log(fechaBloqueoU)
+
+    let fechaAhorita = new Date()
+    let fechaActual = `${fechaAhorita.getFullYear()}-${fechaAhorita.getMonth() < 9? '0':''}${fechaAhorita.getMonth()+1}-${fechaAhorita.getDate() < 10? '0':''}${fechaAhorita.getDate()} ${fechaAhorita.getHours() < 10? '0':''}${fechaAhorita.getHours()}:${fechaAhorita.getMinutes() < 10? '0':''}${fechaAhorita.getMinutes()}`
 
 
     const validar = async ()=>{
@@ -68,7 +80,7 @@ function MenuLogin () {
                     }
                 })
 
-                if (response1.data.estado != 1){
+                /*if (response1.data.estado != 1){
                     setTituloModal('Error')
                     setMensajeModal('El usuario ha sido deshabilitado.')
                     setVisible(true)
@@ -78,7 +90,15 @@ function MenuLogin () {
                     nuevos = empleados.filter((empleado)=> empleado.id != empleadoActual.id)
                     nuevos.push(empleadoActual)
 
-                }else if (response1.data.empleadoUsuario === nombreUsuario && response1.data.empleadoContrasenia === contrasenia){
+                }else*/
+                console.log(fechaActual, response1.data.fechaBloqueo)
+                if (fechaActual < response1.data.fechaBloqueo){
+                    setTituloModal('Error')
+                    setMensajeModal('Sigue jodido.')
+                    setVisible(true)
+                }else
+                
+                if (response1.data.empleadoUsuario === nombreUsuario && response1.data.empleadoContrasenia === contrasenia){
                     empleadoActual.contador = 0
                     let nuevos = empleados.filter((empleado)=> empleado.id != empleadoActual.id)
                     nuevos.push(empleadoActual)
@@ -97,13 +117,13 @@ function MenuLogin () {
                             empleadoCorreo: empleado.empleadoCorreo, empleadoUsuario: empleado.empleadoUsuario,
                             empleadoContrasenia: empleado.empleadoContrasenia, empleadoDireccion: empleado.empleadoDireccion, 
                             empleadoSueldo: empleado.empleadoSueldo, cargoActualId: empleado.cargoActualId, fechaContratacion: empleado.fechaContratacion,
-                            fechaNacimiento: empleado.fechaNacimiento, estado: empleado.estado = 0})
+                            fechaNacimiento: empleado.fechaNacimiento, estado: empleado.estado = 1, fechaBloqueo: fechaBloqueoU})
 
                             empleadoActual.contador = 0
                             let nuevos = empleados.filter((empleado)=> empleado.id != empleadoActual.id)
                             nuevos.push(empleadoActual)
 
-                            //console.log(response2.data) //
+                            console.log(response2.data) 
                             localStorage.removeItem('usuario')
                     }else{
                         empleadoActual.contador++
