@@ -8,14 +8,15 @@ import axios from 'axios';
 
 const endPointGetEmpleado = 'http://127.0.0.1:8000/api/Empleado'
 const endPointUpdateEmpleado = 'http://127.0.0.1:8000/api/updateEmpleado'
-let contador = 0
+//let contador = 0
 
 function MenuLogin () {
     const navigate                      = useNavigate()
     const [nombreUsuario, setNombre]    = useState('')
     const [contrasenia, setcontrasenia] = useState('')
     const [empleado, setEmpleado]       = useState()
-
+    const [empleados, setEmpleados]     = useState([])
+    let empleadoActual = {}
 
     const [mensajeModal, setMensajeModal]   = useState('')
     const [tituloModal, setTituloModal]     = useState('')
@@ -24,7 +25,6 @@ function MenuLogin () {
 
 
     const validar = async ()=>{
-        console.log(contador)
 
         if (nombreUsuario == '' || contrasenia == ''){
             setTituloModal('Error')
@@ -45,44 +45,81 @@ function MenuLogin () {
                 setEmpleado(response1.data)
 
                 localStorage.setItem('usuario', `${response1.data.id}`)
+                let contadorRep = 0
+
+                empleados.map((empleadoI)=>{
+                    if (empleadoI.id == response1.data.id){
+                        //console.log(empleadoI.id, response1.data.id)
+                        contadorRep++
+                    }
+                })
+
+                if (contadorRep == 0){
+                    empleados.push({id: response1.data.id, contador: 0})
+                }
+                //setEmpleados(nuevos)
+
+                /*let nuevos = empleados.filter((empleado)=> empleado.id != response1.data.id)*/
+                //nuevos.push({id: response1.data.id, contador: 0})
+
+                empleados.map((empeladoI)=>{
+                    if (empeladoI.id == response1.data.id){
+                        empleadoActual = empeladoI
+                    }
+                })
 
                 if (response1.data.estado != 1){
                     setTituloModal('Error')
-                    setMensajeModal('Usuario Deshabilitado.')
+                    setMensajeModal('El usuario ha sido deshabilitado.')
                     setVisible(true)
 
-                    contador = 0
+                    empleadoActual.contador = 0
+                    let nuevos = {...empleados}
+                    nuevos = empleados.filter((empleado)=> empleado.id != empleadoActual.id)
+                    nuevos.push(empleadoActual)
+
                 }else if (response1.data.empleadoUsuario === nombreUsuario && response1.data.empleadoContrasenia === contrasenia){
-                    contador = 0
+                    empleadoActual.contador = 0
+                    let nuevos = empleados.filter((empleado)=> empleado.id != empleadoActual.id)
+                    nuevos.push(empleadoActual)
+
                     sessionStorage.setItem('userName', response1.data.empleadoUsuario)
                     sessionStorage.setItem('id', response1.data.id)
                     navigate('/MenuPrincipal')
                 }else{
-                    if (contador == 2){
+                    if (empleadoActual.contador == 2){
                         setTituloModal('Error')
-                        setMensajeModal('El usuario Se bloquerá, muchos intentos fallidos')
+                        setMensajeModal('Usuario deshabilitado debido a muchos intentos fallidos.')
                         setVisible(true)
-                            console.log(empleado)
-                            const response2 = await axios.put(`${endPointUpdateEmpleado}/${localStorage.getItem('usuario')}`, {tipoDocumentoId:
+                            //console.log(empleado)
+                            const response2 = await axios.put(`${endPointUpdateEmpleado}/${empleadoActual.id}`, {tipoDocumentoId:
                             empleado.tipoDocumentoId, numeroDocumento: empleado.numeroDocumento, empleadoNombre: empleado.empleadoNombre, empleadoNumero: empleado.empleadoNumero,
                             empleadoCorreo: empleado.empleadoCorreo, empleadoUsuario: empleado.empleadoUsuario,
                             empleadoContrasenia: empleado.empleadoContrasenia, empleadoDireccion: empleado.empleadoDireccion, 
                             empleadoSueldo: empleado.empleadoSueldo, cargoActualId: empleado.cargoActualId, fechaContratacion: empleado.fechaContratacion,
                             fechaNacimiento: empleado.fechaNacimiento, estado: empleado.estado = 0})
 
-                            contador = 0
-                            console.log(response2.data) //
+                            empleadoActual.contador = 0
+                            let nuevos = empleados.filter((empleado)=> empleado.id != empleadoActual.id)
+                            nuevos.push(empleadoActual)
+
+                            //console.log(response2.data) //
                             localStorage.removeItem('usuario')
                     }else{
-                        contador++
+                        empleadoActual.contador++
+                        let nuevos = empleados.filter((empleado)=> empleado.id != empleadoActual.id)
+                        nuevos.push(empleadoActual)
+                        
                         setTituloModal('Error')
-                        setMensajeModal('Credenciales Invalidas. Intente nuevamente. Malas')
+                        setMensajeModal('Credenciales Invalidas. Intente nuevamente. Intentos restantes: ' + (3-empleadoActual.contador))
                         setVisible(true)
-                        console.log(contador)
                     }
                 }
             }
         }
+
+        /*console.log(empleadoActual)
+        console.log(empleados)*/
     }
 
     return (
