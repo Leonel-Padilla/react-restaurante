@@ -69,32 +69,16 @@ function MenuLogin () {
                 if (contadorRep == 0){
                     empleados.push({id: response1.data.id, contador: 0})
                 }
-                //setEmpleados(nuevos)
-
-                /*let nuevos = empleados.filter((empleado)=> empleado.id != response1.data.id)*/
-                //nuevos.push({id: response1.data.id, contador: 0})
-
+               
                 empleados.map((empeladoI)=>{
                     if (empeladoI.id == response1.data.id){
                         empleadoActual = empeladoI
                     }
                 })
-
-                /*if (response1.data.estado != 1){
-                    setTituloModal('Error')
-                    setMensajeModal('El usuario ha sido deshabilitado.')
-                    setVisible(true)
-
-                    empleadoActual.contador = 0
-                    let nuevos = {...empleados}
-                    nuevos = empleados.filter((empleado)=> empleado.id != empleadoActual.id)
-                    nuevos.push(empleadoActual)
-
-                }else*/
                 console.log(fechaActual, response1.data.fechaBloqueo)
                 if (fechaActual < response1.data.fechaBloqueo){
                     setTituloModal('Error')
-                    setMensajeModal('Sigue jodido.')
+                    setMensajeModal('El usuario ha sido deshabilitado')
                     setVisible(true)
                 }else
                 
@@ -137,9 +121,7 @@ function MenuLogin () {
                 }
             }
         }
-
-        /*console.log(empleadoActual)
-        console.log(empleados)*/
+        
     }
 
     return (
