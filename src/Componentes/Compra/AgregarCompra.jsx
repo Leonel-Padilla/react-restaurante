@@ -58,26 +58,12 @@ const AgregarCompra = () => {
 
   //
   const agregarAlCarro = ()=>{
-
-    /*if (cantidadInsumo < insumoActual.cantidadMin){
-      activarModal('Error', `La cantidad debe ser menor a ${insumoActual.cantidadMax} y mayor que ${insumoActual.cantidadMin}`)
-      setCantidadInsumo(0)
-    }else if (cantidadInsumo > 999){
-      activarModal('Error', `La cantidad debe ser menor a ${insumoActual.cantidadMax} y mayor que ${insumoActual.cantidadMin} 2222222`)
-      setCantidadInsumo(0)
-    }else{*/
-
-    if (cantidadInsumo < insumoActual.cantidadMin){
-      activarModal('Error', 'asdae')
-    }else if (cantidadInsumo > insumoActual.cantidadMax){
-      activarModal('Error', 'aaaaaa')
-      console.log('Si se paso')
+    //PONER EXPRECIÓN REGULAR PARA EVITAR QUE INGRESE NUMERO NEGATIVOS EN CANTIDAD////////////////////////
+    //PONER EXPRECIÓN REGULAR PARA EVITAR QUE INGRESE NUMERO NEGATIVOS EN PRECIO//////////////////////////
+    if ((parseInt(cantidadInsumo) + parseInt(insumoActual.cantidad)) > parseInt(insumoActual.cantidadMax)){
+      activarModal('Error', `La compra sobrepasa la cantidad máxima de ${insumoActual.cantidadMax}`)
     }
     else{
-
-      console.log(cantidadInsumo, parseInt(insumoActual.cantidadMax))
-      
-
 
       let nuevoCarrito = [...carroInsumos]
       let nuevoInsumo = {...insumoActual, cantidadDeCompra: cantidadInsumo, precioDeCompra: precioInsumo}
@@ -102,17 +88,24 @@ const AgregarCompra = () => {
 
   //
   const editarCompra = ()=>{
-    let nuevoCarro = [...carroInsumos]
 
-    if (nuevoCarro.find(insumo => insumo.insumoNombre == insumoActual.insumoNombre)){
-      insumoActual.cantidadDeCompra = cantidadInsumo
-      insumoActual.precioDeCompra   = precioInsumo
+    if ((parseInt(cantidadInsumo) + parseInt(insumoActual.cantidad)) > parseInt(insumoActual.cantidadMax)){
+      activarModal('Error', `La compra sobrepasa la cantidad máxima de ${insumoActual.cantidadMax}`)
+    }
+    else{
+      let nuevoCarro = [...carroInsumos]
+
+      if (nuevoCarro.find(insumo => insumo.insumoNombre == insumoActual.insumoNombre)){
+        insumoActual.cantidadDeCompra = cantidadInsumo
+        insumoActual.precioDeCompra   = precioInsumo
+      }
+  
+      setCarroInsumos(nuevoCarro)
+      setCantidadInsumo(0)
+      setPrecioInsumo(0)
+      setVisible(false)
     }
 
-    setCarroInsumos(nuevoCarro)
-    setCantidadInsumo(0)
-    setPrecioInsumo(0)
-    setVisible(false)
   }
 
   //
@@ -383,6 +376,8 @@ const AgregarCompra = () => {
                             onClick={()=>{
                               activarModal('Editar Compra', '')
                               setInsumoActual(insumo)
+                              setCantidadInsumo(insumo.cantidadDeCompra)
+                              setPrecioInsumo(insumo.precioDeCompra)
                             }}
                             auto>
                               Editar
