@@ -10,6 +10,7 @@ import Sucursal from './Componentes/Sucursal/Sucursal';
 import Cliente from './Componentes/Cliente/Cliente';
 import Insumo from './Componentes/Insumo/Insumo'
 import Mesa from './Componentes/Mesa/Mesa'
+import Compra from './Componentes/Compra/Compra'
 
 
 
@@ -38,6 +39,7 @@ function App() {
           <Route path='/Clientes/*' element={<Cliente></Cliente>}></Route>
           <Route path='/Insumos/*' element={<Insumo></Insumo>}></Route>
           <Route path='/Mesas/*' element={<Mesa></Mesa>}></Route>
+          <Route path='/Compras/*' element={<Compra></Compra>}></Route>
         </Routes>
       </section>
     </div>

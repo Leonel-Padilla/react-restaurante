@@ -133,15 +133,92 @@ label{
 
 
 input[type="date"]{
-  background-color: #5bacfd;
+  /*background-color: #5bacfd;*/
   padding: 5px;
   width: 210px;
   top: 50%;
   left:50%;
   font-family: "Roboto Mono",monospace;
-  color: #ffffff;
+  /*color: #ffffff;*/
   font-size: 18px;
-  border: none;
+  border: 1px solid;
   outline: none;
   border-radius: 5px;
 }
+
+
+/*ESTILOS DE COMPRAS*/
+.layoutCompra{
+  display: grid;
+  grid-template-columns: repeat(2, 50%);
+  grid-template-rows: 110px 500px 100px;
+}
+
+.selectCompra{
+  display: grid;
+  grid-row-start: 1;
+  grid-row-end: 1;
+  grid-column-start: 1;
+  grid-column-end: 3;
+  justify-items: center;
+  grid-template-columns: repeat(5, 20%);
+}
+
+
+.fechasCompra{
+  display: grid;
+  grid-row-start: 3;
+  grid-row-end: 3;
+  grid-column-start: 2;
+  grid-column-end: 2;
+  grid-template-columns: repeat(3, 33%);
+}
+
+.botonesCompra{
+  display: grid;
+  grid-template-columns: repeat(2, 30%);
+  justify-content: space-around;
+  align-content: center;
+}
+
+.listaInsumos{
+  display: grid;
+  grid-column-start: 1;
+  grid-row: 2, 2;
+  margin-right: 2px;
+  grid-template-rows: 45px 455px;
+  overflow-y: scroll;
+
+}
+
+.insumosEnCarro{
+  display: grid;
+  grid-column-start: 2;
+  margin-right: 2px;
+  grid-template-rows: 45px 455px;
+  overflow-y: scroll;
+}
+
+.insumoCompra{
+  display: flex;
+  height: 45px;
+  border: 2px solid rgba(0, 0, 0, 0.3);
+  list-style: none;
+  border-radius: 5px;
+  background-color: rgba(150, 150, 150, 0.1);
+  margin-bottom: 10px;
+  justify-content: center;
+  align-items: center;
+}
+
+.insumoCompra:hover{
+  background-color: rgba(150, 150, 150, 0.2);
+}
+
+.botonesModal{
+  display: flex;
+  justify-content: center;
+
+}
+
+/*ESTILOS DE COMPRAS*/

@@ -7,7 +7,7 @@ import lapizEditar from '../../img/lapiz_editar.png'
 
 
 
-const endPointGetInsumos     = 'http://127.0.0.1:8000/api/Insumo'
+const endPointGetInsumos        = 'http://127.0.0.1:8000/api/Insumo'
 const endPointUpdateInsumos     = 'http://127.0.0.1:8000/api/updateInsumo'
 const endPointGetAllProveedores = 'http://127.0.0.1:8000/api/Proveedor'
 const MostrarInsumo = () =>{
