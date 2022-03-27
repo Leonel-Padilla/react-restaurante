@@ -85,7 +85,7 @@ const AgregarCliente =()=>{
                     placeholder='Juan Perez'
                     onChange={(e)=>setClienteNombre(e.target.value)}
                     type='text'
-                    pattern='[A-Za-z]{3,}'
+                    pattern='[A-Za-z ]{3,}'
                     maxLength={40}
                     title='Solo se aceptan letras, ejem: "Juan"'
                     className='form-control'
