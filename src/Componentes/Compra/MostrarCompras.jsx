@@ -6,11 +6,13 @@ import buscarLupa from '../../img/buscar_lupa.png';
 import lapizEditar from '../../img/lapiz_editar.png'
 
 
-const endPointGetCompras = 'http://127.0.0.1:8000/api/CompraEncabezado'
+const endPointGetCompras    = 'http://127.0.0.1:8000/api/CompraEncabezado'
+const endPointUpdateComrpra = 'http://127.0.0.1:8000/api/updateCompraEncabezado'
 
 const MostrarCompras = ()=> {
 
-  const [compras, setCompras] = useState([])
+  const [compras, setCompras]           = useState([])
+  const [compraActual, setCompraACtual] = useState([])
 
   const [parametroBusqueda, setParametroBusqueda]   = useState('Seleccione')
   const [valorBusqueda, setValorBusqueda]           = useState()
@@ -32,19 +34,61 @@ const MostrarCompras = ()=> {
   }
   //
   const cambioEstado = async ()=>{
+    //console.log(compraActual)
 
+    const response = await axios.put(`${endPointUpdateComrpra}/${compraActual.id}`, {proveedorId: compraActual.proveedorId, 
+        empleadoId: compraActual.empleadoId, fechaSolicitud: compraActual.fechaSolicitud, 
+        fechaEntregaCompra: compraActual.fechaEntregaCompra, fechaPagoCompra: compraActual.fechaPagoCompra, 
+        estadoCompra: compraActual.estadoCompra, numeroFactura: compraActual.numeroFactura, cai: compraActual.cai, 
+        estado: compraActual.estado == 1? 0 : 1})
+
+        //console.log(response.data)
+        getAllCompras()
   }
 
   //
   const getAllCompras = async ()=>{
     const respose = await axios.get(endPointGetCompras)
-    console.log(respose.data)
+    //console.log(respose.data)
     setCompras(respose.data)
   }
 
   //
-  const getByValorBusqueda = async ()=>{
-
+  const getByValorBusqueda = async (e)=>{
+    e.preventDefault()
+    if (parametroBusqueda.includes('Seleccione')){
+        setTituloModal('Error')
+        setMensajeModal('Seleccione un parametro de busqueda.')
+        setVisible(true)
+    }else{
+        if (parametroBusqueda == 'ID'){
+            const response = await axios.get(`${endPointGetCompras}/${valorBusqueda}`)
+            //console.log(response.data)
+            
+            if (response.status != 200){
+                setTituloModal('Error')
+                setMensajeModal(response.data.Error)
+                setVisible(true)
+            }else{
+                const array = [response.data]
+                setCompras(array)
+            }
+            
+        }else{
+            /*const response = await axios.get(`${endPointGet}N/${valorBusqueda}`)
+            console.log(response.data)
+            
+            const array = response.data
+    
+            if (array.length < 1){
+                setTituloModal('Error')
+                setMensajeModal('No hay clientes con el nombre que ingresó.')
+                setVisible(true)
+            }else{
+                setClientes(array)
+            }*/
+        }
+    }
   }
 
   return (
@@ -64,7 +108,31 @@ const MostrarCompras = ()=> {
                 </Text>
             </Modal.Header>
             <Modal.Body>
-                {mensajeModal}
+                {tituloModal.includes('Error')?     //IF ERROR
+                mensajeModal
+                :                                   //ELSE ELMINAR
+                <div>
+                    {mensajeModal}
+
+                    <div className='d-flex mt-3'>
+                        <Button
+                        className='me-3 ms-5'
+                        auto>
+                            Cancelar
+                        </Button>
+
+                        <Button
+                        className='ms-5'
+                        auto
+                        onClick={()=>{
+                            cambioEstado()
+                            setVisible(false)
+                            }}>
+                            Cambiar
+                        </Button>
+                        </div>
+                </div>
+                }
             </Modal.Body>
 
         </Modal>
@@ -80,9 +148,10 @@ const MostrarCompras = ()=> {
             onChange={(e)=>setParametroBusqueda(e.target.value)}>
                 <option>Seleccione tipo busqueda</option>
                 <option>ID</option>
-                <option>Nombre</option>
+                <option>Otro parametro</option>
             </select>
 
+             {/*Formulario de busqueda*/}   
             <form 
             className='d-flex align-self-center' 
             style={{left: '300px'}} 
@@ -134,6 +203,7 @@ const MostrarCompras = ()=> {
             </Button>
         </div>
 
+
         {/*---------Tabla de compras*/}
         <table className='table mt-2'> 
             <thead className='bg-dark text-white'> 
@@ -169,7 +239,18 @@ const MostrarCompras = ()=> {
                                     >Editar
                                 </Button>
 
-                                <Tooltip
+                                <Button 
+                                light
+                                shadow
+                                children={compra.estado == 1 ? 'Deshabilitar' : 'Habilitar'}
+                                color={'secondary'}
+                                onClick={()=>{
+                                    setCompraACtual(compra)
+                                    activarModal('Cambiar', `¿Seguro que desea ${compra.estado == 1 ? 'deshabilitar' : 'habilitar'} este registro?`)
+                                }}
+                                ></Button>
+
+                                {/* <Tooltip
                                 placement='left'
                                 initialVisible={false}
                                 trigger='hover' 
@@ -197,7 +278,7 @@ const MostrarCompras = ()=> {
                                     ></Button>
 
                                     
-                                </Tooltip>
+                                </Tooltip> */}
 
                             </td>
                         </tr>

@@ -137,7 +137,7 @@ const AgregarCompra = () => {
       setPrecioInsumo(0)
       setCantidadInsumo(0)
       activarModal('Error', `La compra sobrepasa la cantidad máxima de ${insumoActual.cantidadMax}.`)
-    }else if(parseInt(cantidadInsumo) < 100 || parseInt(cantidadInsumo) > 50000){
+    }else if(parseInt(precioInsumo) < 100 || parseInt(precioInsumo) > 50000){
       setPrecioInsumo(0)
       setCantidadInsumo(0)
       activarModal('Error', `El precio no debe ser menor a 100 ni mayor a 50,000.`)
@@ -170,10 +170,10 @@ const AgregarCompra = () => {
       formatearProveedorId()
       formatearEmpleadoId()
 
-      const response = await axios.post(endPointSaveCompraEncabezado, {proveedorId: idProveedor, fechaSolicitud: fechaSolicitud,
-        fechaEntregaCompra: fechaEntrega, fechaPagoCompra: fechaPago, estadoCompra: compraEstado, numeroFactura: numeroFactura,
-        cai: cai, estado: 1})
-      console.log(response.data)  
+      const response = await axios.post(endPointSaveCompraEncabezado, {proveedorId: idProveedor, empleadoId: idEmpleado,
+        fechaSolicitud: fechaSolicitud, fechaEntregaCompra: fechaEntrega, fechaPagoCompra: fechaPago, estadoCompra: compraEstado,
+        numeroFactura: numeroFactura, cai: cai, estado: 1})
+      //console.log(response.data)  
     
       if (response.status != 200){
         activarModal('Error', `${response.data.Error}`)
@@ -194,7 +194,7 @@ const AgregarCompra = () => {
       const response1 = await axios.post(endPointSaveCompraDetalle, {insumoId: insumoEnCarro.id, compraEncabezadoId: encabezadoActual,
       precio: insumoEnCarro.precioDeCompra, cantidad: insumoEnCarro.cantidadDeCompra, estado:1})
 
-      console.log(response1.data)
+      //console.log(response1.data)
     })
 
     cambiosEnInventario()
@@ -202,7 +202,7 @@ const AgregarCompra = () => {
   
   //
   const cambiosEnInventario = async ()=>{
-    console.log('------------Inventario----------')
+    //console.log('------------Inventario----------')
 
     
     carroInsumos.map(async (insumoEnCarro)=>{
@@ -213,8 +213,10 @@ const AgregarCompra = () => {
         insumoNombre: insumoEnCarro.insumoNombre, insumoDescripcion: insumoEnCarro.insumoDescripcion, 
         cantidad: cantidadFinal, cantidadMin: insumoEnCarro.cantidadMin,
         cantidadMax: insumoEnCarro.cantidadMax, estado: insumoEnCarro.estado})
-        console.log(response.data)
+        //console.log(response.data)
     })
+
+    navigate('/Compras')
   }
 
   return (

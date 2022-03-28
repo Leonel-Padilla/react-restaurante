@@ -75,7 +75,7 @@ function MenuLogin () {
                         empleadoActual = empeladoI
                     }
                 })
-                console.log(fechaActual, response1.data.fechaBloqueo)
+                //console.log(fechaActual, response1.data.fechaBloqueo)
                 if (fechaActual < response1.data.fechaBloqueo){
                     setTituloModal('Error')
                     setMensajeModal('El usuario ha sido deshabilitado')
