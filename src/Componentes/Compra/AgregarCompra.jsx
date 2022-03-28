@@ -4,25 +4,34 @@ import axios from 'axios'
 import { Navigate, useNavigate } from 'react-router-dom'
 
 
-const endPointGelAllInsunmos    = 'http://127.0.0.1:8000/api/Insumo'
-const endPointGelAllEmpleado    = 'http://127.0.0.1:8000/api/Empleado'
-const endPointGelAllProveedores = 'http://127.0.0.1:8000/api/Proveedor'
+const endPointGetInsunmos           = 'http://127.0.0.1:8000/api/Insumo'
+const endPointGetAllEmpleado        = 'http://127.0.0.1:8000/api/Empleado'
+const endPointGetAllProveedores     = 'http://127.0.0.1:8000/api/Proveedor'
+const endPointSaveCompraEncabezado  = 'http://127.0.0.1:8000/api/addCompraEncabezado'
+const endPointSaveCompraDetalle     = 'http://127.0.0.1:8000/api/addCompraDetalle'
+const endPointGetCompraEncabezado   = 'http://127.0.0.1:8000/api/CompraEncabezado'
+const endPointUpdateInsumo          = 'http://127.0.0.1:8000/api/updateInsumo'
+
 const AgregarCompra = () => {
-  const [insumos, setInsumos]               = useState([])
-  const [carroInsumos, setCarroInsumos]     = useState([])
-  const [insumoActual, setInsumoActual]     = useState({})
-  const [cantidadInsumo, setCantidadInsumo] = useState(0)
-  const [precioInsumo, setPrecioInsumo] = useState(0)
-  const [empleados, setEmpleados]           = useState([])
-  const [proveedores, setProveedores]       = useState([])
+  const [insumos, setInsumos]                   = useState([])
+  const [carroInsumos, setCarroInsumos]         = useState([])
+  const [insumoActual, setInsumoActual]         = useState({})
+  const [cantidadInsumo, setCantidadInsumo]     = useState(0)
+  const [precioInsumo, setPrecioInsumo]         = useState(0)
+  const [empleados, setEmpleados]               = useState([])
+  const [proveedores, setProveedores]           = useState([])
   
 
   const [empleadoId, setEmpleadoId]         = useState('Seleccione')
-  let idEmpleado                            = ''
+  let   idEmpleado                          = ''
   const [compraEstado, setCompraEstado]     = useState('Seleccione')
   const [cai, setCai]                       = useState('')
   const [numeroFactura, setNUmeroFactura]   = useState('')
-  const [proveedorId, setProveedorId]       = useState()
+  const [proveedorId, setProveedorId]       = useState('Seleccione')
+  let   idProveedor                         = ''
+  const [fechaSolicitud, setFechaSolicitud] = useState()
+  const [fechaEntrega, setFechaEntrega]     = useState()
+  const [fechaPago, setFechaPago]           = useState()
 
   const [mensajeModal, setMensajeModal]   = useState('')
   const [tituloModal, setTituloModal]     = useState('')
@@ -30,40 +39,75 @@ const AgregarCompra = () => {
   const navigate                          = useNavigate()
 
   useEffect(()=>{
-    getAllInsumos()
     getAllEmpleados()
     getAllProveedores()
   }, [])
 
   //
-  const getAllInsumos = async ()=>{
-    const response = await axios.get(endPointGelAllInsunmos)
-    setInsumos(response.data)
+  const getInsumos = async ()=>{
+
+    if (proveedorId.includes('Seleccione')){
+      activarModal('Error', 'Debe de seleccionar un proveedor para realizar una compra.')
+    }else{
+      formatearProveedorId()
+
+      const response = await axios.get(`${endPointGetInsunmos}P/${idProveedor}`)
+      setInsumos(response.data)
+  
+      setCarroInsumos([])
+    }
+
   }
   //
   const getAllEmpleados = async ()=>{
-    const response = await axios.get(endPointGelAllEmpleado)
+    const response = await axios.get(endPointGetAllEmpleado)
     setEmpleados(response.data)
   }
   //
   const getAllProveedores = async()=>{
-    const response = await axios.get(endPointGelAllProveedores)
+    const response = await axios.get(endPointGetAllProveedores)
     setProveedores(response.data)
   }
+  //
   const activarModal = (titulo, mensajeModal)=>{
     setTituloModal(titulo)
     setMensajeModal(mensajeModal)
     setVisible(true)
+  }
+  //
+  const formatearProveedorId = ()=>{
+    proveedores.map((proveedor)=>{
+      if (proveedor.proveedorNombre == proveedorId){
+        idProveedor = proveedor.id
+
+        //console.log(`${idProveedor} ${proveedor.id}`)
+      }
+    })
+  }
+  //
+  const formatearEmpleadoId = ()=>{
+    empleados.map((empleado)=>{
+      if (empleado.empleadoNombre == empleadoId){
+        idEmpleado = empleado.id
+      }
+    })
   }
 
   //
   const agregarAlCarro = ()=>{
     //PONER EXPRECIÓN REGULAR PARA EVITAR QUE INGRESE NUMERO NEGATIVOS EN CANTIDAD////////////////////////
     //PONER EXPRECIÓN REGULAR PARA EVITAR QUE INGRESE NUMERO NEGATIVOS EN PRECIO//////////////////////////
+
+
     if ((parseInt(cantidadInsumo) + parseInt(insumoActual.cantidad)) > parseInt(insumoActual.cantidadMax)){
-      activarModal('Error', `La compra sobrepasa la cantidad máxima de ${insumoActual.cantidadMax}`)
-    }
-    else{
+      setPrecioInsumo(0)
+      setCantidadInsumo(0)
+      activarModal('Error', `La compra sobrepasa la cantidad máxima de ${insumoActual.cantidadMax}.`)
+    }else if(parseInt(precioInsumo) < 100 || parseInt(precioInsumo) > 50000){
+      setPrecioInsumo(0)
+      setCantidadInsumo(0)
+      activarModal('Error', `El precio no debe ser menor a 100 ni mayor a 50,000.`)
+    }else{
 
       let nuevoCarrito = [...carroInsumos]
       let nuevoInsumo = {...insumoActual, cantidadDeCompra: cantidadInsumo, precioDeCompra: precioInsumo}
@@ -88,11 +132,16 @@ const AgregarCompra = () => {
 
   //
   const editarCompra = ()=>{
-
+    
     if ((parseInt(cantidadInsumo) + parseInt(insumoActual.cantidad)) > parseInt(insumoActual.cantidadMax)){
-      activarModal('Error', `La compra sobrepasa la cantidad máxima de ${insumoActual.cantidadMax}`)
-    }
-    else{
+      setPrecioInsumo(0)
+      setCantidadInsumo(0)
+      activarModal('Error', `La compra sobrepasa la cantidad máxima de ${insumoActual.cantidadMax}.`)
+    }else if(parseInt(cantidadInsumo) < 100 || parseInt(cantidadInsumo) > 50000){
+      setPrecioInsumo(0)
+      setCantidadInsumo(0)
+      activarModal('Error', `El precio no debe ser menor a 100 ni mayor a 50,000.`)
+    }else{
       let nuevoCarro = [...carroInsumos]
 
       if (nuevoCarro.find(insumo => insumo.insumoNombre == insumoActual.insumoNombre)){
@@ -108,9 +157,64 @@ const AgregarCompra = () => {
 
   }
 
-  //
-  const registrar = async ()=>{
 
+  //
+  const registrarEncabezado = async ()=>{
+
+    if (empleadoId.includes('Seleccione')){
+      activarModal('Error','Debe seleccionar un empleado y estado de compra.')
+    }else if(carroInsumos.length < 1){
+      activarModal('Error', 'El carrito de compras está vacío.')
+    }
+    else{
+      formatearProveedorId()
+      formatearEmpleadoId()
+
+      const response = await axios.post(endPointSaveCompraEncabezado, {proveedorId: idProveedor, fechaSolicitud: fechaSolicitud,
+        fechaEntregaCompra: fechaEntrega, fechaPagoCompra: fechaPago, estadoCompra: compraEstado, numeroFactura: numeroFactura,
+        cai: cai, estado: 1})
+      console.log(response.data)  
+    
+      if (response.status != 200){
+        activarModal('Error', `${response.data.Error}`)
+      }else{
+        registrarDetalles()
+      }
+
+    }
+  }
+
+  //
+  const registrarDetalles =  async ()=>{
+    const response = await axios.get(`${endPointGetCompraEncabezado}P/${idProveedor}`)
+    const encabezadoActual =  response.data[response.data.length - 1].id
+    
+
+    carroInsumos.map(async(insumoEnCarro)=>{
+      const response1 = await axios.post(endPointSaveCompraDetalle, {insumoId: insumoEnCarro.id, compraEncabezadoId: encabezadoActual,
+      precio: insumoEnCarro.precioDeCompra, cantidad: insumoEnCarro.cantidadDeCompra, estado:1})
+
+      console.log(response1.data)
+    })
+
+    cambiosEnInventario()
+  }
+  
+  //
+  const cambiosEnInventario = async ()=>{
+    console.log('------------Inventario----------')
+
+    
+    carroInsumos.map(async (insumoEnCarro)=>{
+      const cantidadFinal = (parseInt(insumoEnCarro.cantidad) + parseInt(insumoEnCarro.cantidadDeCompra))
+      //console.log(cantidadFinal)
+
+      const response = await axios.put(`${endPointUpdateInsumo}/${insumoEnCarro.id}`, {proveedorId: insumoEnCarro.proveedorId, 
+        insumoNombre: insumoEnCarro.insumoNombre, insumoDescripcion: insumoEnCarro.insumoDescripcion, 
+        cantidad: cantidadFinal, cantidadMin: insumoEnCarro.cantidadMin,
+        cantidadMax: insumoEnCarro.cantidadMax, estado: insumoEnCarro.estado})
+        console.log(response.data)
+    })
   }
 
   return (
@@ -238,18 +342,26 @@ const AgregarCompra = () => {
 
             <div className='layoutCompra'>
 
-              {/*Select de las compras*/}
+              {/*Select e inputs de la compra*/}
               <div className='selectCompra'>
                 
-              <div className='atributo'>
+                <div className='atributo'>
                   <label>Proveedor</label>
                   <select
                   value={proveedorId}
                   onChange={(e)=>setProveedorId(e.target.value)}
                   className='select'> 
-                      <option>Seleccione el Empleado</option>
+                      <option>Seleccione un Proveedor</option>
                       {proveedores.map((proveedor)=> <option key={proveedor.id}>{proveedor.proveedorNombre}</option>)}
                   </select>
+
+                  <Button 
+                  color={'gradient'}
+                  ghost
+                  size={'xs'}
+                  onClick={()=>getInsumos()}>
+                    Buscar
+                  </Button>
                 </div>
 
                 <div className='atributo'>
@@ -392,7 +504,6 @@ const AgregarCompra = () => {
               </div>
 
               {/*Botones de la compra*/}
-
               <div className='botonesCompra'>                
               <Button
                 auto
@@ -405,27 +516,35 @@ const AgregarCompra = () => {
                 <Button
                 auto
                 color={'gradient'}
-                ghost>
+                ghost
+                onClick={()=>registrarEncabezado()}>
                   Guardar
                 </Button>
               </div>
               
+
               {/*Fechas de la compra*/}
               <div className='fechasCompra'>
                 
                 <div className='atributo'>
                   <label>Fecha Solicitud</label> 
-                  <input type="date" />
+                  <input type="date" 
+                  onChange={(e)=>setFechaSolicitud(e.target.value)}
+                  />
                 </div>
 
                 <div className='atributo'>
                   <label>Fecha Entrega</label>
-                  <input type="date" />
+                  <input type="date" 
+                  onChange={(e)=>setFechaEntrega(e.target.value)}
+                  />
                 </div>
 
                 <div className='atributo'>
                   <label>Fecha Pago</label>
-                  <input type="date" />
+                  <input type="date"
+                  onChange={(e)=>setFechaPago(e.target.value)}
+                  />
                 </div>
 
               </div>
@@ -436,4 +555,5 @@ const AgregarCompra = () => {
 }
 
 export default AgregarCompra
+
 

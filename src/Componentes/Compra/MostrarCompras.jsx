@@ -6,7 +6,7 @@ import buscarLupa from '../../img/buscar_lupa.png';
 import lapizEditar from '../../img/lapiz_editar.png'
 
 
-const endPointGetCompras = ''
+const endPointGetCompras = 'http://127.0.0.1:8000/api/CompraEncabezado'
 
 const MostrarCompras = ()=> {
 
@@ -37,8 +37,9 @@ const MostrarCompras = ()=> {
 
   //
   const getAllCompras = async ()=>{
-    
-
+    const respose = await axios.get(endPointGetCompras)
+    console.log(respose.data)
+    setCompras(respose.data)
   }
 
   //
@@ -153,13 +154,18 @@ const MostrarCompras = ()=> {
                         
                         <tr key={compra.id}>
                             <td>{compra.id}</td>
+                            <td>Empleado</td>
+                            <td>{compra.fechaSolicitud}</td>
+                            <td>{compra.fechaEntregaCompra}</td>
+                            <td>{compra.fechaPagoCompra}</td>
+                            <td>{compra.estadoCompra}</td>
                             <td>{compra.estado == 1 ? 'Habilitado' : 'Deshabilitado'}</td>
                             <td>
                                 <Button
                                 className='mb-1'
                                 color={'gradient'}
                                 iconRight={<img src={lapizEditar}/>}
-                                onClick={()=>navigate(`/Compras/updateMesa/${compra.id}`)}
+                                onClick={()=>navigate(`/Compras/updateCompra/${compra.id}`)}
                                     >Editar
                                 </Button>
 
