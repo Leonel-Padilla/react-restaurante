@@ -103,6 +103,25 @@ function Sidebar () {
                     <Button light color={'default'} onClick={()=>navigate('/Compras/addCompra')}className="text-white">
                         Registrar Compras</Button>
                 </Collapse>
+                <Collapse 
+                title = {<Text h6 className="text-white">Producto</Text>}
+                contentLeft={
+                <Avatar size="md" squared icon={<img src={Sucursal}/>} />}>
+                    <Button light color={'default'} onClick={()=>navigate('/Productos')} className="text-white"> 
+                        Mostrar Compras</Button>
+                    <Button light color={'default'} onClick={()=>navigate('/Productos/addProducto')}className="text-white">
+                        Registrar Compras</Button>
+                </Collapse>
+                <Collapse 
+                title = {<Text h6 className="text-white">Comentario</Text>}
+                contentLeft={
+                <Avatar size="md" squared icon={<img src={Sucursal}/>} />}>
+                    <Button light color={'default'} onClick={()=>navigate('/Comentarios')} className="text-white"> 
+                        Mostrar Compras</Button>
+                    <Button light color={'default'} onClick={()=>navigate('/Comentarios/addComentario')}className="text-white">
+                        Registrar Compras</Button>
+                </Collapse>
+
                 
                 
         </Collapse.Group>

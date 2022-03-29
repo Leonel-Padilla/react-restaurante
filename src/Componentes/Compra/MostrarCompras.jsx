@@ -8,23 +8,27 @@ import lapizEditar from '../../img/lapiz_editar.png'
 
 const endPointGetCompras    = 'http://127.0.0.1:8000/api/CompraEncabezado'
 const endPointUpdateComrpra = 'http://127.0.0.1:8000/api/updateCompraEncabezado'
+const endPointGetEmpleados  = 'http://127.0.0.1:8000/api/Empleado'
 
 const MostrarCompras = ()=> {
 
   const [compras, setCompras]           = useState([])
   const [compraActual, setCompraACtual] = useState([])
+  const [empleados, setEmpleados]       = useState([])
+  let   nombreEmpleado                  = ''
 
   const [parametroBusqueda, setParametroBusqueda]   = useState('Seleccione')
-  const [valorBusqueda, setValorBusqueda]           = useState()
+  const [valorBusqueda, setValorBusqueda]           = useState('Seleccione')
   
   const [mensajeModal, setMensajeModal]   = useState('')
   const [tituloModal, setTituloModal]     = useState('')
   const [visible, setVisible]             = useState(false)
   const navigate                          = useNavigate()
 
-  useEffect(()=>[
+  useEffect(()=>{
     getAllCompras()
-  ],[])
+    getAllEmpleados()
+  },[])
 
   //
   const activarModal = (titulo, mensajeModal)=>{
@@ -52,43 +56,54 @@ const MostrarCompras = ()=> {
     //console.log(respose.data)
     setCompras(respose.data)
   }
-
+  //
+  const getAllEmpleados = async ()=>{
+    const response = await axios.get(endPointGetEmpleados)
+    setEmpleados(response.data)
+  }
   //
   const getByValorBusqueda = async (e)=>{
     e.preventDefault()
     if (parametroBusqueda.includes('Seleccione')){
-        setTituloModal('Error')
-        setMensajeModal('Seleccione un parametro de busqueda.')
-        setVisible(true)
+        activarModal('Error','Seleccione un parametro de busqueda.' )
+
     }else{
+
         if (parametroBusqueda == 'ID'){
             const response = await axios.get(`${endPointGetCompras}/${valorBusqueda}`)
-            //console.log(response.data)
-            
+        
             if (response.status != 200){
-                setTituloModal('Error')
-                setMensajeModal(response.data.Error)
-                setVisible(true)
+                activarModal('Error', response.data.Error)
             }else{
                 const array = [response.data]
                 setCompras(array)
             }
             
         }else{
-            /*const response = await axios.get(`${endPointGet}N/${valorBusqueda}`)
-            console.log(response.data)
-            
-            const array = response.data
-    
-            if (array.length < 1){
-                setTituloModal('Error')
-                setMensajeModal('No hay clientes con el nombre que ingresó.')
-                setVisible(true)
+
+            if (valorBusqueda.includes('Seleccione')){
+                activarModal('Error', 'Debe seleccionar un estado de busqueda.')
             }else{
-                setClientes(array)
-            }*/
+                const response = await axios.get(`${endPointGetCompras}E/${valorBusqueda}`)
+                
+                const array = response.data
+        
+                if (array.length < 1){
+                    activarModal('Error', 'No hay compras con ese estado.')
+                }else{
+                    setCompras(array)
+                }
+            }
         }
     }
+  }
+
+  const formatearIdEmpleado = (idEmpleado)=>{
+    empleados.map((empleado)=>{
+        if(empleado.id == idEmpleado){
+            nombreEmpleado = empleado.empleadoNombre 
+        }
+    })
   }
 
   return (
@@ -110,7 +125,7 @@ const MostrarCompras = ()=> {
             <Modal.Body>
                 {tituloModal.includes('Error')?     //IF ERROR
                 mensajeModal
-                :                                   //ELSE ELMINAR
+                :                                   //ELSE ELIMINAR
                 <div>
                     {mensajeModal}
 
@@ -130,7 +145,7 @@ const MostrarCompras = ()=> {
                             }}>
                             Cambiar
                         </Button>
-                        </div>
+                    </div>
                 </div>
                 }
             </Modal.Body>
@@ -148,7 +163,7 @@ const MostrarCompras = ()=> {
             onChange={(e)=>setParametroBusqueda(e.target.value)}>
                 <option>Seleccione tipo busqueda</option>
                 <option>ID</option>
-                <option>Otro parametro</option>
+                <option>Estado</option>
             </select>
 
              {/*Formulario de busqueda*/}   
@@ -157,14 +172,25 @@ const MostrarCompras = ()=> {
             style={{left: '300px'}} 
             onSubmit={getByValorBusqueda}
             >
-                <input
-                placeholder={parametroBusqueda.includes('Seleccione')? '': `${parametroBusqueda}`}
-                aria-label='aria-describedby'
-                onChange={(e)=>setValorBusqueda(e.target.value)}
-                type={parametroBusqueda == 'ID'? 'number':'text'}
-                className='form-control'
-                required={true}
-                />
+                {
+                    parametroBusqueda != 'Estado'?
+                    <input
+                    placeholder={parametroBusqueda.includes('Seleccione')? '': `${parametroBusqueda}`}
+                    aria-label='aria-describedby'
+                    onChange={(e)=>setValorBusqueda(e.target.value)}
+                    type={parametroBusqueda == 'ID'? 'number':'text'}
+                    className='form-control'
+                    required={true}
+                    />
+                    : 
+                    <select className='select'
+                    onChange={(e)=>setValorBusqueda(e.target.value)}>
+                        <option>Seleccione un estado</option>
+                        <option>Recibida</option>
+                        <option>Pendiente</option>
+                    </select>
+                }
+
                 <Button
                 auto
                 className='ms-2'
@@ -220,11 +246,14 @@ const MostrarCompras = ()=> {
             </thead>
 
             <tbody>
-                {compras.map(compra => 
-                        
+                {compras.map(compra =>{
+
+                        formatearIdEmpleado(compra.empleadoId)
+                        return(
+
                         <tr key={compra.id}>
                             <td>{compra.id}</td>
-                            <td>Empleado</td>
+                            <td>{nombreEmpleado}</td>
                             <td>{compra.fechaSolicitud}</td>
                             <td>{compra.fechaEntregaCompra}</td>
                             <td>{compra.fechaPagoCompra}</td>
@@ -281,8 +310,8 @@ const MostrarCompras = ()=> {
                                 </Tooltip> */}
 
                             </td>
-                        </tr>
-                    )}
+                        </tr>)
+                    })}
                 </tbody>
             </table>
 

@@ -161,7 +161,7 @@ const AgregarCompra = () => {
   //
   const registrarEncabezado = async ()=>{
 
-    if (empleadoId.includes('Seleccione')){
+    if (empleadoId.includes('Seleccione') || compraEstado.includes('Seleccione')){
       activarModal('Error','Debe seleccionar un empleado y estado de compra.')
     }else if(carroInsumos.length < 1){
       activarModal('Error', 'El carrito de compras está vacío.')
@@ -201,10 +201,7 @@ const AgregarCompra = () => {
   }
   
   //
-  const cambiosEnInventario = async ()=>{
-    //console.log('------------Inventario----------')
-
-    
+  const cambiosEnInventario = async ()=>{    
     carroInsumos.map(async (insumoEnCarro)=>{
       const cantidadFinal = (parseInt(insumoEnCarro.cantidad) + parseInt(insumoEnCarro.cantidadDeCompra))
       //console.log(cantidadFinal)
@@ -397,7 +394,6 @@ const AgregarCompra = () => {
                   onChange={(e)=>setCai(e.target.value)}
                   type='text'
                   maxLength={50}
-                  //pattern='^(?=\w*\d)(?=\w*[A-Z])(?=\w*[a-z])\S{5,16}$'
                   className='form-control'
                   />
                 </div>
@@ -409,7 +405,6 @@ const AgregarCompra = () => {
                  onChange={(e)=>setNUmeroFactura(e.target.value)}
                  type='text'
                  maxLength={50}
-                 //pattern='^(?=\w*\d)(?=\w*[A-Z])(?=\w*[a-z])\S{5,16}$'
                  className='form-control'
                  />
                 </div>

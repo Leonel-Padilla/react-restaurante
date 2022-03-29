@@ -222,3 +222,12 @@ input[type="date"]{
 }
 
 /*ESTILOS DE COMPRAS*/
+
+/*Estilos Producto Inusmo*/
+
+.contenedorInsumos{
+  display: grid;
+  grid-template-rows: 500px;
+  grid-template-columns: repeat(2, 50%);
+  background-color: red;
+}

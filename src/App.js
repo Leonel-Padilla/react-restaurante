@@ -11,6 +11,8 @@ import Cliente from './Componentes/Cliente/Cliente';
 import Insumo from './Componentes/Insumo/Insumo'
 import Mesa from './Componentes/Mesa/Mesa'
 import Compra from './Componentes/Compra/Compra'
+import Comentario from './Componentes/Comentario/Comentario';
+import Producto from './Componentes/Producto/Producto';
 
 
 
@@ -20,14 +22,6 @@ function App() {
   return (
 
     <div>
-      
-      {/*<div className='d-flex'>
-        <Button onClick={()=>navigate('/Empleados')}>Empleado</Button>
-        <Button onClick={()=>navigate('/Proveedores')}>Proveedor</Button>
-        <Button onClick={()=>navigate('/Cargos')}>Cargo</Button>
-        <Button onClick={()=>navigate('/MenuPrincipal')}>Menu</Button>
-  </div>  */}
-
       <section>
         <Routes>
           <Route path='/' element={<MenuLogin></MenuLogin>}></Route>
@@ -40,6 +34,8 @@ function App() {
           <Route path='/Insumos/*' element={<Insumo></Insumo>}></Route>
           <Route path='/Mesas/*' element={<Mesa></Mesa>}></Route>
           <Route path='/Compras/*' element={<Compra></Compra>}></Route>
+          <Route path='/Comentarios/*' element={<Comentario></Comentario>}></Route>
+          <Route path='/Productos/*' element={<Producto></Producto>}></Route>
         </Routes>
       </section>
     </div>
