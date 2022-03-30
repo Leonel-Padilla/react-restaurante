@@ -188,7 +188,6 @@ input[type="date"]{
   margin-right: 2px;
   grid-template-rows: 45px 455px;
   overflow-y: scroll;
-
 }
 
 .insumosEnCarro{
@@ -228,6 +227,30 @@ input[type="date"]{
 .contenedorInsumos{
   display: grid;
   grid-template-rows: 500px;
-  grid-template-columns: repeat(2, 50%);
-  background-color: red;
+  grid-template-columns: repeat(2, 20%);
+  justify-content: center;
+}
+
+.productoInsumo{
+  display: flex;
+  height: 45px;
+  border: 2px solid rgba(0, 0, 0, 0.3);
+  border-radius: 5px;
+  background-color: rgba(150, 150, 150, 0.1);
+  margin-bottom: 10px;
+  justify-content: center;
+  align-items: center;
+}
+
+.productoInsumo:hover{
+  background-color: rgba(150, 150, 150, 0.2);
+}
+
+.insumoDePorducto{
+  overflow-y: scroll;
+}
+
+.botones{
+  display: flex;
+  justify-content: center;
 }
