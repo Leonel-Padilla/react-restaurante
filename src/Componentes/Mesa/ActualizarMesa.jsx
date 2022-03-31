@@ -3,14 +3,86 @@ import React, {useState, useEffect, useRef} from 'react'
 import { Button, Input, Modal, Text} from '@nextui-org/react'
 import axios from "axios";
 
+const endPointGetMesa       = 'http://127.0.0.1:8000/api/Mesa'
+const endPointUpdateMesa    = 'http://127.0.0.1:8000/api/updateMesa'
+const endPointGetSucursal   = 'http://127.0.0.1:8000/api/Sucursal'
 const ActualizarMesa = ()=>{
+
+    const {id}                                      = useParams()
+    const [sucursales, setSucursales]               = useState([])
+    const [sucursalId, setSucursalId]               = useState('Seleccione')
+    let idSucursal                                  = ''
+    const [cantidadAsientos, setCantidadAsientos]   = useState(0)
+    const [mesaEstado, setMesaEstado]               = useState(1)
 
     const navigate = useNavigate()
     const [mensajeModal, setMensajeModal] = useState('')
     const [tituloModal, setTituloModal] = useState('')
     const [visible, setVisible] = useState(false)
+    
 
-    const Actualizar = () =>{
+
+    useEffect(()=>{
+        getMesa()
+        getAllSucursales()
+    }, [])
+
+    //
+    const activarModal = (titulo, mensajeModal)=>{
+        setTituloModal(titulo)
+        setMensajeModal(mensajeModal)
+        setVisible(true)
+    }
+    //
+    const getMesa = async ()=>{
+        const response = await axios.get(`${endPointGetMesa}/${id}`)
+
+        const response1 = await axios.get(`${endPointGetSucursal}/${response.data.sucursalId}`)
+
+        setCantidadAsientos(response.data.cantidadAsientos)
+        setSucursalId(response1.data.sucursalNombre)
+        setMesaEstado(response.data.estado)
+    }
+
+    //
+    const getAllSucursales = async ()=>{
+        const response = await axios.get(endPointGetSucursal)
+        setSucursales(response.data)
+
+        //console.log(response.data)
+    }
+
+    //
+    const formatearSucursalId = ()=>{
+        sucursales.map((sucursal)=>{
+            if (sucursal.sucursalNombre == sucursalId){
+                idSucursal = sucursal.id
+            }
+        })
+    }
+
+    //
+    const Actualizar = async (e) =>{
+        e.preventDefault()
+
+        if (sucursalId.includes('Seleccione')){
+            setTituloModal('Error')
+            setMensajeModal('Debe seleccionar una sucursal.')
+            setVisible(true)
+        }else{
+            formatearSucursalId()
+
+            const response = await axios.put(`${endPointUpdateMesa}/${id}`, {sucursalId: idSucursal ,cantidadAsientos: cantidadAsientos,
+            estado: mesaEstado})
+
+            //console.log(response.data)     
+            
+            if (response.status !== 200){
+                activarModal('Error', `${response.data.Error}`)
+            }else{
+                navigate('/Mesas')
+            }
+        }
     }
 
     return (
@@ -45,9 +117,11 @@ const ActualizarMesa = ()=>{
                 <div className='atributo'>
                 <label>Id de sucursales</label>
                 <select
-                //value={cargoActualId}
-                //onChange={(e)=>setCargoActual(e.target.value)}
+                value={sucursalId}
+                onChange={((e)=>setSucursalId(e.target.value))}
                 className='select'> 
+                    <option>Seleccione Sucursal</option>
+                    {sucursales.map((sucursal)=> <option key={sucursal.id}>{sucursal.sucursalNombre}</option>)}
                 </select>
 
                 </div>
@@ -55,9 +129,9 @@ const ActualizarMesa = ()=>{
                     <label>Cantidad de asientos:</label>
                     <input
                     aria-label='aria-describedby'
-                    //value={cargoNombre}
+                    value={cantidadAsientos}
                     placeholder='numeros del 0-9'
-                    //onChange={(e)=>setCargoNombre(e.target.value)}
+                    onChange={(e)=>setCantidadAsientos(e.target.value)}
                     type='text'
                     maxLength={3}
                     pattern='[0-9]{1,}'
@@ -74,8 +148,8 @@ const ActualizarMesa = ()=>{
                     ghost>
                         Regresar
                     </Button>
+
                     <Button
-                    //ref={refButton}
                     auto
                     type='submit'
                     color={'gradient'} 

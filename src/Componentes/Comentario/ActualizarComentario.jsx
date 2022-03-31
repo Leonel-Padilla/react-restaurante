@@ -87,7 +87,7 @@ const ActualizarComentario = () =>{
                 const response = await axios.put(`${endPointUpdateComentario}/${id}`, {sucursalId: idSucursal, descripcion: descripcion, 
                 telCliente: telefonoCliente, correoCliente: correoCliente, estado: estado})
                 
-                console.log(response.data)
+                //console.log(response.data)
 
                 if (response.status !== 200){
                     activarModal('Error', `${response.data.Error}`)

@@ -8,11 +8,12 @@ const endPointGetSucursal   = 'http://127.0.0.1:8000/api/Sucursal'
 const endPointAddMesa       = 'http://127.0.0.1:8000/api/addMesa'
 const AgregarMesa = () =>{
 
+    const [sucursales, setSucursales]               = useState([])
     const [sucursalId, setSucursalId]               = useState('Seleccione')
     let idSucursal                                  = ''
     const [cantidadAsientos, setCantidadAsientos]   = useState(0)
     const [mesaEstado, setMesaEstado]               = useState(1)
-    const [sucursales, setSucursales] = useState([])
+    
 
     const navigate = useNavigate()
     const [mensajeModal, setMensajeModal] = useState('')

@@ -7,44 +7,50 @@ import buscarLupa from '../../img/buscar_lupa.png';
 import lapizEditar from '../../img/lapiz_editar.png'
 
 
-const endPoint = 'http://127.0.0.1:8000/api/Cargo'
-const endPointUpdate = 'http://127.0.0.1:8000/api/updateCargo'
-const endPointGet = 'http://127.0.0.1:8000/api/Cargo'
+const endPoint          = 'http://127.0.0.1:8000/api/Cargo'
+const endPointUpdate    = 'http://127.0.0.1:8000/api/updateCargo'
+const endPointGet       = 'http://127.0.0.1:8000/api/Cargo'
 
 
 function MostrarCargos() {
 
   const [cargos, setCargos]                         = useState([])
+  const [cargoActual, setCargoActual]               = useState()
   const navigate                                    = useNavigate()
   const [parametroBusqueda, setParametroBusqueda]   = useState('Seleccione')
   const [valorBusqueda, setValorBusqueda]           = useState()
   const [mensajeModal, setMensajeModal]             = useState('')
   const [tituloModal, setTituloModal]               = useState('')
   const [visible, setVisible]                       = useState(false)
-  const [valorTooltip, setValorToolTip]             = useState(false)
   
 
   useEffect(()=>{
-
-    getAllCargos()    
-
+    getAllCargos()
   }, [])
-
-const getAllCargos = async ()=>{
-    
-    const response = await axios.get(endPoint)
-    setCargos(response.data)
-    //console.log(response.data) //DEV
-}
+  
 
 //
-const cambioEstado = async (cargo)=>{
+    const activarModal = (titulo, mensajeModal)=>{
+        setTituloModal(titulo)
+        setMensajeModal(mensajeModal)
+        setVisible(true)
+    }
+//
+    const getAllCargos = async ()=>{
+        
+        const response = await axios.get(endPoint)
+        setCargos(response.data)
+        //console.log(response.data) //DEV
+    }
 
-  await axios.put(`${endPointUpdate}/${cargo.id}`, {cargoNombre: cargo.cargoNombre,
-      cargoDescripcion: cargo.cargoDescripcion, estado: cargo.estado == 1? 0 : 1})
+//
+    const cambioEstado = async (cargo)=>{
 
-      getAllCargos()
-}
+    await axios.put(`${endPointUpdate}/${cargo.id}`, {cargoNombre: cargo.cargoNombre,
+        cargoDescripcion: cargo.cargoDescripcion, estado: cargo.estado == 1? 0 : 1})
+
+        getAllCargos()
+    }
     //
   const getByValorBusqueda = async (e)=>{
       e.preventDefault()
@@ -103,7 +109,33 @@ const cambioEstado = async (cargo)=>{
                 </Text>
             </Modal.Header>
             <Modal.Body>
-                {mensajeModal}
+            {tituloModal.includes('Error')?     //IF ERROR
+                mensajeModal
+                :                                   //ELSE ELIMINAR
+                <div>
+                    {mensajeModal}
+
+                    <div className='d-flex mt-3'>
+                        <Button
+                        className='me-3 ms-5'
+                        auto
+                        onClick={()=>{
+                            setVisible(false)
+                        }}>
+                            Cancelar
+                        </Button>
+
+                        <Button
+                        className='ms-5'
+                        auto
+                        onClick={()=>{
+                            cambioEstado(cargoActual)
+                            setVisible(false)
+                            }}>
+                            Cambiar
+                        </Button>
+                    </div>
+                </div>}
             </Modal.Body>
 
         </Modal>
@@ -199,37 +231,17 @@ const cambioEstado = async (cargo)=>{
                                 onClick={()=>navigate(`/Cargos/updateCargo/${cargo.id}`)}
                                     >Editar
                                 </Button>
-
-                                <Tooltip
-                                placement='left'
-                                initialVisible={false}
-                                trigger='hover' 
-                                visible = {valorTooltip}
-                                content={<div>
-                                            <p>Está seguro que desea cambiar este registro?</p> 
-
-                                            <div style={{display: 'flex'}}>
-                                            <Button 
-                                            auto
-                                            className='bg-dark text-light '
-                                            color={'dark'}
-                                            children={cargo.estado == 1 ? 'Deshabilitar' : 'Habilitar'}
-                                            onClick={()=>cambioEstado(cargo)}>
-                                            </Button>
-
-
-                                            </div>
-                                            
-                                        </div>}>
-                                    <Button 
-                                    light
-                                    shadow
-                                    children={cargo.estado == 1 ? 'Deshabilitar' : 'Habilitar'}
-                                    color={'secondary'}
-                                    ></Button>
-
-                                    
-                                </Tooltip>
+                                
+                                <Button 
+                                light
+                                shadow
+                                children={cargo.estado == 1 ? 'Deshabilitar' : 'Habilitar'}
+                                color={'secondary'}
+                                onClick={()=>{
+                                    setCargoActual(cargo)
+                                    activarModal('Cambiar', `¿Seguro que desea ${cargo.estado == 1 ? 'deshabilitar' : 'habilitar'} este registro?`)
+                                }}
+                                ></Button>
 
                             </td>
                         </tr>

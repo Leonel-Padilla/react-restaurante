@@ -11,6 +11,8 @@ const endPointGet = 'http://127.0.0.1:8000/api/Proveedor'
 
 const MostrarProveedores = ()=>{
     const [proveedores, setProveedores] = useState([])
+    const [proveedorActual, setProveedorActual] = useState()
+
     const navigate = useNavigate()
     const [parametroBusqueda, setParametroBusqueda] = useState('Seleccione')
     const [valorBusqueda, setValorBusqueda] = useState()
@@ -19,16 +21,22 @@ const MostrarProveedores = ()=>{
     const [visible, setVisible] = useState(false)
 
     useEffect(()=>{
-
         getAllProveedores()
-
     }, [])
 
+
+    //
+    const activarModal = (titulo, mensajeModal)=>{
+        setTituloModal(titulo)
+        setMensajeModal(mensajeModal)
+        setVisible(true)
+    }
+    //
     const getAllProveedores = async ()=>{
         const response = await axios.get(endPoint)
         setProveedores(response.data)
     }
-
+    //
     const cambioEstado = async (proveedor)=>{
 
     await axios.put(`${endPointUpdate}/${proveedor.id}`, {proveedorNombre: proveedor.proveedorNombre, 
@@ -39,6 +47,7 @@ const MostrarProveedores = ()=>{
         getAllProveedores()
     }
 
+    //
     const getByValorBusqueda = async (e)=>{
         e.preventDefault()
 
@@ -95,7 +104,33 @@ const MostrarProveedores = ()=>{
                 </Text>
             </Modal.Header>
             <Modal.Body>
-                {mensajeModal}
+            {tituloModal.includes('Error')?     //IF ERROR
+                mensajeModal
+                :                                   //ELSE ELIMINAR
+                <div>
+                    {mensajeModal}
+
+                    <div className='d-flex mt-3'>
+                        <Button
+                        className='me-3 ms-5'
+                        auto
+                        onClick={()=>{
+                            setVisible(false)
+                        }}>
+                            Cancelar
+                        </Button>
+
+                        <Button
+                        className='ms-5'
+                        auto
+                        onClick={()=>{
+                            cambioEstado(proveedorActual)
+                            setVisible(false)
+                            }}>
+                            Cambiar
+                        </Button>
+                    </div>
+                </div>}
             </Modal.Body>
 
         </Modal>
@@ -199,28 +234,16 @@ const MostrarProveedores = ()=>{
                                     >Editar
                                 </Button>
 
-                                <Tooltip
-                                placement='left'
-                                initialVisible={false}
-                                trigger='click' 
-                                content={<div>
-                                            <p>Está seguro que desea cambiar este registro?</p> 
-
-                                            <Button 
-                                            className='bg-dark text-light'
-                                            color={'dark'}
-                                            children={proveedor.estado == 1 ? 'Deshabilitar' : 'Habilitar'}
-                                            onClick={()=>cambioEstado(proveedor)}
-                                            ></Button>
-                                            
-                                        </div>}>
-                                    <Button 
-                                    light
-                                    shadow
-                                    children={proveedor.estado == 1 ? 'Deshabilitar' : 'Habilitar'}
-                                    color={'secondary'}
-                                    ></Button>
-                                </Tooltip>
+                                <Button 
+                                light
+                                shadow
+                                children={proveedor.estado == 1 ? 'Deshabilitar' : 'Habilitar'}
+                                color={'secondary'}
+                                onClick={()=>{
+                                    setProveedorActual(proveedor)
+                                    activarModal('Cambiar', `¿Seguro que desea ${proveedor.estado == 1 ? 'deshabilitar' : 'habilitar'} este registro?`)
+                                }}
+                                ></Button>
 
                             </td>
                         </tr>

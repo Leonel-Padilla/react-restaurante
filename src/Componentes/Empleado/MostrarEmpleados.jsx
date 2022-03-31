@@ -13,6 +13,7 @@ const endPointBuscarTodosDocumentos = 'http://127.0.0.1:8000/api/TipoDocumento'
 
 const MostrarEmpleados = ()=>{
     const [empleados, setEmpleados]                 = useState([])
+    const [empleadoActual, setEmpleadoActual]       = useState()
     const navigate                                  = useNavigate()
     const [todosDocumentos, setTodosDocumentos]     = useState([])
     const [parametroBusqueda, setParametroBusqueda] = useState('Seleccione')
@@ -27,14 +28,20 @@ const MostrarEmpleados = ()=>{
         getAllDocumentos()
     },[])
 
-
+    //
+    const activarModal = (titulo, mensajeModal)=>{
+        setTituloModal(titulo)
+        setMensajeModal(mensajeModal)
+        setVisible(true)
+    }
+    //
     const getAllEmpleados = async ()=>{
     
         const response = await axios.get(endPoint)
         setEmpleados(response.data)
         
     }
-
+    //
     const cambioEstado = async (empleado)=>{
 
         await axios.put(`${endPointUpdate}/${empleado.id}`, {tipoDocumentoId:empleado.tipoDocumentoId,
@@ -46,7 +53,7 @@ const MostrarEmpleados = ()=>{
 
         getAllEmpleados()
     }
-
+    //
     const GetByValorBusqueda = async (e)=>{
         e.preventDefault()
 
@@ -132,7 +139,33 @@ const MostrarEmpleados = ()=>{
                 </Text>
             </Modal.Header>
             <Modal.Body>
-                {mensajeModal}
+            {tituloModal.includes('Error')?     //IF ERROR
+                mensajeModal
+                :                                   //ELSE ELIMINAR
+                <div>
+                    {mensajeModal}
+
+                    <div className='d-flex mt-3'>
+                        <Button
+                        className='me-3 ms-5'
+                        auto
+                        onClick={()=>{
+                            setVisible(false)
+                        }}>
+                            Cancelar
+                        </Button>
+
+                        <Button
+                        className='ms-5'
+                        auto
+                        onClick={()=>{
+                            cambioEstado(empleadoActual)
+                            setVisible(false)
+                            }}>
+                            Cambiar
+                        </Button>
+                    </div>
+                </div>}
             </Modal.Body>
 
         </Modal>
@@ -243,29 +276,17 @@ const MostrarEmpleados = ()=>{
                                 >Editar
                             </Button>
 
-                            <Tooltip
-                            placement='left'
-                            initialVisible={false}
-                            trigger='hover' 
-                            content={<div>
-                                        <p>Está seguro que desea cambiar este registro?</p> 
+                            <Button 
+                            light
+                            shadow
+                            children={empleado.estado == 1 ? 'Deshabilitar' : 'Habilitar'}
+                            color={'secondary'}
+                            onClick={()=>{
+                                setEmpleadoActual(empleado)
+                                activarModal('Cambiar', `¿Seguro que desea ${empleado.estado == 1 ? 'deshabilitar' : 'habilitar'} este registro?`)
+                            }}
+                            ></Button>
 
-                                        <Button 
-                                        auto
-                                        className='bg-dark text-light'
-                                        color={'dark'}
-                                        children={empleado.estado == 1 ? 'Deshabilitar' : 'Habilitar'}
-                                        onClick={()=> cambioEstado(empleado)}
-                                        ></Button>
-                                        
-                                    </div>}>
-                                <Button 
-                                light
-                                shadow
-                                children={empleado.estado == 1 ? 'Deshabilitar' : 'Habilitar'}
-                                color={'secondary'}
-                                ></Button>
-                            </Tooltip>
 
                         </td>
                     </tr>)})}

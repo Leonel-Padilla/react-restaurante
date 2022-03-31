@@ -14,6 +14,7 @@ const endPointGetAllEmpleados   = 'http://127.0.0.1:8000/api/Empleado'
 function MostrarSucursales() { 
 
     const [sucursales, setSucursales]               = useState([])
+    const [sucursalActual, setSucursalActual]       = useState()
     const [empleados, setEmpleados]                 = useState([])
     const navigate                                  = useNavigate()
     const [parametroBusqueda, setParametroBusqueda] = useState('Seleccione')
@@ -31,13 +32,18 @@ function MostrarSucursales() {
     
       }, [])
 
+
+    //
+    const activarModal = (titulo, mensajeModal)=>{
+        setTituloModal(titulo)
+        setMensajeModal(mensajeModal)
+        setVisible(true)
+    }
     //
     const getAllSucursales = async ()=>{
-    
         const response = await axios.get(endPoint)
         setSucursales(response.data)
     }
-
     //
     const cambioEstado = async (sucursal)=>{
 
@@ -120,7 +126,33 @@ function MostrarSucursales() {
                 </Text>
             </Modal.Header>
             <Modal.Body>
-                {mensajeModal}
+            {tituloModal.includes('Error')?     //IF ERROR
+                mensajeModal
+                :                                   //ELSE ELIMINAR
+                <div>
+                    {mensajeModal}
+
+                    <div className='d-flex mt-3'>
+                        <Button
+                        className='me-3 ms-5'
+                        auto
+                        onClick={()=>{
+                            setVisible(false)
+                        }}>
+                            Cancelar
+                        </Button>
+
+                        <Button
+                        className='ms-5'
+                        auto
+                        onClick={()=>{
+                            cambioEstado(sucursalActual)
+                            setVisible(false)
+                            }}>
+                            Cambiar
+                        </Button>
+                    </div>
+                </div>}
             </Modal.Body>
 
         </Modal>
@@ -226,36 +258,16 @@ function MostrarSucursales() {
                                     >Editar
                                 </Button>
 
-                                <Tooltip
-                                placement='left'
-                                initialVisible={false}
-                                trigger='hover' 
-                                visible = {valorTooltip}
-                                content={<div>
-                                            <p>Está seguro que desea cambiar este registro?</p> 
-
-                                            <div style={{display: 'flex'}}>
-                                            <Button 
-                                            auto
-                                            className='bg-dark text-light '
-                                            color={'dark'}
-                                            children={sucursal.estado == 1 ? 'Deshabilitar' : 'Habilitar'}
-                                            onClick={()=>cambioEstado(sucursal)}>
-                                            </Button>
-
-
-                                            </div>
-                                            
-                                        </div>}>
-                                    <Button 
-                                    light
-                                    shadow
-                                    children={sucursal.estado == 1 ? 'Deshabilitar' : 'Habilitar'}
-                                    color={'secondary'}
-                                    ></Button>
-
-                                    
-                                </Tooltip>
+                                <Button 
+                                light
+                                shadow
+                                children={sucursal.estado == 1 ? 'Deshabilitar' : 'Habilitar'}
+                                color={'secondary'}
+                                onClick={()=>{
+                                    setSucursalActual(sucursal)
+                                    activarModal('Cambiar', `¿Seguro que desea ${sucursal.estado == 1 ? 'deshabilitar' : 'habilitar'} este registro?`)
+                                }}
+                                ></Button>
 
                             </td>
                         </tr>

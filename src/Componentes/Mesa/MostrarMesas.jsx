@@ -8,8 +8,8 @@ import lapizEditar from '../../img/lapiz_editar.png'
 
 
 const endPointGetMesas      = 'http://127.0.0.1:8000/api/Mesa'
-const endPointUpdateMesa   = 'http://127.0.0.1:8000/api/updateMesa'
-const endPointGetSucursal      = 'http://127.0.0.1:8000/api/Sucursal'
+const endPointUpdateMesa    = 'http://127.0.0.1:8000/api/updateMesa'
+const endPointGetSucursal   = 'http://127.0.0.1:8000/api/Sucursal'
 
 const MostrarMesas = ()=>{
 
@@ -20,6 +20,7 @@ const MostrarMesas = ()=>{
     let sucursalId                                    = 0 
 
     const [mesas, setMesas]                 = useState([])
+    const [mesaActual, setMesaActual]       = useState()
     const [mensajeModal, setMensajeModal]   = useState('')
     const [tituloModal, setTituloModal]     = useState('')
     const [visible, setVisible]             = useState(false)
@@ -32,6 +33,12 @@ const MostrarMesas = ()=>{
 
 
     //
+    const activarModal = (titulo, mensajeModal)=>{
+        setTituloModal(titulo)
+        setMensajeModal(mensajeModal)
+        setVisible(true)
+    }
+    //
     const getAllMesas = async ()=>{
         const response = await axios.get(endPointGetMesas)
         setMesas(response.data)
@@ -39,9 +46,12 @@ const MostrarMesas = ()=>{
 
     //
     const cambioEstado = async (mesa)=>{
-        await axios.put(`${endPointUpdateMesa}/${mesa.id}`, {sucursalId: mesa.sucursalId, 
+        console.log('HGoaaa')
+        const response = await axios.put(`${endPointUpdateMesa}/${mesa.id}`, {sucursalId: mesa.sucursalId, 
         cantidadAsientos: mesa.cantidadAsientos, estado: mesa.estado == 1? 0 : 1})
-
+        
+        console.log(response.data)
+        
         getAllMesas()
     }
 
@@ -77,7 +87,7 @@ const MostrarMesas = ()=>{
           }else{
             formatearSucursalNombre(valorBusqueda)
             const response = await axios.get(`${endPointGetMesas}N/${sucursalId}`)
-            console.log(response.data)
+            //console.log(response.data)
 
             const array = response.data
 
@@ -126,7 +136,33 @@ const MostrarMesas = ()=>{
                     </Text>
                 </Modal.Header>
                 <Modal.Body>
+                {tituloModal.includes('Error')?     //IF ERROR
+                mensajeModal
+                :                                   //ELSE ELIMINAR
+                <div>
                     {mensajeModal}
+
+                    <div className='d-flex mt-3'>
+                        <Button
+                        className='me-3 ms-5'
+                        auto
+                        onClick={()=>{
+                            setVisible(false)
+                        }}>
+                            Cancelar
+                        </Button>
+
+                        <Button
+                        className='ms-5'
+                        auto
+                        onClick={()=>{
+                            cambioEstado(mesaActual)
+                            setVisible(false)
+                            }}>
+                            Cambiar
+                        </Button>
+                    </div>
+                </div>}
                 </Modal.Body>
 
             </Modal>
@@ -229,29 +265,16 @@ const MostrarMesas = ()=>{
                                 >Editar
                             </Button>
 
-                            <Tooltip
-                            placement='left'
-                            initialVisible={false}
-                            trigger='hover' 
-                            content={<div>
-                                        <p>Está seguro que desea cambiar este registro?</p> 
-
-                                        <Button 
-                                        auto
-                                        className='bg-dark text-light'
-                                        color={'dark'}
-                                        children={mesa.estado == 1 ? 'Deshabilitar' : 'Habilitar'}
-                                        onClick={()=> cambioEstado(mesa)}
-                                        ></Button>
-                                        
-                                    </div>}>
-                                <Button 
-                                light
-                                shadow
-                                children={mesa.estado == 1 ? 'Deshabilitar' : 'Habilitar'}
-                                color={'secondary'}
-                                ></Button>
-                            </Tooltip>
+                            <Button 
+                            light
+                            shadow
+                            children={mesa.estado == 1 ? 'Deshabilitar' : 'Habilitar'}
+                            color={'secondary'}
+                            onClick={()=>{
+                                setMesaActual(mesa)
+                                activarModal('Cambiar', `¿Seguro que desea ${mesa.estado == 1 ? 'deshabilitar' : 'habilitar'} este registro?`)
+                            }}
+                            ></Button>
 
                         </td>
                     </tr>)

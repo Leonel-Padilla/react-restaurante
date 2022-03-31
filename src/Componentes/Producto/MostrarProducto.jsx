@@ -123,8 +123,7 @@ const MostrarProducto = () =>{
                             Cambiar
                         </Button>
                     </div>
-                </div>
-                }
+                </div>}
                 </Modal.Body>
             </Modal>
 

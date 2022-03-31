@@ -10,9 +10,11 @@ import lapizEditar from '../../img/lapiz_editar.png'
 const endPointGetInsumos        = 'http://127.0.0.1:8000/api/Insumo'
 const endPointUpdateInsumos     = 'http://127.0.0.1:8000/api/updateInsumo'
 const endPointGetAllProveedores = 'http://127.0.0.1:8000/api/Proveedor'
+
 const MostrarInsumo = () =>{
 
     const [insumos, setInsumos]             = useState([])
+    const [insumoActual, setInsumoActual]   = useState()
     const [proveedores, setProveedores]     = useState([])
     let proveedorNombre                     = ''
 
@@ -29,6 +31,12 @@ const MostrarInsumo = () =>{
         getAllProveedores()
     }, [])
 
+    //
+    const activarModal = (titulo, mensajeModal)=>{
+        setTituloModal(titulo)
+        setMensajeModal(mensajeModal)
+        setVisible(true)
+    }
     //
     const getAllInsumos = async ()=>{
         const respose = await axios.get(endPointGetInsumos)
@@ -116,7 +124,33 @@ const MostrarInsumo = () =>{
                     </Text>
                 </Modal.Header>
                 <Modal.Body>
+                {tituloModal.includes('Error')?     //IF ERROR
+                mensajeModal
+                :                                   //ELSE ELIMINAR
+                <div>
                     {mensajeModal}
+
+                    <div className='d-flex mt-3'>
+                        <Button
+                        className='me-3 ms-5'
+                        auto
+                        onClick={()=>{
+                            setVisible(false)
+                        }}>
+                            Cancelar
+                        </Button>
+
+                        <Button
+                        className='ms-5'
+                        auto
+                        onClick={()=>{
+                            cambioEstado(insumoActual)
+                            setVisible(false)
+                            }}>
+                            Cambiar
+                        </Button>
+                    </div>
+                </div>}
                 </Modal.Body>
 
             </Modal>
@@ -219,29 +253,16 @@ const MostrarInsumo = () =>{
                                 >Editar
                             </Button>
 
-                            <Tooltip
-                            placement='left'
-                            initialVisible={false}
-                            trigger='hover' 
-                            content={<div>
-                                        <p>Está seguro que desea cambiar este registro?</p> 
-
-                                        <Button 
-                                        auto
-                                        className='bg-dark text-light'
-                                        color={'dark'}
-                                        children={insumo.estado == 1 ? 'Deshabilitar' : 'Habilitar'}
-                                        onClick={()=> cambioEstado(insumo)}
-                                        ></Button>
-                                        
-                                    </div>}>
-                                <Button 
-                                light
-                                shadow
-                                children={insumo.estado == 1 ? 'Deshabilitar' : 'Habilitar'}
-                                color={'secondary'}
-                                ></Button>
-                            </Tooltip>
+                            <Button 
+                            light
+                            shadow
+                            children={insumo.estado == 1 ? 'Deshabilitar' : 'Habilitar'}
+                            color={'secondary'}
+                            onClick={()=>{
+                                setInsumoActual(insumo)
+                                activarModal('Cambiar', `¿Seguro que desea ${insumo.estado == 1 ? 'deshabilitar' : 'habilitar'} este registro?`)
+                            }}
+                            ></Button>
 
                         </td>
                     </tr>
