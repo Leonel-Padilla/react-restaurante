@@ -131,7 +131,10 @@ const MostrarComentario = () =>{
                     <div className='d-flex mt-3'>
                         <Button
                         className='me-3 ms-5'
-                        auto>
+                        auto
+                        onClick={()=>{
+                            setVisible(false)
+                        }}>
                             Cancelar
                         </Button>
 
@@ -141,7 +144,7 @@ const MostrarComentario = () =>{
                         onClick={()=>{
                             cambioEstado()
                             setVisible(false)
-                            }}>
+                        }}>
                             Cambiar
                         </Button>
                     </div>

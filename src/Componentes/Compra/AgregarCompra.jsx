@@ -398,7 +398,7 @@ const AgregarCompra = () => {
                   value={cai}
                   onChange={(e)=>setCai(e.target.value)}
                   type='text'
-                  maxLength={50}
+                  maxLength={32}
                   className='form-control'
                   />
                 </div>
@@ -409,7 +409,7 @@ const AgregarCompra = () => {
                  value={numeroFactura}
                  onChange={(e)=>setNUmeroFactura(e.target.value)}
                  type='text'
-                 maxLength={50}
+                 maxLength={16}
                  className='form-control'
                  />
                 </div>

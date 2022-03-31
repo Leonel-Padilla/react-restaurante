@@ -106,7 +106,10 @@ const MostrarProducto = () =>{
                     <div className='d-flex mt-3'>
                         <Button
                         className='me-3 ms-5'
-                        auto>
+                        auto
+                        onClick={()=>{
+                            setVisible(false)
+                        }}>
                             Cancelar
                         </Button>
 

@@ -315,7 +315,7 @@ const AgregarProducto = () =>{
                     <div className='listaInsumos'>
                         <div className='d-flex justify-content-center bg-dark mb-2'
                         style={{borderRadius: '10px', height:'41.59px'}}>
-                        <h3 className='text-white'>Lista Inumos</h3>
+                        <h3 className='text-white'>Lista Insumos</h3>
                         </div>
 
                         <div>
@@ -342,7 +342,7 @@ const AgregarProducto = () =>{
                     <div className='insumoDePorducto'>
                         <div className='d-flex justify-content-center bg-dark mb-2'
                         style={{borderRadius: '10px', height:'41.59px'}}>
-                        <h3 className='text-white'>Insumos de este Producto</h3>
+                        <h3 className='text-white'>Insumos utilizados</h3>
                     </div>
 
                     <div>

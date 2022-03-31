@@ -3,7 +3,8 @@ import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { Button, Tooltip, Modal, Text } from '@nextui-org/react';
 import buscarLupa from '../../img/buscar_lupa.png';
-import lapizEditar from '../../img/lapiz_editar.png'
+import lapizEditar from '../../img/lapiz_editar.png';
+import moment from 'moment';
 
 
 const endPointGetCompras    = 'http://127.0.0.1:8000/api/CompraEncabezado'
@@ -132,7 +133,10 @@ const MostrarCompras = ()=> {
                     <div className='d-flex mt-3'>
                         <Button
                         className='me-3 ms-5'
-                        auto>
+                        auto
+                        onClick={()=>{
+                            setVisible(false)
+                        }}>
                             Cancelar
                         </Button>
 
@@ -254,9 +258,9 @@ const MostrarCompras = ()=> {
                         <tr key={compra.id}>
                             <td>{compra.id}</td>
                             <td>{nombreEmpleado}</td>
-                            <td>{compra.fechaSolicitud}</td>
-                            <td>{compra.fechaEntregaCompra}</td>
-                            <td>{compra.fechaPagoCompra}</td>
+                            <td>{moment(compra.fechaSolicitud).format("DD/MM/yy")}</td>
+                            <td>{moment(compra.fechaEntregaCompra).format("DD/MM/yy")}</td>
+                            <td>{moment(compra.fechaPagoCompra).format("DD/MM/yy")}</td>
                             <td>{compra.estadoCompra}</td>
                             <td>{compra.estado == 1 ? 'Habilitado' : 'Deshabilitado'}</td>
                             <td>
