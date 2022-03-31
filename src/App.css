@@ -90,7 +90,7 @@ link{
 }
 
 .overflow_sideBar{
-  overflow-y: hidden;
+  overflow-y: scroll;
 }
 
 .body{
@@ -254,3 +254,26 @@ input[type="date"]{
   display: flex;
   justify-content: center;
 }
+
+/*Estilos Producto Inusmo*/
+
+/*Estilos sideBar*/
+
+::-webkit-scrollbar {
+  width: 8px; 
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #b3b3b3;
+  box-shadow: 0 0 2px 1px rgba(0, 0, 0, 0.2);
+}
+::-webkit-scrollbar-thumb:active {
+   background-color: #999999;
+
+}
+/*Estilo de sidebar*/

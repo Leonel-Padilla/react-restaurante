@@ -95,11 +95,12 @@ const AgregarCompra = () => {
 
   //
   const agregarAlCarro = ()=>{
-    //PONER EXPRECIÓN REGULAR PARA EVITAR QUE INGRESE NUMERO NEGATIVOS EN CANTIDAD////////////////////////
-    //PONER EXPRECIÓN REGULAR PARA EVITAR QUE INGRESE NUMERO NEGATIVOS EN PRECIO//////////////////////////
 
-
-    if ((parseInt(cantidadInsumo) + parseInt(insumoActual.cantidad)) > parseInt(insumoActual.cantidadMax)){
+    if (parseInt(cantidadInsumo) < 1){
+      setPrecioInsumo(0)
+      setCantidadInsumo(0)
+      activarModal('Error', 'La cantidad debe ser mayor a 0.')
+    }else if ((parseInt(cantidadInsumo) + parseInt(insumoActual.cantidad)) > parseInt(insumoActual.cantidadMax)){
       setPrecioInsumo(0)
       setCantidadInsumo(0)
       activarModal('Error', `La compra sobrepasa la cantidad máxima de ${insumoActual.cantidadMax}.`)
@@ -132,8 +133,12 @@ const AgregarCompra = () => {
 
   //
   const editarCompra = ()=>{
-    
-    if ((parseInt(cantidadInsumo) + parseInt(insumoActual.cantidad)) > parseInt(insumoActual.cantidadMax)){
+
+    if (parseInt(cantidadInsumo) < 1){
+      setPrecioInsumo(0)
+      setCantidadInsumo(0)
+      activarModal('Error', 'La cantidad debe ser mayor a 0.')
+    }else if ((parseInt(cantidadInsumo) + parseInt(insumoActual.cantidad)) > parseInt(insumoActual.cantidadMax)){
       setPrecioInsumo(0)
       setCantidadInsumo(0)
       activarModal('Error', `La compra sobrepasa la cantidad máxima de ${insumoActual.cantidadMax}.`)
