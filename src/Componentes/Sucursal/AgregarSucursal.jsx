@@ -56,8 +56,7 @@ function AgregarSucursal() {
     
                 formatearEmpleadoId()
 
-                console.log(empleadoId, sucursalNombre, sucursalDireccion, sucursalEstado)
-    
+                //console.log(empleadoId, sucursalNombre, sucursalDireccion, sucursalEstado)    
                 const response = await axios.post(endPointRegistrarSucursal, {empleadoId: empleadoId, sucursalNombre: sucursalNombre,
                 sucursalDireccion: sucursalDireccion, estado: sucursalEstado})
 

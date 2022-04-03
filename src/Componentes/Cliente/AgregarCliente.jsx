@@ -65,10 +65,11 @@ const AgregarCliente = ()=>{
             formatearIdDocumento()
 
             const response = await axios.post(endPointRegistarCliente, {tipoDocumentoId: idTipoDocumento,
-            /*numeroDocumento: numeroDocumento*/
-            clienteNombre: clienteNombre, clienteNumero: clienteNumero, clienteCorreo: clienteCorreo, 
-            clienteRTN: clienteRTN, estado: clienteEstado})
+            numeroDocumento: numeroDocumento, clienteNombre: clienteNombre, clienteNumero: clienteNumero,
+            clienteCorreo: clienteCorreo,  clienteRTN: clienteRTN, estado: clienteEstado})
         
+            //console.log(response.data)
+
                 if (response.status !== 200){
                     setTituloModal('Error')
                     setMensajeModal(response.data.Error)
@@ -94,7 +95,6 @@ const AgregarCliente = ()=>{
             case 'Licencia Conducir': digitosNumero = 9
                 break
         }
-
     }
 
     return(

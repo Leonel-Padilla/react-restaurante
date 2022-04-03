@@ -24,6 +24,7 @@ const ActualizarCompra = () =>{
   const [estadoEnCambio, setEstadoEnCambio] = useState()
   const [cai, setCai]                       = useState('')
   const [numeroFactura, setNUmeroFactura]   = useState('')
+  const [caiNumFactura, setCaiNumFactura]   = useState('')
   const [proveedorId, setProveedorId]       = useState('Seleccione')
   let   idProveedor                         = ''
   const [fechaSolicitud, setFechaSolicitud] = useState('')
@@ -68,6 +69,7 @@ const ActualizarCompra = () =>{
     setFechaPago(response.data.fechaPagoCompra)
     setCai(response.data.cai)
     setNUmeroFactura(response.data.numeroFactura)
+    setCaiNumFactura(response.data.numeroFacturaCai)
     setCompraEstado(response.data.estadoCompra)
     setEstadoEnCambio(response.data.estadoCompra)
   }
@@ -134,9 +136,10 @@ const ActualizarCompra = () =>{
 
         setCompraEstado('Pendiente')
 
+
         const response = await axios.put(`${endPointUpdateCompraEncabezado}/${id}`, {proveedorId: idProveedor, empleadoId: empleadoId,
         fechaSolicitud: fechaSolicitud, fechaEntregaCompra: fechaEntrega, fechaPagoCompra: fechaPago, estadoCompra: compraEstado,
-        numeroFactura: numeroFactura, cai: cai, estado: 1})
+        numeroFactura: numeroFactura, cai: cai, numeroFacturaCai: caiNumFactura, estado: 1})
 
         //console.log(response.data)
       }else{
@@ -170,7 +173,7 @@ const ActualizarCompra = () =>{
 
     const response = await axios.put(`${endPointUpdateCompraEncabezado}/${id}`, {proveedorId: idProveedor, empleadoId: empleadoId,
     fechaSolicitud: fechaSolicitud, fechaEntregaCompra: fechaEntrega, fechaPagoCompra: fechaPago, estadoCompra: compraEstado,
-    numeroFactura: numeroFactura, cai: cai, estado: 1})
+    numeroFactura: numeroFactura, cai: cai, numeroFacturaCai: caiNumFactura, estado: 1})
     
     //console.log(response.data)
 

@@ -310,7 +310,6 @@ const MostrarCompras = ()=> {
                   <th>Fecha Pago</th>
                   <th>Fecha Recibida</th>
                   <th>Estado compra</th>
-                  <th>Estado</th>
                   <th>Opciones</th>
                 </tr>
             </thead>
@@ -328,7 +327,6 @@ const MostrarCompras = ()=> {
                             <td>{moment(compra.fechaEntregaCompra).format("DD/MM/yy")}</td>
                             <td>{moment(compra.fechaPagoCompra).format("DD/MM/yy")}</td>
                             <td>{compra.estadoCompra}</td>
-                            <td>{compra.estado == 1 ? 'Habilitado' : 'Deshabilitado'}</td>
                             <td>
                                 <Button
                                 className='mb-1'

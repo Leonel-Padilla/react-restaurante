@@ -191,10 +191,12 @@ const AgregarCompra = () => {
     else{
       formatearProveedorId()
       //console.log(empleadoId)
+      const caiNumFactura = `${cai}/${numeroFactura}`
+      console.log(caiNumFactura)
 
       const response = await axios.post(endPointSaveCompraEncabezado, {proveedorId: idProveedor, empleadoId: empleadoId,
       fechaSolicitud: fechaSolicitud, fechaEntregaCompra: fechaEntrega, fechaPagoCompra: fechaPago, estadoCompra: compraEstado,
-      numeroFactura: numeroFactura, cai: cai, estado: 1})
+      numeroFactura: numeroFactura, cai: cai, numeroFacturaCai: caiNumFactura, estado: 1})
         
       //console.log(response.data)
     
