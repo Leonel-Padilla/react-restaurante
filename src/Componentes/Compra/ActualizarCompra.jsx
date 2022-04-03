@@ -3,33 +3,32 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { Button, Input, Modal, Text, Textarea} from '@nextui-org/react'
 import axios from 'axios'
 
-
-const endPointGetInsunmos           = 'http://127.0.0.1:8000/api/Insumo'
-const endPointGetAllEmpleado        = 'http://127.0.0.1:8000/api/Empleado'
-const endPointGetAllProveedores     = 'http://127.0.0.1:8000/api/Proveedor'
-const endPointSaveCompraEncabezado  = 'http://127.0.0.1:8000/api/addCompraEncabezado'
-const endPointSaveCompraDetalle     = 'http://127.0.0.1:8000/api/addCompraDetalle'
-const endPointGetCompraEncabezado   = 'http://127.0.0.1:8000/api/CompraEncabezado'
-const endPointUpdateInsumo          = 'http://127.0.0.1:8000/api/updateInsumo'
+const endPointGetEmpleado             = 'http://127.0.0.1:8000/api/Empleado'
+const endPointGetProveedor            = 'http://127.0.0.1:8000/api/Proveedor'
+const endPointGetCompraEncabezado     = 'http://127.0.0.1:8000/api/CompraEncabezado'
+const endPointUpdateCompraEncabezado  = 'http://127.0.0.1:8000/api/updateCompraEncabezado'
+const endPointGetCompraDetalles       = 'http://127.0.0.1:8000/api/CompraDetalle'
+const endPointUpdateInsumo            = 'http://127.0.0.1:8000/api/updateInsumo'
+const endPointGetInsumo               = 'http://127.0.0.1:8000/api/Insumo'
 const ActualizarCompra = () =>{
-  const [insumos, setInsumos]                   = useState([])
-  const [carroInsumos, setCarroInsumos]         = useState([])
-  const [insumoActual, setInsumoActual]         = useState({})
-  const [cantidadInsumo, setCantidadInsumo]     = useState(0)
-  const [precioInsumo, setPrecioInsumo]         = useState(0)
+
   const [empleados, setEmpleados]               = useState([])
+  const [nombreUsuario, setNombreUsuario]       = useState('')
   const [proveedores, setProveedores]           = useState([])
+  const [compraDetalles, setCompraDetalles]     = useState([])
+  const [insumos, setInsumos]                   = useState([])
 
   const [empleadoId, setEmpleadoId]         = useState('Seleccione')
   let   idEmpleado                          = ''
   const [compraEstado, setCompraEstado]     = useState('Seleccione')
+  const [estadoEnCambio, setEstadoEnCambio] = useState()
   const [cai, setCai]                       = useState('')
   const [numeroFactura, setNUmeroFactura]   = useState('')
   const [proveedorId, setProveedorId]       = useState('Seleccione')
   let   idProveedor                         = ''
-  const [fechaSolicitud, setFechaSolicitud] = useState()
-  const [fechaEntrega, setFechaEntrega]     = useState()
-  const [fechaPago, setFechaPago]           = useState()
+  const [fechaSolicitud, setFechaSolicitud] = useState('')
+  const [fechaEntrega, setFechaEntrega]     = useState('')
+  const [fechaPago, setFechaPago]           = useState('')
 
   const [mensajeModal, setMensajeModal]   = useState('')
   const [tituloModal, setTituloModal]     = useState('')
@@ -40,6 +39,9 @@ const ActualizarCompra = () =>{
   useEffect(()=>{
     getAllEmpleados()
     getAllProveedores()
+    getCompra()
+    getCompraDetalles()
+    getInsumos()
   }, [])
 
   //
@@ -49,28 +51,46 @@ const ActualizarCompra = () =>{
     setVisible(true)
   }
   //
-  const getInsumos = async ()=>{
+  const getCompra = async ()=>{
+    const response = await axios.get(`${endPointGetCompraEncabezado}/${id}`)
+    
+    const response0 = await axios.get(`${endPointGetProveedor}/${response.data.proveedorId}`)
+    //console.log(response0.data)
 
-    if (proveedorId.includes('Seleccione')){
-      activarModal('Error', 'Debe de seleccionar un proveedor para realizar una compra.')
-    }else{
-      formatearProveedorId()
-
-      const response = await axios.get(`${endPointGetInsunmos}P/${idProveedor}`)
-      setInsumos(response.data)
-  
-      setCarroInsumos([])
-    }
-
+    const response1 = await axios.get(`${endPointGetEmpleado}/${response.data.empleadoId}`)
+    //console.log(response1.data)
+    
+    setEmpleadoId(response1.data.id)
+    setNombreUsuario(response1.data.empleadoNombre)
+    setProveedorId(response0.data.proveedorNombre)
+    setFechaSolicitud(response.data.fechaSolicitud)
+    setFechaEntrega(response.data.fechaEntregaCompra)
+    setFechaPago(response.data.fechaPagoCompra)
+    setCai(response.data.cai)
+    setNUmeroFactura(response.data.numeroFactura)
+    setCompraEstado(response.data.estadoCompra)
+    setEstadoEnCambio(response.data.estadoCompra)
+  }
+  //
+  const getCompraDetalles = async () => {
+    const response = await axios.get(`${endPointGetCompraDetalles}E/${id}`)
+    //console.log(response.data)
+    setCompraDetalles(response.data)
+  }
+  //
+  const getInsumos = async () => {
+    const response = await axios.get(`${endPointGetInsumo}`)
+    setInsumos(response.data)
+    //console.log(response.data)
   }
   //
   const getAllEmpleados = async ()=>{
-    const response = await axios.get(endPointGetAllEmpleado)
+    const response = await axios.get(endPointGetEmpleado)
     setEmpleados(response.data)
   }
   //
   const getAllProveedores = async()=>{
-    const response = await axios.get(endPointGetAllProveedores)
+    const response = await axios.get(endPointGetProveedor)
     setProveedores(response.data)
   }
   //
@@ -91,6 +111,75 @@ const ActualizarCompra = () =>{
       }
     })
   }
+  //
+    const cambiosEnInventario = async ()=>{
+    let errores = []
+       
+      compraDetalles.map(async (insumoEnCarro)=>{
+
+        insumos.map(async(insumo)=>{
+          if (insumo.id == insumoEnCarro.insumoId){
+            
+            if ((parseInt(insumo.cantidad) + parseInt(insumoEnCarro.cantidad)) > insumo.cantidadMax){
+              errores.push([insumo.insumoNombre])
+
+            }
+
+          }
+        })
+      })
+
+      if (errores.length > 0){
+        activarModal('Error', `No se puede realizar la compra, debido a que el inventario no tiene suficiente cantidad de: ${errores}.`)
+
+        setCompraEstado('Pendiente')
+
+        const response = await axios.put(`${endPointUpdateCompraEncabezado}/${id}`, {proveedorId: idProveedor, empleadoId: empleadoId,
+        fechaSolicitud: fechaSolicitud, fechaEntregaCompra: fechaEntrega, fechaPagoCompra: fechaPago, estadoCompra: compraEstado,
+        numeroFactura: numeroFactura, cai: cai, estado: 1})
+
+        //console.log(response.data)
+      }else{
+        compraDetalles.map(async (insumoEnCarro)=>{
+
+          insumos.map(async(insumo)=>{
+            if (insumo.id == insumoEnCarro.insumoId){
+              
+              const cantidadFinal = (parseInt(insumo.cantidad) + parseInt(insumoEnCarro.cantidad))
+        
+              const response = await axios.put(`${endPointUpdateInsumo}/${insumo.id}`, {proveedorId: insumo.proveedorId, 
+              insumoNombre: insumo.insumoNombre, insumoDescripcion: insumo.insumoDescripcion, 
+              cantidad: cantidadFinal, cantidadMin: insumo.cantidadMin, cantidadMax: insumo.cantidadMax, 
+              estado: insumo.estado})
+
+            }
+          })  
+  
+        })
+
+        
+        navigate('/Compras')
+      }
+
+  }
+  //
+  const actualizar = async (e)=>{
+    e.preventDefault()
+    formatearProveedorId()
+    //console.log(empleadoId)
+
+    const response = await axios.put(`${endPointUpdateCompraEncabezado}/${id}`, {proveedorId: idProveedor, empleadoId: empleadoId,
+    fechaSolicitud: fechaSolicitud, fechaEntregaCompra: fechaEntrega, fechaPagoCompra: fechaPago, estadoCompra: compraEstado,
+    numeroFactura: numeroFactura, cai: cai, estado: 1})
+    
+    //console.log(response.data)
+
+    if (compraEstado == 'Recibida' && estadoEnCambio != compraEstado){
+      cambiosEnInventario()
+    }else{
+      navigate('/Compras')
+    }
+  }
 
   
   return (
@@ -109,43 +198,7 @@ const ActualizarCompra = () =>{
           </Text>
         </Modal.Header>
         <Modal.Body>
-                  
-          {tituloModal.includes('Error')? /*If*/ mensajeModal: //ERROR
-
-            <div>
-              <label>Cantidad</label>
-              <input
-              type='number'
-              className='form-control'
-              value={cantidadInsumo}
-              onChange={(e)=>setCantidadInsumo(e.target.value)}/>
-
-              <label>Precio Total</label>
-              <input
-              type='number'
-              className='form-control'
-              value={precioInsumo}
-              onChange={(e)=>setPrecioInsumo(e.target.value)}/>
-
-              <div className='botonesModal mt-4'>
-                <Button
-                className='me-4'
-                auto
-                onClick={()=>setVisible(false)}
-                >
-                  Cancelar
-                </Button>
-
-                <Button
-                className='ms-4'
-                auto
-                //onClick={()=>editarCompra()}
-                >
-                  Aceptar
-                </Button>
-              </div>
-
-            </div>}
+          {mensajeModal}
         </Modal.Body>
       </Modal>
 
@@ -154,214 +207,120 @@ const ActualizarCompra = () =>{
         <h1 className='text-white'>Actualizar Compra</h1>
       </div>
 
-      <div className='layoutCompra'>
+        <form onSubmit={actualizar} className='formulario'>
 
-        {/*Select e inputs de la compra*/}
-        <div className='selectCompra'>
-          
-          <div className='atributo'>
-            <label>Proveedor</label>
-            <select
-            value={proveedorId}
-            onChange={(e)=>setProveedorId(e.target.value)}
-            className='select'> 
-              <option>Seleccione un Proveedor</option>
-              {proveedores.map((proveedor)=> <option key={proveedor.id}>{proveedor.proveedorNombre}</option>)}
-            </select>
+                <div className='atributo'>
+                  <label>Proveedor</label>
+                  <select
+                  value={proveedorId}
+                  onChange={(e)=>setProveedorId(e.target.value)}
+                  className='select'> 
+                      <option>{proveedorId}</option>
+                  </select>
+                </div>
 
-            <Button 
-            color={'gradient'}
-            ghost
-            size={'xs'}
-            onClick={()=>getInsumos()}>
-              Buscar
-            </Button>
-          </div>
+                <div className='atributo'>
+                  <label>Empleado</label>
+                  <select
+                  value={nombreUsuario}
+                  onChange={(e)=>setNombreUsuario(e.target.value)}
+                  className='select'> 
+                      <option>{nombreUsuario}</option>
+                  </select>
+                </div>
 
-          <div className='atributo'>
-            <label>Empleado</label>
-            <select
-            value={empleadoId}
-            onChange={(e)=>setEmpleadoId(e.target.value)}
-            className='select'> 
-              <option>Seleccione el Empleado</option>
-              {empleados.map((empleado)=> <option key={empleado.id}>{empleado.empleadoNombre}</option>)}
-            </select>
-          </div>
+                <div className='atributo'>
+                  <label>Fecha Solicitud</label> 
+                  <input type="date" 
+                  value={fechaSolicitud}
+                  onChange={(e)=>setFechaSolicitud(e.target.value)}
+                  />
+                </div>
 
-          <div className='atributo'>
-            <label>Estado</label>
-            <select
-            value={compraEstado}
-            onChange={(e)=>setCompraEstado(e.target.value)}
-            className='select'> 
-              <option>Seleccione un Estado</option>
-              <option>Pendiente</option>
-              <option>Recibida</option>
-            </select>
-          </div>
+                <div className='atributo'>
+                  <label>Fecha Entrega</label>
+                  <input type="date" 
+                  value={fechaEntrega}
+                  onChange={(e)=>setFechaEntrega(e.target.value)}
+                  />
+                </div>
 
-                
-          <div className='atributo'>
-            <label>CAI</label>
-            <input
-            value={cai}
-            onChange={(e)=>setCai(e.target.value)}
-            type='text'
-            maxLength={50}
-            className='form-control'
-            />
-          </div>
+                <div className='atributo'>
+                  <label>Fecha Pago</label>
+                  <input type="date"
+                  value={fechaPago}
+                  onChange={(e)=>setFechaPago(e.target.value)}
+                  />
+                </div>
 
-          <div className='atributo'>
-            <label>Numero Factura</label>
-            <input
-            value={numeroFactura}
-            onChange={(e)=>setNUmeroFactura(e.target.value)}
-            type='text'
-            maxLength={50}
-            className='form-control'
-            />
-          </div>
-
-        </div>
-
-
-        {/*Lista de los insumos*/}
-        <div className='listaInsumos'>
-          <div className='d-flex justify-content-center bg-dark mb-2'
-          style={{borderRadius: '10px', height:'41.59px'}}>
-            <h3 className='text-white'>Lista Insumos</h3>
-          </div>
-
-          <div>
-            {insumos.map((insumo)=>
-              <div
-              className='insumoCompra' 
-              key={insumo.id}
-              onClick={()=>{
-                    
-                if(carroInsumos.find(insumoEnCarro => insumoEnCarro.insumoNombre == insumo.insumoNombre)){
-                  activarModal('Error', 'No puede tener repetidos, si desea editar o elminar hagalo en el apartado del carrito.')
-                }else{
-                  setInsumoActual(insumo)
-                  activarModal('Detalle de compra', '')
-                      
-                }}}>
-                  {insumo.insumoNombre}
-                    
+                {compraEstado == 'Recibida'?    //IF Ya fue recibida
+                <div className='atributo'>
+                <label>Estado de compra</label>
+                <select
+                value={compraEstado}
+                onChange={(e)=>setCompraEstado(e.target.value)}
+                className='select'> 
+                    <option>Recibida</option>
+                </select>
               </div>
-            )}
-          </div>
+                :                           //ELSE
+                <div className='atributo'>
+                  <label>Estado de compra</label>
+                  <select
+                  value={compraEstado}
+                  onChange={(e)=>setCompraEstado(e.target.value)}
+                  className='select'> 
+                      <option>Pendiente</option>
+                      <option>Rechazada</option>
+                      <option>Recibida</option>
+                  </select>
+                </div>}
 
-        </div>
+                <div className='atributo'>
+                  <label>CAI</label>
+                  <input
+                  value={cai}
+                  onChange={(e)=>setCai(e.target.value)}
+                  type='text'
+                  maxLength={32}
+                  className='form-control'
+                  />
+                </div>
 
-        {/*Insumos en el carrito*/}
-        <div className='insumosEnCarro'>
-          <div className='d-flex justify-content-center bg-dark mb-2'
-          style={{borderRadius: '10px', height:'41.59px'}}>
-            <h3 className='text-white'>Carrito de compras</h3>
-          </div>
+                <div className='atributo'>
+                <label>Numero Factura</label>
+                <input
+                 pattern='[0-9]{1,}'
+                 title='Solo se permiten números.'
+                 value={numeroFactura}
+                 onChange={(e)=>setNUmeroFactura(e.target.value)}
+                 type='text'
+                 maxLength={16}
+                 className='form-control'
+                 />
+                </div>
+                <div className='d-flex mt-2'>
 
-          <div>
-            <table className='table'>
-              <thead>
-                <tr>
-                  <th>Nombre</th>
-                  <th>Cantidad</th>
-                  <th>Precio Total</th>
-                  <th>Opciones</th>
-                </tr>
-              </thead>
+                    <Button 
+                    color={'gradient'}
+                    className='align-self-end me-3 ' 
+                    auto 
+                    onClick={()=>navigate('/Compras')}
+                    ghost>
+                        Regresar
+                    </Button>
 
-              <tbody>
+                    <Button
+                    auto
+                    type='submit'
+                    color={'gradient'} 
+                    ghost>
+                        Guardar
+                    </Button>
 
-                {carroInsumos.map((insumo)=>
-                  <tr key={insumo.id}>
-                    <td>{insumo.insumoNombre}</td>
-                    <td>{insumo.cantidadDeCompra}</td>
-                    <td>{insumo.precioDeCompra}</td>
-                    <td className='d-flex'>
-                      {/* <Button
-                      className='d-flex'
-                      color={'error'}
-                      auto
-                      onClick={()=>{
-                        activarModal('Eliminar Compra', 'Seguro que desea eliminar este registro?')
-                        setInsumoActual(insumo)
-                      }}>
-                        Eliminar
-                      </Button> */}
-
-                      <Button
-                        onClick={()=>{
-                          activarModal('Editar Compra', '')
-                          setInsumoActual(insumo)
-                          setCantidadInsumo(insumo.cantidadDeCompra)
-                          setPrecioInsumo(insumo.precioDeCompra)
-                        }}
-                        auto>
-                          Editar
-                        </Button>
-                    </td>
-                  </tr>
-                )}
-
-              </tbody>
-            </table>
-          </div>
-          
-        </div>
-
-
-        {/*Botones de la compra*/}
-        <div className='botonesCompra'>                
-          <Button
-          auto
-          color={'gradient'}
-          onClick={()=>navigate('/Compras')}
-          ghost>
-            Cancelar
-          </Button>
-
-          <Button
-          auto
-          color={'gradient'}
-          ghost
-          //onClick={()=>registrarEncabezado()}
-          >
-            Guardar
-          </Button>
-        </div>
-
-        {/*Fechas de la compra*/}
-        <div className='fechasCompra'>
-                
-          <div className='atributo'>
-            <label>Fecha Solicitud</label> 
-            <input type="date" 
-            onChange={(e)=>setFechaSolicitud(e.target.value)}
-            />
-          </div>
-
-          <div className='atributo'>
-            <label>Fecha Entrega</label>
-            <input type="date" 
-            onChange={(e)=>setFechaEntrega(e.target.value)}
-            />
-          </div>
-
-          <div className='atributo'>
-            <label>Fecha Pago</label>
-            <input type="date"
-            onChange={(e)=>setFechaPago(e.target.value)}
-            />
-          </div>
-
-        </div>
-
-
-      </div>
+                </div>
+            </form>
+      
     </div>
   )
 }

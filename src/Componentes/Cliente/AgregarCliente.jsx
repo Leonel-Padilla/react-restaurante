@@ -1,17 +1,23 @@
-import React, {useRef, useState} from 'react'
+import React, {useEffect, useRef, useState} from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { Button, Input, Modal, Text, Textarea} from '@nextui-org/react'
 
 
-const endPointRegistarCliente = 'http://127.0.0.1:8000/api/addCliente'
+const endPointRegistarCliente   = 'http://127.0.0.1:8000/api/addCliente'
+const endPointGetTipoDocumento  = 'http://127.0.0.1:8000/api/TipoDocumento'
 
-const AgregarCliente =()=>{
-    const [clienteNombre, setClienteNombre] = useState('')
-    const [clienteNumero, setClienteNumero] = useState('')
-    const [clienteCorreo, setClienteCorreo]  = useState('')
-    const [clienteRTN, setClienteRTN]       = useState('')
-    const [clienteEstado, setClienteEstado] = useState(1)
+const AgregarCliente = ()=>{
+    const [tipoDocumentoId, setTipoDocumentoId] = useState('')
+    let idTipoDocumento                         = 0
+    const [numeroDocumento, setNumeroDocumento] = useState('')
+    const [clienteNombre, setClienteNombre]     = useState('')
+    const [clienteNumero, setClienteNumero]     = useState('')
+    const [clienteCorreo, setClienteCorreo]     = useState('')
+    const [clienteRTN, setClienteRTN]           = useState('')
+    const [clienteEstado, setClienteEstado]     = useState(1)
+
+    const [tiposDocumento, setTiposDocumento] = useState([])
 
 
     const navigate                          = useNavigate()
@@ -19,6 +25,26 @@ const AgregarCliente =()=>{
     const [tituloModal, setTituloModal]     = useState('')
     const [visible, setVisible]             = useState(false)
 
+    let digitosNumero = 0
+
+    useEffect(()=>{
+        getAllTipoDocumento()
+    },[])
+
+    //
+    const getAllTipoDocumento = async () =>{
+        const response = await axios.get(`${endPointGetTipoDocumento}`)
+        setTiposDocumento(response.data)
+    }
+    //
+    const formatearIdDocumento = ()=>{
+        tiposDocumento.map((documento)=>{
+            if(documento.nombreDocumento == tipoDocumentoId){
+                idTipoDocumento = documento.id
+            }
+        })
+    }
+    //
     const registrar = async (e)=>{ 
         e.preventDefault()
         
@@ -36,8 +62,12 @@ const AgregarCliente =()=>{
             setMensajeModal('La información ingresada contiene mas de dos caracteres repetidos seguidos.')
             setVisible(true)
         }else{
-            const response = await axios.post(endPointRegistarCliente, {clienteNombre: clienteNombre, 
-            clienteNumero: clienteNumero, clienteCorreo: clienteCorreo, clienteRTN: clienteRTN, estado: clienteEstado})
+            formatearIdDocumento()
+
+            const response = await axios.post(endPointRegistarCliente, {tipoDocumentoId: idTipoDocumento,
+            /*numeroDocumento: numeroDocumento*/
+            clienteNombre: clienteNombre, clienteNumero: clienteNumero, clienteCorreo: clienteCorreo, 
+            clienteRTN: clienteRTN, estado: clienteEstado})
         
                 if (response.status !== 200){
                     setTituloModal('Error')
@@ -47,6 +77,24 @@ const AgregarCliente =()=>{
                     navigate('/Clientes')
                 }
         }
+    }
+
+    //
+    const verificarTipoDocumento = ()=> {
+
+        switch (tipoDocumentoId){
+            case 'RTN': digitosNumero = 14 
+                break
+            case 'Identidad': digitosNumero = 13 
+                break
+            case 'Pasaporte': digitosNumero = 7 
+                break
+            case 'Visa': digitosNumero = 9 
+                break
+            case 'Licencia Conducir': digitosNumero = 9
+                break
+        }
+
     }
 
     return(
@@ -78,6 +126,40 @@ const AgregarCliente =()=>{
             <form onSubmit={registrar} className='formulario'>
 
                 <div className='atributo'>
+                    <label>Tipo Documento</label>
+                    <select
+                    value={tipoDocumentoId}
+                    onChange={(e)=> setTipoDocumentoId(e.target.value)}
+                    type='number'
+                    className='select'
+                    >   
+                        <option>Seleccione Tipo Documento</option>
+                        {tiposDocumento.map((documento)=>{
+                            verificarTipoDocumento()
+                            if (documento.nombreDocumento != 'RTN'){
+                                return( <option key={documento.id}>{documento.nombreDocumento}</option>)
+                            }
+                        })}
+
+                    </select>
+                </div>
+
+                <div className='atributo'>
+                    <label>Número documento:</label>
+                    <input
+                    required={true}
+                    minLength={digitosNumero}
+                    maxLength={digitosNumero}
+                    value={numeroDocumento}
+                    pattern={tipoDocumentoId == 'Visa' || tipoDocumentoId == 'Pasaporte'? '^[A-Z][0-9]+$':
+                    tipoDocumentoId == 'RTN' || tipoDocumentoId == 'Identidad'? '^[0-1][0-9]+$': '^[1][0-9]+$'}
+                    onChange={(e)=> setNumeroDocumento(e.target.value)}
+                    type='text'
+                    className='form-control'
+                    />
+                </div>
+                
+                <div className='atributo'>
                     <label>Nombre:</label>
                     <input
                     aria-label='aria-describedby'
@@ -93,42 +175,42 @@ const AgregarCliente =()=>{
                 </div>
 
                 <div className='atributo'>
-                <label>Número telefónico:</label>
-                <input
-                placeholder='88922711'
-                value={clienteNumero}
-                onChange={(e)=>setClienteNumero(e.target.value)}
-                pattern='[0-9]{8,}'
-                maxLength={8}
-                title='Solo se aceptan numeros del 0-9 y la longitud del numero debe ser igual a 8, ejem: "2252667"'
-                type='text'
-                className='form-control'
-                />
+                    <label>Número telefónico:</label>
+                    <input
+                    placeholder='88922711'
+                    value={clienteNumero}
+                    onChange={(e)=>setClienteNumero(e.target.value)}
+                    pattern='[0-9]{8,}'
+                    maxLength={8}
+                    title='Solo se aceptan numeros del 0-9 y la longitud del numero debe ser igual a 8, ejem: "2252667"'
+                    type='text'
+                    className='form-control'
+                    />
                 </div>
 
                 <div className='atributo'>
-                <label>Correo electrónico:</label>
-                <input
-                placeholder='ejem@gmail.com'
-                value={clienteCorreo}
-                onChange={(e)=>setClienteCorreo(e.target.value)}
-                maxLength={50}
-                type='email'
-                className='form-control'
-                />
+                    <label>Correo electrónico:</label>
+                    <input
+                    placeholder='ejem@gmail.com'
+                    value={clienteCorreo}
+                    onChange={(e)=>setClienteCorreo(e.target.value)}
+                    maxLength={50}
+                    type='email'
+                    className='form-control'
+                    />
                 </div>
 
                 <div className='atributo'>
-                <label>RTN:</label>
-                <input
-                maxLength={14}
-                value={clienteRTN}
-                pattern='[0-9]{14,}'
-                onChange={(e)=>setClienteRTN(e.target.value)}
-                placeholder='08019999176681'
-                type='text'
-                className='form-control'
-                />
+                    <label>RTN:</label>
+                    <input
+                    maxLength={14}
+                    value={clienteRTN}
+                    pattern='[0-9]{14,}'
+                    onChange={(e)=>setClienteRTN(e.target.value)}
+                    placeholder='08019999176681'
+                    type='text'
+                    className='form-control'
+                    />
                 </div>
 
 

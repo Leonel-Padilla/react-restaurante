@@ -236,6 +236,7 @@ const MostrarMesas = ()=>{
                 <thead className='bg-dark text-white'> 
                     <tr>
                         <th>Id Mesa</th>
+                        <th>Numero Mesa</th>
                         <th>Cantidad de asientos</th>
                         <th>Sucursal nombre</th>
                         <th>Estado</th>
@@ -252,6 +253,7 @@ const MostrarMesas = ()=>{
                      return(   
                     <tr key={mesa.id}>
                         <td>{mesa.id}</td>
+                        <td>{mesa.numero}</td>
                         <td>{mesa.cantidadAsientos}</td>
                         <td>{sucursalNombre}</td>
                         <td>{mesa.estado == 1 ? 'Habilitado' : 'Deshabilitado'}</td>

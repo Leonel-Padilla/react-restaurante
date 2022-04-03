@@ -12,6 +12,8 @@ const AgregarMesa = () =>{
     const [sucursalId, setSucursalId]               = useState('Seleccione')
     let idSucursal                                  = ''
     const [cantidadAsientos, setCantidadAsientos]   = useState(0)
+    const [descripcionMesa, setDescripcionMesa]     = useState('')
+    const [numeroMesa, setNumeroMesa]               = useState(0)
     const [mesaEstado, setMesaEstado]               = useState(1)
     
 
@@ -36,7 +38,7 @@ const AgregarMesa = () =>{
             formatearSucursalId()
 
             const response = await axios.post(endPointAddMesa, {sucursalId: idSucursal, 
-            cantidadAsientos: cantidadAsientos, estado: mesaEstado})
+            cantidadAsientos: cantidadAsientos, descripcion: descripcionMesa, numero: numeroMesa, estado: mesaEstado})
         
             if (response.status !== 200){
                 setTituloModal('Error')
@@ -105,6 +107,35 @@ const AgregarMesa = () =>{
                 </select>
 
                 </div>
+
+                <div className='atributo'>
+                    <label>Descripción Mesa:</label>
+                    <input
+                    aria-label='aria-describedby'
+                    value={descripcionMesa}
+                    placeholder='Mesa para reservar'
+                    onChange={(e)=>setDescripcionMesa(e.target.value)}
+                    type='text'
+                    title='Solo acepta números'
+                    className='form-control'
+                    />
+                </div>
+
+                <div className='atributo'>
+                    <label>Numero de mesa:</label>
+                    <input
+                    aria-label='aria-describedby'
+                    value={numeroMesa}
+                    placeholder='numeros 0-9'
+                    onChange={(e)=>setNumeroMesa(e.target.value)}
+                    type='text'
+                    pattern='[0-9]{1,}'
+                    maxLength={3}
+                    title='numeros del 0-9"'
+                    className='form-control'
+                    />
+                </div>
+
                 <div className='atributo'>
                     <label>Cantidad de asientos:</label>
                     <input
@@ -119,6 +150,7 @@ const AgregarMesa = () =>{
                     className='form-control'
                     />
                 </div>
+
                 <div className='d-flex mt-2'>
                     <Button 
                     color={'gradient'}

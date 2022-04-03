@@ -151,7 +151,7 @@ input[type="date"]{
 .layoutCompra{
   display: grid;
   grid-template-columns: repeat(2, 50%);
-  grid-template-rows: 110px 500px 100px;
+  grid-template-rows: 250px 500px;
 }
 
 .selectCompra{
@@ -161,24 +161,9 @@ input[type="date"]{
   grid-column-start: 1;
   grid-column-end: 3;
   justify-items: center;
+  align-items: center;
   grid-template-columns: repeat(5, 20%);
-}
-
-
-.fechasCompra{
-  display: grid;
-  grid-row-start: 3;
-  grid-row-end: 3;
-  grid-column-start: 2;
-  grid-column-end: 2;
-  grid-template-columns: repeat(3, 33%);
-}
-
-.botonesCompra{
-  display: grid;
-  grid-template-columns: repeat(2, 30%);
-  justify-content: space-around;
-  align-content: center;
+  grid-template-rows: repeat(2,50%);
 }
 
 .listaInsumos{

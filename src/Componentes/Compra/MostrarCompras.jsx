@@ -7,17 +7,24 @@ import lapizEditar from '../../img/lapiz_editar.png';
 import moment from 'moment';
 
 
-const endPointGetCompras    = 'http://127.0.0.1:8000/api/CompraEncabezado'
-const endPointUpdateComrpra = 'http://127.0.0.1:8000/api/updateCompraEncabezado'
-const endPointGetEmpleados  = 'http://127.0.0.1:8000/api/Empleado'
+const endPointGetCompras        = 'http://127.0.0.1:8000/api/CompraEncabezado'
+const endPointGetEmpleados      = 'http://127.0.0.1:8000/api/Empleado'
+const endPointGetProveedores    = 'http://127.0.0.1:8000/api/Proveedor'
+const endPointGetInsumos        = 'http://127.0.0.1:8000/api/Insumo'
+const endPointGetCompraDetalles = 'http://127.0.0.1:8000/api/CompraDetalle'
 
 const MostrarCompras = ()=> {
 
   const [compras, setCompras]           = useState([])
-  const [compraActual, setCompraACtual] = useState([])
   const [empleados, setEmpleados]       = useState([])
   let   nombreEmpleado                  = ''
+  const [proveedores, setProveedores]   = useState([])
+  let   idProveedor                     = 0
+  const [insumos, setInsumos]           = useState([])
+  let   insumoNombre                    = ''
 
+
+  const [compraDetalles, setCompraDetalles]         = useState([])
   const [parametroBusqueda, setParametroBusqueda]   = useState('Seleccione')
   const [valorBusqueda, setValorBusqueda]           = useState('Seleccione')
   
@@ -29,6 +36,8 @@ const MostrarCompras = ()=> {
   useEffect(()=>{
     getAllCompras()
     getAllEmpleados()
+    getAllProveedores()
+    getAllInsumos()
   },[])
 
   //
@@ -37,8 +46,18 @@ const MostrarCompras = ()=> {
     setMensajeModal(mensajeModal)
     setVisible(true)
   }
+//
+  const getAllProveedores = async () => {
+    const response = await axios.get(endPointGetProveedores)
+    setProveedores(response.data)
+  }
   //
-  const cambioEstado = async ()=>{
+  const getCompraDetalles = async (compraId) => {
+    const response = await axios.get(`${endPointGetCompraDetalles}E/${compraId}`)
+    setCompraDetalles(response.data)
+  }
+  //
+  /*const cambioEstado = async ()=>{
     //console.log(compraActual)
 
     const response = await axios.put(`${endPointUpdateComrpra}/${compraActual.id}`, {proveedorId: compraActual.proveedorId, 
@@ -49,7 +68,7 @@ const MostrarCompras = ()=> {
 
         //console.log(response.data)
         getAllCompras()
-  }
+  }*/
 
   //
   const getAllCompras = async ()=>{
@@ -63,6 +82,12 @@ const MostrarCompras = ()=> {
     setEmpleados(response.data)
   }
   //
+  const getAllInsumos = async () =>{
+    const response = await axios.get(endPointGetInsumos)
+    setInsumos(response.data)
+
+  }
+  //
   const getByValorBusqueda = async (e)=>{
     e.preventDefault()
     if (parametroBusqueda.includes('Seleccione')){
@@ -71,6 +96,7 @@ const MostrarCompras = ()=> {
     }else{
 
         if (parametroBusqueda == 'ID'){
+
             const response = await axios.get(`${endPointGetCompras}/${valorBusqueda}`)
         
             if (response.status != 200){
@@ -80,7 +106,7 @@ const MostrarCompras = ()=> {
                 setCompras(array)
             }
             
-        }else{
+        }else if (parametroBusqueda == 'Estado'){
 
             if (valorBusqueda.includes('Seleccione')){
                 activarModal('Error', 'Debe seleccionar un estado de busqueda.')
@@ -95,14 +121,43 @@ const MostrarCompras = ()=> {
                     setCompras(array)
                 }
             }
+            
+        }else{
+            formatearProveedorId()
+
+            const response = await axios.get(`${endPointGetCompras}P/${idProveedor}`)                
+            const array = response.data
+    
+            if (array.length < 1){
+                activarModal('Error', 'No hay compras a ese proveedor.')
+            }else{
+                setCompras(array)
+            }
+
         }
     }
   }
-
+  //
+  const formatearProveedorId = ()=>{
+    proveedores.map((proveedor)=>{
+        if (proveedor.proveedorNombre == valorBusqueda){
+            idProveedor = proveedor.id
+        }
+    })
+  }
+  //
   const formatearIdEmpleado = (idEmpleado)=>{
     empleados.map((empleado)=>{
         if(empleado.id == idEmpleado){
             nombreEmpleado = empleado.empleadoNombre 
+        }
+    })
+  }
+  //
+  const formatearInsumoId = (insumoId)=>{
+    insumos.map((insumo)=>{
+        if(insumo.id == insumoId){
+            insumoNombre = insumo.insumoNombre 
         }
     })
   }
@@ -128,28 +183,28 @@ const MostrarCompras = ()=> {
                 mensajeModal
                 :                                   //ELSE ELIMINAR
                 <div>
-                    {mensajeModal}
+                    <table className='table mt-2 text-white'>
+                        <thead>
+                            <tr>
+                                <th>Insumo</th>
+                                <th>Precio</th>
+                                <th>cantidad</th>
+                            </tr>
+                        </thead>
 
-                    <div className='d-flex mt-3'>
-                        <Button
-                        className='me-3 ms-5'
-                        auto
-                        onClick={()=>{
-                            setVisible(false)
-                        }}>
-                            Cancelar
-                        </Button>
-
-                        <Button
-                        className='ms-5'
-                        auto
-                        onClick={()=>{
-                            cambioEstado()
-                            setVisible(false)
-                            }}>
-                            Cambiar
-                        </Button>
-                    </div>
+                        <tbody> 
+                            {compraDetalles.map((compraDetalle)=>{
+                            formatearInsumoId(compraDetalle.insumoId)
+                             
+                            return(
+                            <tr key={compraDetalle.id}>
+                                <td>{insumoNombre}</td>
+                                <td>{compraDetalle.precio}</td>
+                                <td>{compraDetalle.cantidad}</td>
+                            </tr>)
+                            })}
+                        </tbody>
+                    </table>
                 </div>
                 }
             </Modal.Body>
@@ -168,16 +223,34 @@ const MostrarCompras = ()=> {
                 <option>Seleccione tipo busqueda</option>
                 <option>ID</option>
                 <option>Estado</option>
+                <option>Nombre Proveedor</option>
             </select>
 
-             {/*Formulario de busqueda*/}   
+            {/*Formulario de busqueda*/}
             <form 
             className='d-flex align-self-center' 
             style={{left: '300px'}} 
             onSubmit={getByValorBusqueda}
             >
                 {
-                    parametroBusqueda != 'Estado'?
+                    parametroBusqueda == 'Estado'?
+                    
+                    <select className='select'
+                    onChange={(e)=>setValorBusqueda(e.target.value)}>
+                        <option>Seleccione un estado</option>
+                        <option>Recibida</option>
+                        <option>Pendiente</option>
+                    </select>
+
+                    : parametroBusqueda == 'Nombre Proveedor'?
+                    <select className='select'
+                    onChange={(e)=>setValorBusqueda(e.target.value)}>
+                        <option>Seleccione un proveedor</option>
+                        {proveedores.map((proveedor)=>
+                            <option key={proveedor.id}>{proveedor.proveedorNombre}</option>
+                        )}
+                    </select>
+                    :
                     <input
                     placeholder={parametroBusqueda.includes('Seleccione')? '': `${parametroBusqueda}`}
                     aria-label='aria-describedby'
@@ -186,13 +259,6 @@ const MostrarCompras = ()=> {
                     className='form-control'
                     required={true}
                     />
-                    : 
-                    <select className='select'
-                    onChange={(e)=>setValorBusqueda(e.target.value)}>
-                        <option>Seleccione un estado</option>
-                        <option>Recibida</option>
-                        <option>Pendiente</option>
-                    </select>
                 }
 
                 <Button
@@ -275,43 +341,12 @@ const MostrarCompras = ()=> {
                                 <Button 
                                 light
                                 shadow
-                                children={compra.estado == 1 ? 'Deshabilitar' : 'Habilitar'}
                                 color={'secondary'}
                                 onClick={()=>{
-                                    setCompraACtual(compra)
-                                    activarModal('Cambiar', `¿Seguro que desea ${compra.estado == 1 ? 'deshabilitar' : 'habilitar'} este registro?`)
+                                    getCompraDetalles(compra.id)
+                                    activarModal('Detalles de compra', ``)
                                 }}
-                                ></Button>
-
-                                {/* <Tooltip
-                                placement='left'
-                                initialVisible={false}
-                                trigger='hover' 
-                                content={<div>
-                                            <p>Está seguro que desea cambiar este registro?</p> 
-
-                                            <div style={{display: 'flex'}}>
-                                            <Button 
-                                            auto
-                                            className='bg-dark text-light '
-                                            color={'dark'}
-                                            children={compra.estado == 1 ? 'Deshabilitar' : 'Habilitar'}
-                                            onClick={()=>cambioEstado(compra)}>
-                                            </Button>
-
-
-                                            </div>
-                                            
-                                        </div>}>
-                                    <Button 
-                                    light
-                                    shadow
-                                    children={compra.estado == 1 ? 'Deshabilitar' : 'Habilitar'}
-                                    color={'secondary'}
-                                    ></Button>
-
-                                    
-                                </Tooltip> */}
+                                >Detalles de Compra</Button>
 
                             </td>
                         </tr>)

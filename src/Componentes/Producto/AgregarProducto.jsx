@@ -6,6 +6,7 @@ import { Button, Modal, Text,} from '@nextui-org/react'
 
 const endPointAddProducto           = 'http://127.0.0.1:8000/api/addProducto'
 const endPointaddProductoInsumo     = 'http://127.0.0.1:8000/api/addProductoInsumo'
+const endPointaddProductoHistorial  = 'http://127.0.0.1:8000/api/addProductoHistorial'
 const endPointGetInsumo             = 'http://127.0.0.1:8000/api/Insumo'
 const endPointGetProducto           = 'http://127.0.0.1:8000/api/Producto'
 const AgregarProducto = () =>{
@@ -23,6 +24,10 @@ const AgregarProducto = () =>{
     const [mensajeModal, setMensajeModal]   = useState('')
     const [tituloModal, setTituloModal]     = useState('')
     const [visible, setVisible]             = useState(false)
+
+    const date = new Date()
+    const fechaHoy = `${date.getFullYear()}-${date.getMonth() < 9? '0':''}${date.getMonth()+1}-${date.getDate() < 10? '0':''}${date.getDate()}`
+    
 
     useEffect(() => {
         getAllInsumos()
@@ -42,9 +47,11 @@ const AgregarProducto = () =>{
     }
     //
     const agregarAlCarro = ()=>{
-        //PONER EXPRECIÓN REGULAR PARA EVITAR QUE INGRESE NUMERO NEGATIVOS EN CANTIDAD////////////////////////
     
-        if (parseInt(cantidadInsumo) > 10){
+        if (parseInt(cantidadInsumo) <= 0){
+            setCantidadInsumo(0)
+            activarModal('Error', `La cantidad de insumo debe ser real, no puede ser cero.`)
+        }else if (parseInt(cantidadInsumo) > 10){
           setCantidadInsumo(0)
           activarModal('Error', `Un producto no puede tener más de 10 unidades del mismo insumo.`)
         }else{
@@ -69,8 +76,11 @@ const AgregarProducto = () =>{
 
     //
     const editarCompra = ()=>{
-    
-        if (parseInt(cantidadInsumo) > 10){
+        
+        if (parseInt(cantidadInsumo) <= 0){
+            setCantidadInsumo(0)
+            activarModal('Error', `La cantidad de insumo debe ser real, no puede ser cero.`)
+        }else if (parseInt(cantidadInsumo) > 10){
             setCantidadInsumo(0)
             activarModal('Error', `Un producto no puede tener más de 10 unidades del mismo insumo.`)
         }else{
@@ -107,16 +117,25 @@ const AgregarProducto = () =>{
                 const response = await axios.post(endPointAddProducto, {productoNombre: productoNombre,
                 productoDescripcion: productoDescripcion, precio: precio, estado: 1})
     
-                console.log(response.data)
+                //console.log(response.data)
     
                 if (response.status !== 200){
                     activarModal('Error', `${response.data.Error}`)
                 }else{
+                    registrarProductoHistorial()
                     registrarProductoInsumo()
                 }
             }
         }
 
+    }
+    //
+    const registrarProductoHistorial = async() =>{
+        const response = await axios.get(endPointGetProducto)
+        const productoActual = response.data[response.data.length-1].id
+
+        const response1 = await axios.post(endPointaddProductoHistorial, {productoId: productoActual,
+        precio: precio, fechaInicio: fechaHoy, estado: 1})
     }
     //
     const registrarProductoInsumo = async() =>{
@@ -127,11 +146,12 @@ const AgregarProducto = () =>{
             const response1 = await axios.post(endPointaddProductoInsumo, {productoId: productoActual, insumoId: insumo.id, 
             cantidad: insumo.cantidadDeCompra, estado:1})
 
-            console.log(response1.data)
+            //console.log(response1.data)
         })
 
         navigate('/Productos')
     }
+    
 
 
     return(
