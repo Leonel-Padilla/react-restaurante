@@ -193,7 +193,6 @@ const AgregarCompra = () => {
     }
     else{
       formatearProveedorId()
-      //console.log(empleadoId)
       const caiNumFactura = `${cai}/${numeroFactura}`
       console.log(caiNumFactura)
 
@@ -202,6 +201,7 @@ const AgregarCompra = () => {
       numeroFactura: numeroFactura, cai: cai, numeroFacturaCai: caiNumFactura, estado: 1})
         
       //console.log(response.data)
+      
     
       if (response.status != 200){
         activarModal('Error', `${response.data.Error}`)

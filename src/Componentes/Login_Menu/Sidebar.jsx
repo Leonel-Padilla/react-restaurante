@@ -140,9 +140,9 @@ function Sidebar () {
                 contentLeft={
                 <Avatar size="md" squared icon={<img src={Sucursal}/>} />}>
                     <Button light color={'default'} onClick={()=>navigate('/Facturas')} className="text-white"> 
-                        Mostrar Sucursales</Button>
+                        Mostrar Facturas</Button>
                     <Button light color={'default'} onClick={()=>navigate('/Facturas/addFactura')}className="text-white">
-                        Registrar Sucursal</Button>
+                        Registrar Facturas</Button>
                 </Collapse>
                
                 

@@ -272,7 +272,7 @@ input[type="date"]{
   grid-column-end: 3;
   justify-items: center;
   align-items: center;
-  grid-template-columns: repeat(6, 17%);
+  grid-template-columns: repeat(6, 16%);
   grid-template-rows: repeat(2,50%);
 }
 

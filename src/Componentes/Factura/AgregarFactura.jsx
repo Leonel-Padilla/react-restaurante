@@ -13,7 +13,10 @@ const endPointGetCliente            = 'http://127.0.0.1:8000/api/Cliente'
 const endPointGetAllTiposEntrega    = 'http://127.0.0.1:8000/api/TipoEntrega'
 const endPointPostOrdenEncabezado   = 'http://127.0.0.1:8000/api/addOrdenEncabezado'
 const endPointPostOrdenDetalle      = 'http://127.0.0.1:8000/api/addOrdenDetalle'
-
+const endPointGetAllParametrosCAI   = 'http://127.0.0.1:8000/api/ParametrosFactura'
+const endPointUpdateParametroCAI    = 'http://127.0.0.1:8000/api/updateParametrosFactura'
+const endPointGetFormasPago         = 'http://127.0.0.1:8000/api/FormaPago'
+const endPointPostFactura           = 'http://127.0.0.1:8000/api/addFactura'
 
 function AgregarFactura() {
   const [productos, setProductos]               = useState([])
@@ -24,6 +27,8 @@ function AgregarFactura() {
   const [empleados, setEmpleados]               = useState([])
   const [clientes, setClientes]                 = useState([])
   const [tiposEntrega, setTiposEntrega]         = useState([])
+  const [parametrosCai, setParametrosCai]       = useState([])
+  const [formasPago, setFormasPago]             = useState([])
 
 
 
@@ -41,6 +46,22 @@ function AgregarFactura() {
   const [subtotal, setSubtotal]               = useState(0)
   const [impuesto, setImpuesto]               = useState(0)
   const [total, setTotal]                     = useState(0)
+  const [formaPagoId, setFormaPagoId]         = useState('Seleccione')
+  let   idFormaPago                           = ''
+  const [parametroCAIId, setParametroCAIId]   = useState('Seleccione')
+  let   idParametroCAI                        = ''
+  /*const [puntoEmision, setPuntoEmision]       = useState('')
+  const [establecimiento, setEstablecimiento] = useState('')
+  const [tipoDocumento, setTipoDocumento]     = useState('')
+  const [numeroFactura, setNumeroFactura]     = useState('')*/
+
+  /*INFORMACION DEL CAI*/
+  let puntoEmision                            = ''
+  let establecimiento                         = ''
+  let tipoDocumento                           = ''
+  let numeroFactura                           = ''
+  /*INFORMACION DEL CAI*/
+
 
   let date = new Date()
   let fechaActual = `${date.getFullYear()}-${date.getMonth() < 9? '0':''}${date.getMonth()+1}-${date.getDate() < 10? '0':''}${date.getDate()} ${date.getHours() < 10? '0':''}${date.getHours()}:${date.getMinutes() < 10? '0':''}${date.getMinutes()}`
@@ -53,13 +74,14 @@ function AgregarFactura() {
   const navigate                          = useNavigate()
 
   useEffect(()=>{
-    //console.log(fechaActual)
     getEmpleado()
     getAllProductos()
     getAllEmpleados()
     getAllClientes()
     getAllTiposEntrega()
     getAllInsumos()
+    getAllFormasPago()
+    getAllCAI()
   },[])
 
   //
@@ -67,6 +89,21 @@ function AgregarFactura() {
     setTituloModal(titulo)
     setMensajeModal(mensajeModal)
     setVisible(true)
+  }
+  //
+  const getAllCAI = async ()=>{
+    const response = await axios.get(endPointGetAllParametrosCAI)
+
+    const array = response.data.filter(parametro => parametro.fechaDesde < fechaActual && parametro.fechaHasta > fechaActual
+    && parseInt(parametro.rangoFinal) > parseInt(parametro.numeroFacturaActual))
+
+    //console.log(array)
+    setParametrosCai(array)
+  }
+  //
+  const getAllFormasPago = async ()=>{
+    const response = await axios.get(endPointGetFormasPago)
+    setFormasPago(response.data)
   }
   //
   const getAllProductos = async ()=>{
@@ -129,6 +166,34 @@ function AgregarFactura() {
     clientes.map(cliente=>{
       if (cliente.clienteNombre == clienteId){
         idCliente = cliente.id
+      }
+    })
+  }
+  //
+  const formatearFormaPagoId = ()=>{
+    formasPago.map(formaPago=>{
+      if (formaPago.nombreFormaPago == formaPagoId){
+        idFormaPago = formaPago.id
+      }
+    })
+  }
+  //
+  const formatearParametroCAI = ()=>{
+    parametrosCai.map(parametroCAI=>{
+      if (parametroCAI.numeroCAI == parametroCAIId){
+        idParametroCAI = parametroCAI.id
+      }
+    })
+  }
+  //
+  const buscarParametroCAI = ()=>{
+    parametrosCai.map(parametroCAI=>{
+      if (parametroCAI.numeroCAI == parametroCAIId){
+
+        puntoEmision    = parametroCAI.puntoEmision
+        establecimiento = parametroCAI.establecimiento
+        tipoDocumento   = parametroCAI.tipoDocumento
+        numeroFactura   = parametroCAI.numeroFacturaActual
       }
     })
   }
@@ -233,15 +298,13 @@ function AgregarFactura() {
 
   //
   const verificarInventario = ()=>{
-    //console.log('verificando')
-    //console.log(insumosDeOrdern)
     let insumosNecesarios = insumosDeOrdern
     let insumosNoDisponibles = []
 
     insumosNecesarios.map((insumoNecesario)=>{
       insumos.map((insumo)=>{
         if (insumo.id == insumoNecesario.insumoId){
-          if (insumo.cantidad < insumoNecesario.cantidad){
+          if ((insumo.cantidad-insumo.cantidadMin) < insumoNecesario.cantidad){
             insumosNoDisponibles.push(insumo.insumoNombre)
           }
         }
@@ -249,33 +312,34 @@ function AgregarFactura() {
     })
 
     if (insumosNoDisponibles.length > 0){
-      console.log('no hay suficientes insumos')
+      //console.log('no hay suficientes insumos')
       activarModal('Error', `No hay suficientes insumos para esta orden, faltan: ${insumosNoDisponibles.join(', ')}.`)
     }else{
       setVisible(false)
-      registrarordenEncabezado()
+      registrarOrdenEncabezado()
     }
     
   }
   //
-  const registrarordenEncabezado = async ()=>{
-    if (cocineroId.includes('Seleccione') || meseroId.includes('Seleccione') || tipoEntregaId.includes('Seleccione')){
-      activarModal('Error', 'Debe seleccionar un cocinero, un mesero y un tipo de entrega.')
+  const registrarOrdenEncabezado = async ()=>{
+
+
+    
+    if (cocineroId.includes('Seleccione') || meseroId.includes('Seleccione') || tipoEntregaId.includes('Seleccione') || formaPagoId.includes('Seleccione') || parametroCAIId.includes('Seleccione')){
+      activarModal('Error', 'Debe seleccionar un cocinero, un mesero, tipo de entrega, forma de pago y un CAI.')
     }else if (carroProductos.length == 0){
       activarModal('Error', 'Debe agregar al menos un producto a la orden.')
     }
     else{
-      //console.log('registrando encabezado')
-
+      buscarParametroCAI()
       formatearClienteId()
       formatearMeseoId()
       formatearCocineroId()
       formatearTipoEntregaId()
 
       const response = await axios.post(endPointPostOrdenEncabezado, {clienteId: idCliente, empleadoMeseroId: idMesero, 
-      empleadoCocinaId: idCocinero, tipoEntregaId: idTipoEntrega, fechaHora: fechaActual, /*ESTO NO VA*/estadoOrden: 'Esto no va', 
-      estado: 1})
-      //console.log(response.data)
+      empleadoCocinaId: idCocinero, tipoEntregaId: idTipoEntrega, fechaHora: fechaActual, estado: 1})
+      console.log(response.data)
       
       if (response.status != 200){
         activarModal('Error', `${response.data.Error}`)
@@ -294,14 +358,73 @@ function AgregarFactura() {
       const response = await axios.post(endPointPostOrdenDetalle, {ordenEncabezadoId: encabezadoId,
       productoId: producto.id, precio: precioDeCompra, cantidad: producto.cantidadDeCompra, estado: 1})
 
-      console.log(response.data)
+      //console.log(response.data)
 
     })
 
+    cambiosEnInventario()
     registrarFactura(encabezadoId)
   }
   //
-  const registrarFactura = async ()=>{
+  const cambiosEnInventario = async ()=>{
+    //console.log(insumosDeOrdern)
+    insumosDeOrdern.map(async(insumoDeOrden)=>{
+      insumos.map(async(insumo)=>{
+        if (insumo.id == insumoDeOrden.insumoId){
+          const nuevaCantidad = (insumo.cantidad - insumoDeOrden.cantidad)
+          //console.log(nuevaCantidad)
+
+          const response = await axios.put(`${endPointUpdateInsumo}/${insumo.id}`, {proveedorId: insumo.proveedorId, 
+          insumoNombre: insumo.insumoNombre, insumoDescripcion: insumo.insumoDescripcion, cantidad: nuevaCantidad,
+          cantidadMin: insumo.cantidadMin, cantidadMax: insumo.cantidadMax, estado: insumo.estado})
+
+          //console.log(response.data)
+        }
+      })
+    })
+    
+  }
+  //
+  const registrarFactura = async (encabezadoId)=>{
+    
+    // let ultimosDigitos = (parseInt(numeroFactura)+1)
+    let ultimosDigitos = (parseInt(numeroFactura)+1)
+    const cerosNecesarios = (8-ultimosDigitos.toString().length)
+
+    for (let i = 0; i < cerosNecesarios; i++){
+      ultimosDigitos = '0' + ultimosDigitos
+    }
+
+    const numeroFacturaActual = `${puntoEmision}${establecimiento}${tipoDocumento}${ultimosDigitos}`
+    //console.log(numeroFacturaActual)
+
+    formatearFormaPagoId()
+    formatearParametroCAI()
+
+    //console.log(encabezadoId, empleadoId, idParametroCAI, idFormaPago, fechaActual, numeroFacturaActual, impuesto, subtotal, total)
+
+    const response = await axios.post(endPointPostFactura, {ordenEncabezadoId: encabezadoId, empleadoCajeroId: empleadoId, 
+    parametroFacturaId: idParametroCAI, formaPagosId: idFormaPago, fechaHora: fechaActual, numeroFactura: numeroFacturaActual,
+    impuesto: impuesto, subTotal: subtotal, total: total, estado: 1})
+
+    console.log(response.data)
+
+
+    const response1 = await axios.get(`${endPointGetAllParametrosCAI}/${idParametroCAI}`)
+    const parametroActual = response1.data
+    console.log(`Buscando parametro `)
+    console.log(response1.data)
+
+    const nuevoNumeroFactura = (parseInt(parametroActual.numeroFacturaActual)+1)
+
+    const response2 = await axios.put(`${endPointUpdateParametroCAI}/${idParametroCAI}`, 
+    {numeroCAI: parametroActual.numeroCAI, fechaDesde: parametroActual.fechaDesde, fechaHasta: parametroActual.fechaHasta,
+    rangoInicial: parametroActual.rangoInicial, rangoFinal: parametroActual.rangoFinal, numeroFacturaActual: nuevoNumeroFactura,
+    puntoEmision: parametroActual.puntoEmision, establecimiento: parametroActual.establecimiento, 
+    tipoDocumento: parametroActual.tipoDocumento, rtn_Restaurante: parametroActual.rtn_Restaurante, estado: parametroActual.estado})
+
+    console.log(`Respuesta de UPDATE`)
+    console.log(response2.data)
     
   }
 
@@ -493,13 +616,13 @@ function AgregarFactura() {
           </div>
 
           <div className='atributo'>
-            <label>Parametros de CAI</label>
+            <label>CAI de Factura</label>
             <select
-           /* value={tipoEntregaId}
-            onChange={(e)=>setTipoEntregaId(e.target.value)}*/
+            value={parametroCAIId}
+            onChange={(e)=>setParametroCAIId(e.target.value)}
             className='select'> 
-              <option>Seleccione El parametro</option>
-              {/* {tiposEntrega.map((tipoEntrega)=> <option key={tipoEntrega.id}>{tipoEntrega.nombreTipoEntrega}</option>)} */}
+              <option>Seleccione CAI</option>
+              {parametrosCai.map((parametro)=> <option key={parametro.id}>{parametro.numeroCAI}</option>)}
             </select>
           </div>
 
@@ -524,16 +647,6 @@ function AgregarFactura() {
             Guardar
           </Button>
 
-          <Button
-          auto
-          size={'lg'}
-          color={'gradient'}
-          ghost
-          //onClick={()=>registrarEncabezado()}>
-          >
-            Imprimir
-          </Button>
-
           <div className='atributo'>
             <label>Subtotal</label>
             <h4>{subtotal}</h4>
@@ -549,7 +662,19 @@ function AgregarFactura() {
             <h4>{total}</h4>
           </div>
 
+          <div className='atributo'>
+            <label>Froma de pago</label>
+            <select
+            value={formaPagoId}
+            onChange={(e)=>setFormaPagoId(e.target.value)}
+            className='select'> 
+              <option>Seleccione forma de apgo</option>
+              {formasPago.map((formaDePago)=> <option key={formaDePago.id}>{formaDePago.nombreFormaPago}</option>)}
+            </select>
+          </div>
+
         </div>
+
 
         {/*Lista de los insumos*/}
         <div className='listaInsumos'>

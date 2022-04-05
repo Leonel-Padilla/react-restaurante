@@ -132,7 +132,7 @@ const ActualizarCompra = () =>{
       })
 
       if (errores.length > 0){
-        activarModal('Error', `No se puede realizar la compra, debido a que el inventario no tiene suficiente cantidad de: ${errores}.`)
+        activarModal('Error', `No se puede realizar la compra, debido a que el inventario no tiene suficiente espacio para: ${errores.join(', ')}.`)
 
         setCompraEstado('Pendiente')
 
