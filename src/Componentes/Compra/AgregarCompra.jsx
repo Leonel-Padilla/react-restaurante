@@ -45,13 +45,24 @@ const AgregarCompra = () => {
   let date2 = new Date()
   date2.setDate(date2.getDate()-3)
   let minFechaSolicitud = `${date2.getFullYear()}-${date2.getMonth() < 9? '0':''}${date2.getMonth()+1}-${date2.getDate() < 10? '0':''}${date2.getDate()}`
+
+  let date3 = new Date(fechaSolicitud);
+  date3.setDate(date3.getDate()+1);
+
+  let date4 = new Date(fechaSolicitud);
+  date4.setDate(date4.getDate()+30);
+
+  let date5 = new Date(fechaEntrega);
+  date5.setDate(date5.getDate()+1);
+
+  let date6 = new Date(fechaEntrega);
+  date6.setDate(date6.getDate()+90);
   
 
   useEffect(()=>{
     getAllEmpleados()
     getAllProveedores()
     setFechaSolicitud(fechaHoy)
-    //setEmpleadoId(sessionStorage.getItem('userName'))
     getEmpleado()
   }, [])
 
@@ -104,14 +115,6 @@ const AgregarCompra = () => {
       }
     })
   }
-  //
-  /*const formatearEmpleadoId = ()=>{
-    empleados.map((empleado)=>{
-      if (empleado.empleadoNombre == empleadoId){
-        idEmpleado = empleado.id
-      }
-    })
-  }*/
   //
   const agregarAlCarro = ()=>{
 
@@ -208,7 +211,6 @@ const AgregarCompra = () => {
 
     }
   }
-
   //
   const registrarDetalles =  async ()=>{
     const response = await axios.get(`${endPointGetCompraEncabezado}P/${idProveedor}`)
@@ -223,24 +225,8 @@ const AgregarCompra = () => {
     })
     navigate('/compras')
 
-    //cambiosEnInventario()
   }
-  
-  //
-  /*const cambiosEnInventario = async ()=>{    
-    carroInsumos.map(async (insumoEnCarro)=>{
-      const cantidadFinal = (parseInt(insumoEnCarro.cantidad) + parseInt(insumoEnCarro.cantidadDeCompra))
-      //console.log(cantidadFinal)
 
-      const response = await axios.put(`${endPointUpdateInsumo}/${insumoEnCarro.id}`, {proveedorId: insumoEnCarro.proveedorId, 
-        insumoNombre: insumoEnCarro.insumoNombre, insumoDescripcion: insumoEnCarro.insumoDescripcion, 
-        cantidad: cantidadFinal, cantidadMin: insumoEnCarro.cantidadMin,
-        cantidadMax: insumoEnCarro.cantidadMax, estado: insumoEnCarro.estado})
-        //console.log(response.data)
-    })
-
-    navigate('/Compras')
-  }*/
 
   return (
     <div>
@@ -468,6 +454,8 @@ const AgregarCompra = () => {
                 <div className='atributo'>
                   <label>Fecha Entrega</label>
                   <input type="date" 
+                  min={`${date3.getFullYear()}-${date3.getMonth() < 9? '0':''}${date3.getMonth()+1}-${date3.getDate() < 10? '0':''}${date3.getDate()}`}
+                  max={`${date4.getFullYear()}-${date4.getMonth() < 9? '0':''}${date4.getMonth()+1}-${date4.getDate() < 10? '0':''}${date4.getDate()}`}
                   onChange={(e)=>setFechaEntrega(e.target.value)}
                   />
                 </div>
@@ -475,6 +463,8 @@ const AgregarCompra = () => {
                 <div className='atributo'>
                   <label>Fecha Pago</label>
                   <input type="date"
+                  min={`${date5.getFullYear()}-${date5.getMonth() < 9? '0':''}${date5.getMonth()+1}-${date5.getDate() < 10? '0':''}${date5.getDate()}`}
+                  max={`${date6.getFullYear()}-${date6.getMonth() < 9? '0':''}${date6.getMonth()+1}-${date6.getDate() < 10? '0':''}${date6.getDate()}`}
                   onChange={(e)=>setFechaPago(e.target.value)}
                   />
                 </div>
@@ -484,6 +474,7 @@ const AgregarCompra = () => {
               
               {/*Lista de los insumos*/}
               <div className='listaInsumos'>
+
                 <div className='d-flex justify-content-center bg-dark mb-2'
                 style={{borderRadius: '10px', height:'41.59px'}}>
                   <h3 className='text-white'>Lista Insumos</h3>

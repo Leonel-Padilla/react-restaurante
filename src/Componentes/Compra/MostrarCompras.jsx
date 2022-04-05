@@ -181,7 +181,7 @@ const MostrarCompras = ()=> {
             <Modal.Body>
                 {tituloModal.includes('Error')?     //IF ERROR
                 mensajeModal
-                :                                   //ELSE ELIMINAR
+                :                                   //ELSE DETALLES
                 <div>
                     <table className='table mt-2 text-white'>
                         <thead>

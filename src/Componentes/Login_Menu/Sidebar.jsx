@@ -134,6 +134,16 @@ function Sidebar () {
                     <Button light color={'default'} onClick={()=>navigate('/Sucursales/addSucursal')}className="text-white">
                         Registrar Sucursal</Button>
                 </Collapse>
+
+                <Collapse 
+                title = {<Text h6 className="text-white">Facturas</Text>}
+                contentLeft={
+                <Avatar size="md" squared icon={<img src={Sucursal}/>} />}>
+                    <Button light color={'default'} onClick={()=>navigate('/Facturas')} className="text-white"> 
+                        Mostrar Sucursales</Button>
+                    <Button light color={'default'} onClick={()=>navigate('/Facturas/addFactura')}className="text-white">
+                        Registrar Sucursal</Button>
+                </Collapse>
                
                 
                 

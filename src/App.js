@@ -13,6 +13,7 @@ import Mesa from './Componentes/Mesa/Mesa'
 import Compra from './Componentes/Compra/Compra'
 import Comentario from './Componentes/Comentario/Comentario';
 import Producto from './Componentes/Producto/Producto';
+import Factura from './Componentes/Factura/Factura';
 
 
 
@@ -36,6 +37,7 @@ function App() {
           <Route path='/Compras/*' element={<Compra></Compra>}></Route>
           <Route path='/Comentarios/*' element={<Comentario></Comentario>}></Route>
           <Route path='/Productos/*' element={<Producto></Producto>}></Route>
+          <Route path='/Facturas/*' element={<Factura></Factura>}></Route>
         </Routes>
       </section>
     </div>
