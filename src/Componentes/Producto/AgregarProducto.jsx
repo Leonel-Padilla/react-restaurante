@@ -232,7 +232,10 @@ const AgregarProducto = () =>{
                       type='number'
                       className='form-control'
                       value={cantidadInsumo}
-                      onChange={(e)=>setCantidadInsumo(e.target.value)}/>
+                      onChange={(e)=>setCantidadInsumo(e.target.value)}
+                      min={1}
+                      max={10}
+                      />
 
                       <div className='botonesModal mt-4'>
                         <Button

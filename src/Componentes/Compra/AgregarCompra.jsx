@@ -313,6 +313,7 @@ const AgregarCompra = () => {
                       type='number'
                       className='form-control'
                       value={cantidadInsumo}
+                      min={1}
                       onChange={(e)=>setCantidadInsumo(e.target.value)}/>
 
                       <label>Precio Total</label>
@@ -418,6 +419,7 @@ const AgregarCompra = () => {
                  value={numeroFactura}
                  onChange={(e)=>setNUmeroFactura(e.target.value)}
                  type='text'
+                 pattern='[0-9]+$'
                  maxLength={16}
                  className='form-control'
                  />

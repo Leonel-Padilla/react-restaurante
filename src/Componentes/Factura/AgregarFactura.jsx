@@ -2,6 +2,7 @@ import React, {useRef, useState, useEffect} from 'react'
 import { Button, Input, Modal, Text, Textarea} from '@nextui-org/react'
 import axios from 'axios'
 import { Navigate, useNavigate } from 'react-router-dom'
+import jsPDF from 'jspdf'
 
 const endPointGetProducto           = 'http://127.0.0.1:8000/api/Producto'
 const endPointGetInsunmos           = 'http://127.0.0.1:8000/api/Insumo'
@@ -50,10 +51,6 @@ function AgregarFactura() {
   let   idFormaPago                           = ''
   const [parametroCAIId, setParametroCAIId]   = useState('Seleccione')
   let   idParametroCAI                        = ''
-  /*const [puntoEmision, setPuntoEmision]       = useState('')
-  const [establecimiento, setEstablecimiento] = useState('')
-  const [tipoDocumento, setTipoDocumento]     = useState('')
-  const [numeroFactura, setNumeroFactura]     = useState('')*/
 
   /*INFORMACION DEL CAI*/
   let puntoEmision                            = ''
@@ -323,8 +320,6 @@ function AgregarFactura() {
   //
   const registrarOrdenEncabezado = async ()=>{
 
-
-    
     if (cocineroId.includes('Seleccione') || meseroId.includes('Seleccione') || tipoEntregaId.includes('Seleccione') || formaPagoId.includes('Seleccione') || parametroCAIId.includes('Seleccione')){
       activarModal('Error', 'Debe seleccionar un cocinero, un mesero, tipo de entrega, forma de pago y un CAI.')
     }else if (carroProductos.length == 0){
@@ -425,7 +420,65 @@ function AgregarFactura() {
 
     console.log(`Respuesta de UPDATE`)
     console.log(response2.data)
+
+    crearFacturaPDF(numeroFacturaActual, parametroActual.rtn_Restaurante, parametroActual.rangoInicial, parametroActual.rangoFinal)
     
+  }
+  //
+  const crearFacturaPDF = async (numeroFacturaActual, RTN, rangoInicio, rangoFinal)=>{
+    let clienteRTN = 0
+    clientes.map(async(cliente)=>{
+      if (cliente.id == idCliente){
+        clienteRTN = cliente.clienteRTN
+      }
+    })
+
+    
+    const doc = new jsPDF({
+      format: 'dl'
+    })
+    
+    doc.setFontSize(15)
+    doc.text(`FIVE FORKS`, 10, 10)
+
+    doc.setFontSize(10)
+
+    doc.text(`RTN: ${RTN}`, 10, 20)
+    doc.text(`Fecha y Hora: ${fechaActual}`, 10, 25)
+    doc.text(`Usuario: ${nombreUsuario}`, 10, 30)
+    doc.text(`NUMERO DE FACTURA: ${numeroFacturaActual}`, 10, 35)
+
+    doc.text(`Articulo: `, 10, 45)
+    doc.text(`Cantidad: `, 40, 45)
+    doc.text(`Precio: `, 80, 45)
+    doc.text(`-------------------------------------------------------------------`, 10, (50))
+    for (let i = 0; i < carroProductos.length; i++){
+      doc.text(`${carroProductos[i].productoNombre}`, 10, (55+(i*5)))
+      doc.text(`${carroProductos[i].cantidadDeCompra}`, 40, (55+(i*5)))
+      doc.text(`L. ${carroProductos[i].precio}`, 80, (55+(i*5)))
+    }
+    doc.text(`-------------------------------------------------------------------`, 10, (55+(carroProductos.length*5)))
+
+    doc.text(`Subtotal:`, 40, (55+(carroProductos.length*5)+5))
+    doc.text(`L. ${subtotal}`, 75, (55+(carroProductos.length*5)+5))
+    doc.text(`Impuesto:`, 40, (55+(carroProductos.length*5)+10))
+    doc.text(`L. ${impuesto}`, 75, (55+(carroProductos.length*5)+10))
+    doc.text(`Total:`, 40, (55+(carroProductos.length*5)+15))
+    doc.text(`L. ${total}`, 75, (55+(carroProductos.length*5)+15))
+
+    doc.text(`CAI: ${parametroCAIId}`, 10, (55+(carroProductos.length*5)+25))
+    doc.text(`Rango Autorizado: ${rangoInicio} - ${rangoFinal}`, 10, (55+(carroProductos.length*5)+30))
+    doc.text(`Cliente: ${clienteId}`, 10, (55+(carroProductos.length*5)+35))
+    doc.text(`Cliente RTN: ${clienteRTN}`, 10, (55+(carroProductos.length*5)+40))
+    doc.text(`Cocinero: ${cocineroId}`, 10, (55+(carroProductos.length*5)+45))
+    doc.text(`Mesero: ${meseroId}`, 10, (55+(carroProductos.length*5)+50))
+
+    doc.text(`La factura es beneficio de todos, EXIJALA.`, 10, (55+(carroProductos.length*5)+60))
+
+    
+    doc.save(`Factura ${numeroFacturaActual}.pdf`)
+
+    navigate('/Facturas')
   }
 
 
@@ -531,6 +584,8 @@ function AgregarFactura() {
               type='number'
               className='form-control'
               value={cantidadProducto}
+              min={1}
+              max={100}
               onChange={(e)=>setCantidadProducto(e.target.value)}/>
 
               <div className='botonesModal mt-4'>
@@ -663,12 +718,12 @@ function AgregarFactura() {
           </div>
 
           <div className='atributo'>
-            <label>Froma de pago</label>
+            <label>Forma de pago</label>
             <select
             value={formaPagoId}
             onChange={(e)=>setFormaPagoId(e.target.value)}
             className='select'> 
-              <option>Seleccione forma de apgo</option>
+              <option>Seleccione forma de pago</option>
               {formasPago.map((formaDePago)=> <option key={formaDePago.id}>{formaDePago.nombreFormaPago}</option>)}
             </select>
           </div>

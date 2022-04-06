@@ -324,8 +324,8 @@ const MostrarCompras = ()=> {
                             <td>{compra.id}</td>
                             <td>{nombreEmpleado}</td>
                             <td>{moment(compra.fechaSolicitud).format("DD/MM/yy")}</td>
-                            <td>{moment(compra.fechaEntregaCompra).format("DD/MM/yy")}</td>
-                            <td>{moment(compra.fechaPagoCompra).format("DD/MM/yy")}</td>
+                            <td>{compra.fechaEntregaCompra == null? 'Por definir':moment(compra.fechaEntregaCompra).format("DD/MM/yy")}</td>
+                            <td>{compra.fechaPagoCompra == null? 'Por definir':moment(compra.fechaPagoCompra).format("DD/MM/yy")}</td>
                             <td>{compra.estadoCompra}</td>
                             <td>
                                 <Button

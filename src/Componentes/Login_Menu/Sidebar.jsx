@@ -12,6 +12,7 @@ import Mesa from '../../img/mesa.png'
 import Comenatario from '../../img/chat.png'
 import Comida from '../../img/comida.png'
 import Compra from '../../img/compras.png'
+import Factura from '../../img/factura.png'
 import { useNavigate } from "react-router-dom";
 
 
@@ -86,6 +87,16 @@ function Sidebar () {
                 </Collapse>
 
                 <Collapse 
+                title = {<Text h6 className="text-white">Facturas</Text>}
+                contentLeft={
+                <Avatar size="md" squared icon={<img src={Factura}/>} />}>
+                    <Button light color={'default'} onClick={()=>navigate('/Facturas')} className="text-white"> 
+                        Mostrar Facturas</Button>
+                    <Button light color={'default'} onClick={()=>navigate('/Facturas/addFactura')}className="text-white">
+                        Registrar Facturas</Button>
+                </Collapse>
+
+                <Collapse 
                 title = {<Text h6 className="text-white">Insumo</Text>}
                 contentLeft={
                 <Avatar size="md" icon={<img src={Insumo}/>}/>}>
@@ -135,15 +146,7 @@ function Sidebar () {
                         Registrar Sucursal</Button>
                 </Collapse>
 
-                <Collapse 
-                title = {<Text h6 className="text-white">Facturas</Text>}
-                contentLeft={
-                <Avatar size="md" squared icon={<img src={Sucursal}/>} />}>
-                    <Button light color={'default'} onClick={()=>navigate('/Facturas')} className="text-white"> 
-                        Mostrar Facturas</Button>
-                    <Button light color={'default'} onClick={()=>navigate('/Facturas/addFactura')}className="text-white">
-                        Registrar Facturas</Button>
-                </Collapse>
+                
                
                 
                 
