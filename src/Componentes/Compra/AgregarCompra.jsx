@@ -361,7 +361,10 @@ const AgregarCompra = () => {
                   <label>Proveedor</label>
                   <select
                   value={proveedorId}
-                  onChange={(e)=>setProveedorId(e.target.value)}
+                  onChange={(e)=>{
+                    setInsumos([])
+                    setCarroInsumos([])
+                    setProveedorId(e.target.value)}}
                   className='select'> 
                       <option>Seleccione un Proveedor</option>
                       {proveedores.map((proveedor)=> <option key={proveedor.id}>{proveedor.proveedorNombre}</option>)}
