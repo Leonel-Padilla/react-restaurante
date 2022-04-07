@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { Button, Input, Tooltip, Modal, Text } from '@nextui-org/react';
 import buscarLupa from '../../img/buscar_lupa.png';
 import lapizEditar from '../../img/lapiz_editar.png'
+import moment from 'moment';
 
 const endPointGetFactura          = 'http://127.0.0.1:8000/api/Factura'
 const endPointGetCliente          = 'http://127.0.0.1:8000/api/Cliente'
@@ -155,7 +156,7 @@ function MostrarFacturas() {
                       <tr>
                         <th>Producto</th>
                         <th>Precio Total</th>
-                        <th>cantidad</th>
+                        <th>Cantidad</th>
                       </tr>
                     </thead>
 
@@ -188,7 +189,7 @@ function MostrarFacturas() {
             >   
                 <option>Seleccione tipo busqueda</option>
                 <option>ID</option>
-                <option>Cejero</option>
+                <option>Cajero</option>
             </select>
 
             <form 
@@ -196,7 +197,7 @@ function MostrarFacturas() {
             style={{left: '300px'}} 
             onSubmit={getByValorBusqueda}
             >
-              {parametroBusqueda == 'Cejero'?
+              {parametroBusqueda == 'Cajero'?
               <select className='select'
               value={valorBusqueda}
               onChange={(e)=>setValorBusqueda(e.target.value)}>
@@ -243,7 +244,7 @@ function MostrarFacturas() {
             color={"gradient"}
             bordered
             className='align-self-center me-2'
-            //onClick={()=>getAllInsumos()}
+            onClick={()=>getAllFacturas()}
             >Llenar Tabla
             </Button>
 
@@ -251,7 +252,7 @@ function MostrarFacturas() {
             className='bg-dark text-light align-self-center'
             color={'dark'}
             bordered
-            onClick={()=>navigate('/Insumos/addInsumo')}>
+            onClick={()=>navigate('/Facturas/addFactura')}>
                 Registrar
             </Button>
 
@@ -269,7 +270,8 @@ function MostrarFacturas() {
                         <th>Cliente</th>
                         <th>Total</th>
                         <th>Fecha</th>
-                        <th>Numero Factura</th>
+                        <th>Número Factura</th>
+                        <th>Opciones</th>
                     </tr>
                 </thead>
                 
@@ -293,7 +295,8 @@ function MostrarFacturas() {
                         <td>{factura.ordenEncabezadoId}</td>
                         <td>{nombreClientre}</td>
                         <td>{factura.total}</td>
-                        <td>{factura.fechaHora}</td>
+                        <td>{moment(factura.fechaHora).format("DD/MM/yy, hh:mm")}</td>
+                        <td>{factura.numeroFactura}</td>
 
                         <td>
                             <Button

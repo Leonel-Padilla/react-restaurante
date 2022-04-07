@@ -399,7 +399,7 @@ const AgregarCompra = () => {
                 </div>
 
                 <div className='atributo'>
-                <label>Numero Factura</label>
+                <label>Número Factura</label>
                 <input
                  value={numeroFactura}
                  onChange={(e)=>setNUmeroFactura(e.target.value)}
