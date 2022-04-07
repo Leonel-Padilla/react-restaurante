@@ -37,6 +37,18 @@ const ActualizarCompra = () =>{
   const navigate                          = useNavigate()
   const {id} = useParams()
 
+  let date3 = new Date(fechaSolicitud);
+  date3.setDate(date3.getDate()+2);
+
+  let date4 = new Date(fechaSolicitud);
+  date4.setDate(date4.getDate()+8);
+
+  let date5 = new Date(fechaEntrega);
+  date5.setDate(date5.getDate()+1);
+
+  let date6 = new Date(fechaEntrega);
+  date6.setDate(date6.getDate()+90);
+
   useEffect(()=>{
     getAllEmpleados()
     getAllProveedores()
@@ -159,7 +171,6 @@ const ActualizarCompra = () =>{
           })  
   
         })
-
         
         navigate('/Compras')
       }
@@ -177,11 +188,18 @@ const ActualizarCompra = () =>{
     
     //console.log(response.data)
 
-    if (compraEstado == 'Recibida' && estadoEnCambio != compraEstado){
-      cambiosEnInventario()
+    if (response.status !== 200){
+      activarModal('Error', `${response.data.Error}`)
     }else{
-      navigate('/Compras')
+
+      if (compraEstado == 'Recibida' && estadoEnCambio != compraEstado){
+        cambiosEnInventario()
+      }else{
+        navigate('/Compras')
+      }
+      
     }
+
   }
 
   
@@ -236,13 +254,15 @@ const ActualizarCompra = () =>{
                   <label>Fecha Solicitud</label> 
                   <input type="date" 
                   value={fechaSolicitud}
-                  onChange={(e)=>setFechaSolicitud(e.target.value)}
+                  //onChange={(e)=>setFechaSolicitud(e.target.value)}
                   />
                 </div>
 
                 <div className='atributo'>
                   <label>Fecha Entrega</label>
                   <input type="date" 
+                  min={`${date3.getFullYear()}-${date3.getMonth() < 9? '0':''}${date3.getMonth()+1}-${date3.getDate() < 10? '0':''}${date3.getDate()}`}
+                  max={`${date4.getFullYear()}-${date4.getMonth() < 9? '0':''}${date4.getMonth()+1}-${date4.getDate() < 10? '0':''}${date4.getDate()}`}
                   value={fechaEntrega}
                   onChange={(e)=>setFechaEntrega(e.target.value)}
                   />
@@ -251,6 +271,8 @@ const ActualizarCompra = () =>{
                 <div className='atributo'>
                   <label>Fecha Pago</label>
                   <input type="date"
+                  min={`${date5.getFullYear()}-${date5.getMonth() < 9? '0':''}${date5.getMonth()+1}-${date5.getDate() < 10? '0':''}${date5.getDate()}`}
+                  max={`${date6.getFullYear()}-${date6.getMonth() < 9? '0':''}${date6.getMonth()+1}-${date6.getDate() < 10? '0':''}${date6.getDate()}`}
                   value={fechaPago}
                   onChange={(e)=>setFechaPago(e.target.value)}
                   />

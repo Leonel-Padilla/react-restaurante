@@ -50,7 +50,7 @@ const AgregarCompra = () => {
   date3.setDate(date3.getDate()+1);
 
   let date4 = new Date(fechaSolicitud);
-  date4.setDate(date4.getDate()+30);
+  date4.setDate(date4.getDate()+8);
 
   let date5 = new Date(fechaEntrega);
   date5.setDate(date5.getDate()+1);
@@ -194,7 +194,7 @@ const AgregarCompra = () => {
     else{
       formatearProveedorId()
       const caiNumFactura = `${cai}/${numeroFactura}`
-      console.log(caiNumFactura)
+      //console.log(caiNumFactura)
 
       const response = await axios.post(endPointSaveCompraEncabezado, {proveedorId: idProveedor, empleadoId: empleadoId,
       fechaSolicitud: fechaSolicitud, fechaEntregaCompra: fechaEntrega, fechaPagoCompra: fechaPago, estadoCompra: compraEstado,
@@ -379,26 +379,11 @@ const AgregarCompra = () => {
                 <div className='atributo'>
                   <label>Empleado</label>
                   <h4>{nombreUsuario}</h4>
-                  {/* <select
-                  value={empleadoId}
-                  onChange={(e)=>setEmpleadoId(e.target.value)}
-                  className='select'> 
-                      <option>Seleccione el Empleado</option>
-                      {empleados.map((empleado)=> <option key={empleado.id}>{empleado.empleadoNombre}</option>)}
-                  </select> */}
                 </div>
 
                 <div className='atributo'>
                   <label>Estado</label>
                   <h4>{compraEstado}</h4>
-                  {/* <select
-                  value={compraEstado}
-                  onChange={(e)=>setCompraEstado(e.target.value)}
-                  className='select'> 
-                      <option>Seleccione un Estado</option>
-                      <option>Pendiente</option>
-                      <option>Recibida</option>
-                  </select> */}
                 </div>
 
                 
@@ -418,8 +403,8 @@ const AgregarCompra = () => {
                 <input
                  value={numeroFactura}
                  onChange={(e)=>setNUmeroFactura(e.target.value)}
-                 type='text'
-                 pattern='[0-9]+$'
+                 type='number'
+                 pattern='[0-9]{1,}'
                  maxLength={16}
                  className='form-control'
                  />
