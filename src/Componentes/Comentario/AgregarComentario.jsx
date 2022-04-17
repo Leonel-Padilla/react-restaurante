@@ -16,7 +16,6 @@ const AgregarComentario = () =>{
     const [descripcion, setDescripcion]         = useState('')
 
     const navigate                          = useNavigate()
-
     const [mensajeModal, setMensajeModal]   = useState('')
     const [tituloModal, setTituloModal]     = useState('')
     const [visible, setVisible]             = useState(false)
@@ -105,7 +104,7 @@ const AgregarComentario = () =>{
             <div className='d-flex justify-content-center bg-dark mb-2'
             style={{backgroundColor: 'whitesmoke'}}>
               <h1 className='text-white'>Registrar Comentario</h1>
-             </div>
+            </div>
 
 
             {/*--------Formulario de informacion*/}

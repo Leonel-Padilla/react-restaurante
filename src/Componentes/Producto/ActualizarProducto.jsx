@@ -7,6 +7,7 @@ import axios from "axios";
 const endPointGetProducto               = 'http://127.0.0.1:8000/api/Producto'
 const endPointUpdateProducto            = 'http://127.0.0.1:8000/api/updateProducto'
 const endPointGetHistorialProducto      = 'http://127.0.0.1:8000/api/ProductoHistorial'
+const endPointGetImpuesto               = 'http://127.0.0.1:8000/api/Impuesto'
 const endPointUpdateHistorialProducto   = 'http://127.0.0.1:8000/api/updateProductoHistorial'
 const endPointaddProductoHistorial      = 'http://127.0.0.1:8000/api/addProductoHistorial'
 
@@ -17,7 +18,11 @@ const ActualizarProducto = () =>{
     const [productoDescripcion, setProductoDescripcion] = useState('')
     const [precio, setPrecio]                           = useState('')
     const [precioEnCambio, setPrecioEnCambio]           = useState('')
+    const [impuestoId, setImpuestoId]                   = useState('Seleccione')
+    let idImpuesto                                      = 0   
+    const [descuento, setDescuento]                     = useState(0)
     const [historialProducto, setHistorialProducto]     = useState([])
+    const [impuestos, setImpuestos]                     = useState([])
 
     const navigate = useNavigate()
     const [mensajeModal, setMensajeModal]   = useState('')
@@ -36,6 +41,7 @@ const ActualizarProducto = () =>{
     useEffect(()=>{
         getProducto()
         getHistorialProducto()
+        getAllImpuestos()
     },[])
 
 
@@ -48,16 +54,25 @@ const ActualizarProducto = () =>{
     //
     const getProducto = async ()=>{
         const response = await axios.get(`${endPointGetProducto}/${id}`)
+
+        const response1 = await axios.get(`${endPointGetImpuesto}/${response.data.impuestoId}`)
         
         setProductoNombre(response.data.productoNombre)
         setProductoDescripcion(response.data.productoDescripcion)
         setPrecio(response.data.precio)
+        setImpuestoId(response1.data.nombreImpuesto)
         setPrecioEnCambio(response.data.precio)
+        setDescuento(response.data.descuento)
     }
     //
     const getHistorialProducto = async ()=>{
         const response = await axios.get(`${endPointGetHistorialProducto}P/${id}`)
         setHistorialProducto(response.data)
+    }
+    //
+    const getAllImpuestos = async ()=>{
+        const response = await axios.get(`${endPointGetImpuesto}`)
+        setImpuestos(response.data)
     }
     //
     const actualizar = async (e)=>{
@@ -75,8 +90,12 @@ const ActualizarProducto = () =>{
         if (contador > 0){
             activarModal('Error', 'La información ingresada contiene mas de dos caracteres repetidos seguidos.')
         }else{
-            const response = await axios.put(`${endPointUpdateProducto}/${id}`, {productoNombre: productoNombre,
-            productoDescripcion: productoDescripcion, precio: precio, estado: 1})
+
+            formatearImpuesto()
+            const response = await axios.put(`${endPointUpdateProducto}/${id}`, {impuestoId: idImpuesto, productoNombre: productoNombre,
+            productoDescripcion: productoDescripcion, precio: precio, descuento: descuento ,estado: 1})
+
+            //console.log(response.data)
     
             if (response.status !== 200){
                 activarModal('Error', `${response.data.Error}`)
@@ -97,7 +116,6 @@ const ActualizarProducto = () =>{
                         fechaFin = `${date2.getFullYear()}-${date2.getMonth() < 9? '0':''}${date2.getMonth()+1}-${date2.getDate() < 10? '0':''}${date2.getDate()}`
                         
                     }
-
                     const response = await axios.put(`${endPointUpdateHistorialProducto}/${historialProducto.id}`,
                     {productoId: historialProducto.productoId, precio: historialProducto.precio, 
                     fechaInicio: historialProducto.fechaInicio, fechaFinal: fechaFin, estado: 1})
@@ -113,6 +131,14 @@ const ActualizarProducto = () =>{
         }else{
             navigate('/Productos')
         }
+    }
+    //
+    const formatearImpuesto = ()=>{
+        impuestos.map((impuesto)=>{
+            if (impuesto.nombreImpuesto == impuestoId){
+                idImpuesto = impuesto.id
+            }
+        })
     }
 
     return(
@@ -213,16 +239,46 @@ const ActualizarProducto = () =>{
                 </div>
 
                 <div className='atributo'>
-                <label>Precio Producto:</label>
-                <input
-                placeholder='L. 100'
-                value={precio}
-                onChange={(e)=>setPrecio(e.target.value)}
-                type='text'
-                pattern='^[0-9]+$'
-                maxLength={8}
-                className='form-control'
-                />
+                    <label>Precio Producto:</label>
+                    <input
+                    placeholder='L. 100'
+                    value={precio}
+                    onChange={(e)=>setPrecio(e.target.value)}
+                    type='text'
+                    pattern='^[0-9]+$'
+                    maxLength={8}
+                    className='form-control'
+                    />
+                </div>
+
+                <div className='atributo'>
+                    <label>Impuesto</label>
+                    <select
+                    value={impuestoId}
+                    onChange={(e)=> setImpuestoId(e.target.value)}
+                    type='number'
+                    className='select'
+                    >   
+                        <option>Seleccione un impuesto</option>
+                        {impuestos.map((impuesto)=>{
+                            return( <option key={impuesto.id}>{impuesto.nombreImpuesto}</option>)
+                        })}
+
+                    </select>
+                </div>
+
+                <div className='atributo'>
+                    <label>Descuento:</label>
+                    <input
+                    placeholder='5%'
+                    value={descuento}
+                    onChange={(e)=>setDescuento(e.target.value)}
+                    type='text'
+                    pattern='^[0-9]+$'
+                    min={0}
+                    maxLength={3}
+                    className='form-control'
+                    />
                 </div>
 
                 <div className='d-flex'>

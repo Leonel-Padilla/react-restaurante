@@ -167,7 +167,12 @@ function MostrarFacturas() {
                         return(
                           <tr key={ordenDetalle.id}>
                             <td>{nombreProducto}</td>
-                            <td>{ordenDetalle.precio}</td>
+                            <td>{Intl.NumberFormat('ES-HN', {
+                                style: 'currency',
+                                currency: 'Hnl'
+                                }).format(ordenDetalle.precio)}
+                            </td>
+
                             <td>{ordenDetalle.cantidad}</td>
                           </tr>)
                       })}
@@ -294,7 +299,10 @@ function MostrarFacturas() {
                         <td>{factura.id}</td>
                         <td>{factura.ordenEncabezadoId}</td>
                         <td>{nombreClientre}</td>
-                        <td>{factura.total}</td>
+                        <td>{Intl.NumberFormat('ES-HN', {
+                              style: 'currency',
+                              currency: 'Hnl'
+                            }).format(factura.total)}</td>
                         <td>{moment(factura.fechaHora).format("DD/MM/yy, hh:mm")}</td>
                         <td>{factura.numeroFactura}</td>
 
@@ -303,7 +311,7 @@ function MostrarFacturas() {
                             className='mb-1'
                             color={'gradient'}
                             iconRight={<img src={lapizEditar}/>}
-                            onClick={()=>navigate(`/Facturas/updateFactura/${factura.ordenEncabezadoId}`)}
+                            onClick={()=>navigate(`/Facturas/updateFactura/${factura.id}`)}
                                 >Editar
                             </Button> 
 

@@ -20,10 +20,12 @@ const endPointActualizarEmpleadoCargos  = 'http://127.0.0.1:8000/api/updateCargo
 const endPointRegistrarCargoEmpleado    = 'http://127.0.0.1:8000/api/addCargoHistorial'
 const endPointBuscarSueldoHistorico     = 'http://127.0.0.1:8000/api/SueldoHistorial'
 const endPointActualizarSueldoHistorico = 'http://127.0.0.1:8000/api/updateSueldoHistorial'
-const endPointRegistrarSueldoHistorico = 'http://127.0.0.1:8000/api/addSueldoHistorial'
+const endPointRegistrarSueldoHistorico  = 'http://127.0.0.1:8000/api/addSueldoHistorial'
+const endPointBuscarSucursales          = 'http://127.0.0.1:8000/api/Sucursal'
 
 const ActualizarEmpleado = () =>{
     const [tipoDocumentoId, setTipoDocumentoId]             = useState()
+    const [sucursalId, setSucursalId]                       = useState('')
     const [numeroDocumento, setNumeroDocumento]             = useState('')
     const [empleadoNombre, setEmpleadoNombre]               = useState('')
     const [empleadoNumero, setEmpleadoNumero]               = useState('')
@@ -42,9 +44,11 @@ const ActualizarEmpleado = () =>{
     let digitosNumero   = 14
     let idDocumento     = 1
     let idCargo         = 1
+    let idSucursal      = 1
     
     const [todosDocumentos, setTodosDocumentos] = useState([])
     const [todosCargos, setTodosCargos]         = useState([])
+    const [todasSucursales, setTodasSucursales] = useState([])
     const [empleadosCargos, setEmpleadosCargos] = useState([])
     const [sueldoHistorico, setSueldoHistorico] = useState([])
     let empleadoCargoNombre                     = ''
@@ -71,6 +75,7 @@ const ActualizarEmpleado = () =>{
         getEmpleadoById()
         getEmpleadosCargos()
         getSueldoHistorico()
+        getAllSucursales()
         
     }, [])
 
@@ -83,7 +88,10 @@ const ActualizarEmpleado = () =>{
 
         const response2 = await axios.get(`${endPointGetCargoById}/${response.data.cargoActualId}`)
 
+        const response3 = await axios.get(`${endPointBuscarSucursales}/${response.data.sucursalId}`)
+
         setTipoDocumentoId(response1.data.nombreDocumento)
+        setSucursalId(response3.data.sucursalNombre)
         setCargoEnCambio(response2.data.cargoNombre)
         setCargoActual(response2.data.cargoNombre)
         setNumeroDocumento(response.data.numeroDocumento)
@@ -135,9 +143,10 @@ const ActualizarEmpleado = () =>{
                 }else{
                     formatearCargo()
                     formatearIdDocumento()
+                    formatearSucursalId()
             
                     const response = await axios.put(`${endPointActualizarEmpleado}/${id}`, 
-                    {tipoDocumentoId: idDocumento, numeroDocumento: numeroDocumento, empleadoNombre: empleadoNombre, 
+                    {tipoDocumentoId: idDocumento, sucursalId: idSucursal, numeroDocumento: numeroDocumento, empleadoNombre: empleadoNombre, 
                     empleadoNumero: empleadoNumero, empleadoCorreo: empleadoCorreo, empleadoUsuario: empleadoUsuario,
                     empleadoContrasenia: empleadoContrasenia, empleadoDireccion: empleadoDireccion, empleadoSueldo: empleadoSueldo,
                     cargoActualId: idCargo, fechaContratacion: fechaContratacion, fechaNacimiento: fechaNacimiento,
@@ -204,6 +213,11 @@ const ActualizarEmpleado = () =>{
 
     }
     //
+    const getAllSucursales = async ()=>{
+        const response = await axios.get(endPointBuscarSucursales)
+        setTodasSucursales(response.data)
+    }
+    //
     const getAllDocumentos = async ()=>{
         const response = await axios.get(endPointBuscarTodosDocumentos)
 
@@ -264,6 +278,14 @@ const ActualizarEmpleado = () =>{
         todosDocumentos.map((documento)=>{
             if(documento.nombreDocumento == tipoDocumentoId){
                 idDocumento = documento.id
+            }
+        })
+    }
+    //
+    const formatearSucursalId = ()=>{
+        todasSucursales.map((sucursal)=>{
+            if(sucursal.nombreSucursal == sucursalId){
+                idSucursal = sucursal.id
             }
         })
     }
@@ -447,6 +469,22 @@ const ActualizarEmpleado = () =>{
                 type='text'
                 maxLength={100}
                 className='form-control'/>
+                </div>
+
+                <div className='atributo'>
+                <label>Sucursal</label>
+                <select
+                value={sucursalId}
+                onChange={(e)=> setSucursalId(e.target.value)}
+                type='number'
+                className='select'
+                >   
+                    {todasSucursales.map((sucursal)=>{
+                        verificarTipoDocumento()
+                        return( <option key={sucursal.id}>{sucursal.sucursalNombre}</option>)
+                    })}
+
+                </select>
                 </div>
 
                 <div className='atributo'>

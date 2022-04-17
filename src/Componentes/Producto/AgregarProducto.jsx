@@ -9,6 +9,7 @@ const endPointaddProductoInsumo     = 'http://127.0.0.1:8000/api/addProductoInsu
 const endPointaddProductoHistorial  = 'http://127.0.0.1:8000/api/addProductoHistorial'
 const endPointGetInsumo             = 'http://127.0.0.1:8000/api/Insumo'
 const endPointGetProducto           = 'http://127.0.0.1:8000/api/Producto'
+const endPointGetImpuesto           = 'http://127.0.0.1:8000/api/Impuesto'
 const AgregarProducto = () =>{
     const [insumos, setInsumos] = useState([])
     const [carroInsumos, setCarroInsumos]               = useState([])
@@ -18,7 +19,11 @@ const AgregarProducto = () =>{
     const [productoNombre, setProductoNombre]           = useState('')
     const [productoDescripcion, setProductoDescripcion] = useState('')
     const [precio, setPrecio]                           = useState('')
+    const [impuestoId, setImpuestoId]                   = useState('Seleccione')
+    let idImpuesto                                      = 0   
+    const [descuento, setDescuento]                     = useState(0)
 
+    const [impuestos, setImpuestos]                     = useState([])
     const navigate = useNavigate()
 
     const [mensajeModal, setMensajeModal]   = useState('')
@@ -31,6 +36,7 @@ const AgregarProducto = () =>{
 
     useEffect(() => {
         getAllInsumos()
+        getAllImpuestos()
     }, [])
 
 
@@ -44,6 +50,11 @@ const AgregarProducto = () =>{
     const getAllInsumos = async() =>{
         const response = await axios.get(endPointGetInsumo)
         setInsumos(response.data)
+    }
+    //
+    const getAllImpuestos = async() =>{
+        const response = await axios.get(endPointGetImpuesto)
+        setImpuestos(response.data)
     }
     //
     const agregarAlCarro = ()=>{
@@ -113,9 +124,13 @@ const AgregarProducto = () =>{
     
             if (contador > 0){
                 activarModal('Error', 'La información ingresada contiene mas de dos caracteres repetidos seguidos.')
+            }else if(impuestoId.includes('Seleccione')){
+                activarModal('Error', 'Debe seleccionar un impuesto.')
             }else{
-                const response = await axios.post(endPointAddProducto, {productoNombre: productoNombre,
-                productoDescripcion: productoDescripcion, precio: precio, estado: 1})
+                formatearImpuesto()
+
+                const response = await axios.post(endPointAddProducto, {impuestoId: idImpuesto, productoNombre: productoNombre,
+                productoDescripcion: productoDescripcion, precio: precio, descuento: descuento ,estado: 1})
     
                 //console.log(response.data)
     
@@ -150,6 +165,14 @@ const AgregarProducto = () =>{
         })
 
         navigate('/Productos')
+    }
+    //
+    const formatearImpuesto = ()=>{
+        impuestos.map((impuesto)=>{
+            if (impuesto.nombreImpuesto == impuestoId){
+                idImpuesto = impuesto.id
+            }
+        })
     }
     
 
@@ -270,16 +293,16 @@ const AgregarProducto = () =>{
             <form onSubmit={registrar} className='formulario'>
 
                 <div className='atributo'>
-                <label>Producto Nombre:</label>
-                <input
-                placeholder='Hamburguesa'
-                pattern='[A-Za-z ]{3,}'
-                maxLength={50}
-                value={productoNombre}
-                onChange={(e)=>setProductoNombre(e.target.value)}
-                type='text'
-                className='form-control'
-                />
+                    <label>Producto Nombre:</label>
+                    <input
+                    placeholder='Hamburguesa'
+                    pattern='[A-Za-z ]{3,}'
+                    maxLength={50}
+                    value={productoNombre}
+                    onChange={(e)=>setProductoNombre(e.target.value)}
+                    type='text'
+                    className='form-control'
+                    />
                 </div>
 
 
@@ -297,38 +320,47 @@ const AgregarProducto = () =>{
                 </div>
 
                 <div className='atributo'>
-                <label>Precio Producto:</label>
-                <input
-                placeholder='L. 100'
-                value={precio}
-                onChange={(e)=>setPrecio(e.target.value)}
-                type='text'
-                pattern='^[0-9]+$'
-                maxLength={8}
-                className='form-control'
-                />
+                    <label>Precio Producto:</label>
+                    <input
+                    placeholder='L. 100'
+                    value={precio}
+                    onChange={(e)=>setPrecio(e.target.value)}
+                    type='text'
+                    pattern='^[0-9]+$'
+                    maxLength={8}
+                    className='form-control'
+                    />
                 </div>
 
-                {/* <div className='d-flex mt-2'>
+                <div className='atributo'>
+                    <label>Impuesto</label>
+                    <select
+                    value={impuestoId}
+                    onChange={(e)=> setImpuestoId(e.target.value)}
+                    type='number'
+                    className='select'
+                    >   
+                        <option>Seleccione un impuesto</option>
+                        {impuestos.map((impuesto)=>{
+                            return( <option key={impuesto.id}>{impuesto.nombreImpuesto}</option>)
+                        })}
 
-                    <Button 
-                    color={'gradient'}
-                    className='align-self-end me-3 ' 
-                    auto 
-                    onClick={()=>navigate('/Productos')}
-                    ghost>
-                        Regresar
-                    </Button>
+                    </select>
+                </div>
 
-                    <Button
-                    auto
-                    type='submit'
-                    color={'gradient'} 
-                    ghost>
-                        Guardar
-                    </Button>
-
-                </div> */}
+                <div className='atributo'>
+                    <label>Descuento:</label>
+                    <input
+                    placeholder='5%'
+                    value={descuento}
+                    onChange={(e)=>setDescuento(e.target.value)}
+                    type='text'
+                    pattern='^[0-9]+$'
+                    min={0}
+                    maxLength={3}
+                    className='form-control'
+                    />
+                </div>
 
             </form>
                 

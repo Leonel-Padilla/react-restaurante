@@ -2,10 +2,10 @@ import React, {useEffect, useState} from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { Button, Input, Modal, Text} from '@nextui-org/react'
-import { toHaveDisplayValue } from '@testing-library/jest-dom/dist/matchers'
 
 const endPointRegistrarEmpleado         = 'http://127.0.0.1:8000/api/addEmpleado'
 const endPointBuscarTodosCargos         = 'http://127.0.0.1:8000/api/Cargo'
+const endPointBuscarSucursales          = 'http://127.0.0.1:8000/api/Sucursal'
 const endPointBuscarTodosDocumentos     = 'http://127.0.0.1:8000/api/TipoDocumento'
 const endPointBuscarEmpleado            = 'http://127.0.0.1:8000/api/Empleado'
 const endPointRegistrarCargoEmpleado    = 'http://127.0.0.1:8000/api/addCargoHistorial' 
@@ -13,6 +13,7 @@ const endPointRegistrarSueldoHistorico  = 'http://127.0.0.1:8000/api/addSueldoHi
 
 const AgregarEmpleado = () =>{
     const [tipoDocumentoId, setTipoDocumentoId]             = useState('Seleccione')
+    const [sucursalId, setSucursalId]                       = useState('Seleccione')
     const [numeroDocumento, setNumeroDocumento]             = useState('')
     const [empleadoNombre, setEmpleadoNombre]               = useState('')
     const [empleadoNumero, setEmpleadoNumero]               = useState('')
@@ -29,6 +30,7 @@ const AgregarEmpleado = () =>{
     let digitosNumero   = 14
     let idDocumento     = 1
     let idCargo         = 1
+    let idSucursal      = 1
 
     let fechaHoy = new Date()
 
@@ -43,6 +45,7 @@ const AgregarEmpleado = () =>{
     
     const [todosDocumentos, setTodosDocumentos] = useState([])
     const [todosCargos, setTodosCargos]         = useState([])
+    const [todasSucursales, setTodasSucursales] = useState([])
     const navigate                              = useNavigate()
 
     const [startDate, setStartDate]         = useState(new Date());
@@ -58,14 +61,15 @@ const AgregarEmpleado = () =>{
     useEffect(()=>{
         getAllDocumentos()
         getAllCargos()
+        getAllSucursales()
     },[])
     
     const registrar = async (e)=>{
         e.preventDefault()
 
-        if (tipoDocumentoId.includes('Seleccione') || cargoActualId.includes('Seleccion')){
+        if (tipoDocumentoId.includes('Seleccione') || cargoActualId.includes('Seleccion') || sucursalId.includes('Seleccione')){
             setTituloModal('Error')
-            setMensajeModal('Debe seleccionar un Cargo Actual y un Tipo Documento')
+            setMensajeModal('Debe seleccionar un Cargo Actual, un Tipo Documento, y una Sucursal')
             setVisible(true)
         }else{
 
@@ -92,12 +96,14 @@ const AgregarEmpleado = () =>{
                 }else{
                     formatearCargo()
                     formatearIdDocumento()
+                    formatearSucursalId()
         
-                    const response = await axios.post(endPointRegistrarEmpleado, {tipoDocumentoId: idDocumento,
+                    const response = await axios.post(endPointRegistrarEmpleado, {tipoDocumentoId: idDocumento, sucursalId: idSucursal,
                         numeroDocumento: numeroDocumento, empleadoNombre: empleadoNombre, empleadoNumero: empleadoNumero,
                         empleadoCorreo: empleadoCorreo, empleadoUsuario: empleadoUsuario, empleadoContrasenia: empleadoContrasenia, 
                         empleadoDireccion: empleadoDireccion, empleadoSueldo: empleadoSueldo, cargoActualId: idCargo,
                         fechaContratacion: fechaContratacion, fechaNacimiento: fechaNacimiento, estado: empleadoEstado})
+
                 
                     if (response.status !== 200){
                         setTituloModal('Error')
@@ -122,18 +128,21 @@ const AgregarEmpleado = () =>{
 
         }
     }
+    //
+    const getAllSucursales = async ()=>{
+        const response = await axios.get(endPointBuscarSucursales)
+        setTodasSucursales(response.data)
+    }
 
     //
     const getAllDocumentos = async ()=>{
         const response = await axios.get(endPointBuscarTodosDocumentos)
-
         setTodosDocumentos(response.data)
     }
     
     //
     const getAllCargos = async ()=>{
         const response = await axios.get(endPointBuscarTodosCargos)
-
         setTodosCargos(response.data)
     }
     
@@ -169,6 +178,14 @@ const AgregarEmpleado = () =>{
         todosDocumentos.map((documento)=>{
             if(documento.nombreDocumento == tipoDocumentoId){
                 idDocumento = documento.id
+            }
+        })
+    }
+    //
+    const formatearSucursalId = ()=>{
+        todasSucursales.map((sucursal)=>{
+            if(sucursal.nombreSucursal == sucursalId){
+                idSucursal = sucursal.id
             }
         })
     }
@@ -247,6 +264,23 @@ const AgregarEmpleado = () =>{
                 onChange={(e)=> setEmpleadoDireccion(e.target.value)}
                 type='text'
                 className='form-control'/>
+                </div>
+
+                <div className='atributo'>
+                <label>Sucursal</label>
+                <select
+                value={sucursalId}
+                onChange={(e)=> setSucursalId(e.target.value)}
+                type='number'
+                className='select'
+                >   
+                    <option>Seleccione una sucursal</option>
+                    {todasSucursales.map((sucursal)=>{
+                        verificarTipoDocumento()
+                        return( <option key={sucursal.id}>{sucursal.sucursalNombre}</option>)
+                    })}
+
+                </select>
                 </div>
 
                 <div className='atributo'>

@@ -107,6 +107,16 @@ function Sidebar () {
                 </Collapse>
 
                 <Collapse 
+                title = {<Text h6 className="text-white">Impuesto</Text>}
+                contentLeft={
+                <Avatar size="md" squared icon={<img src={Factura}/>} />}>
+                    <Button light color={'default'} onClick={()=>navigate('/Impuestos')} className="text-white"> 
+                        Mostrar Impuestos</Button>
+                    <Button light color={'default'} onClick={()=>navigate('/Impuestos/addImpuesto')}className="text-white">
+                        Registrar Impuesto</Button>
+                </Collapse>
+
+                <Collapse 
                 title = {<Text h6 className="text-white">Mesa</Text>}
                 contentLeft={
                 <Avatar size="md" icon={<img src={Mesa}/>}/>}>

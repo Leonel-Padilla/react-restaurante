@@ -12,6 +12,8 @@ const endPointGetEmpleados      = 'http://127.0.0.1:8000/api/Empleado'
 const endPointGetProveedores    = 'http://127.0.0.1:8000/api/Proveedor'
 const endPointGetInsumos        = 'http://127.0.0.1:8000/api/Insumo'
 const endPointGetCompraDetalles = 'http://127.0.0.1:8000/api/CompraDetalle'
+const endPointUpdateDetalle     = 'http://127.0.0.1:8000/api/updateCompraDetalle'
+const endPointUpdateInsumo      = 'http://127.0.0.1:8000/api/updateInsumo'
 
 const MostrarCompras = ()=> {
 
@@ -23,7 +25,7 @@ const MostrarCompras = ()=> {
   const [insumos, setInsumos]           = useState([])
   let   insumoNombre                    = ''
 
-
+  const [detalleActual, setDetalleActual]           = useState({})
   const [compraDetalles, setCompraDetalles]         = useState([])
   const [parametroBusqueda, setParametroBusqueda]   = useState('Seleccione')
   const [valorBusqueda, setValorBusqueda]           = useState('Seleccione')
@@ -56,20 +58,6 @@ const MostrarCompras = ()=> {
     const response = await axios.get(`${endPointGetCompraDetalles}E/${compraId}`)
     setCompraDetalles(response.data)
   }
-  //
-  /*const cambioEstado = async ()=>{
-    //console.log(compraActual)
-
-    const response = await axios.put(`${endPointUpdateComrpra}/${compraActual.id}`, {proveedorId: compraActual.proveedorId, 
-        empleadoId: compraActual.empleadoId, fechaSolicitud: compraActual.fechaSolicitud, 
-        fechaEntregaCompra: compraActual.fechaEntregaCompra, fechaPagoCompra: compraActual.fechaPagoCompra, 
-        estadoCompra: compraActual.estadoCompra, numeroFactura: compraActual.numeroFactura, cai: compraActual.cai, 
-        estado: compraActual.estado == 1? 0 : 1})
-
-        //console.log(response.data)
-        getAllCompras()
-  }*/
-
   //
   const getAllCompras = async ()=>{
     const respose = await axios.get(endPointGetCompras)
@@ -161,6 +149,39 @@ const MostrarCompras = ()=> {
         }
     })
   }
+  //
+    const rechazarDetalleDeCompra = async ()=>{
+
+        let insumoActual = {}
+        insumos.map((insumo)=>{
+            if(insumo.id == detalleActual.insumoId){
+                insumoActual = {...insumo}
+            }
+        })
+
+        if ((parseInt(insumoActual.cantidad) - parseInt(detalleActual.cantidad)) < parseInt(insumoActual.cantidadMin)){
+            activarModal('Error', 'La compra del insumo no puede ser rechazada, ya que no se puede cubrir la cantidad mínima.')
+        }else{
+            insumoActual.cantidad = (parseInt(insumoActual.cantidad) - parseInt(detalleActual.cantidad))
+
+            detalleActual.cantidad = 0
+            detalleActual.precio = 0
+    
+            
+            console.log(detalleActual)
+            console.log(insumoActual)
+            
+    
+            const response = await axios.put(`${endPointUpdateDetalle}/${detalleActual.id}`, detalleActual)
+            console.log(response.data)
+    
+            const response1 = await axios.put(`${endPointUpdateInsumo}/${insumoActual.id}`, insumoActual)
+            console.log(response1.data)
+
+            setVisible(false)
+        }
+
+    }
 
   return (
     <div>
@@ -181,6 +202,28 @@ const MostrarCompras = ()=> {
             <Modal.Body>
                 {tituloModal.includes('Error')?     //IF ERROR
                 mensajeModal
+                : tituloModal.includes('Eliminar')?   //ELSE IF ELIMINAR
+                <div>
+                    {mensajeModal}
+
+                    <div className='botonesModal mt-4'>
+                        <Button
+                        className='me-4'
+                        onClick={()=>setVisible(false)}
+                        auto>
+                          Cancelar
+                        </Button>
+
+                        <Button
+                        className='ms-4'
+                        onClick={()=>{
+                          rechazarDetalleDeCompra()
+                        }}
+                        auto>
+                          Eliminar
+                        </Button>
+                      </div>
+                </div>
                 :                                   //ELSE DETALLES
                 <div>
                     <table className='table mt-2 text-white'>
@@ -189,6 +232,7 @@ const MostrarCompras = ()=> {
                                 <th>Insumo</th>
                                 <th>Precio</th>
                                 <th>cantidad</th>
+                                <th>Opciones</th>
                             </tr>
                         </thead>
 
@@ -201,6 +245,22 @@ const MostrarCompras = ()=> {
                                 <td>{insumoNombre}</td>
                                 <td>{compraDetalle.precio}</td>
                                 <td>{compraDetalle.cantidad}</td>
+                                <td>
+                                    {compraDetalle.cantidad == 0 || compraDetalle.precio == 0?
+                                    <p>Ya rechazado</p>
+                                    :
+                                    <Button
+                                    auto
+                                    onClick={()=>{
+                                        setDetalleActual(compraDetalle)
+                                        activarModal('Eliminar Detalle', '¿Está seguro que desea rechazar el detalle de esta compra?')
+                                    }}
+                                    >
+                                        Rechazar
+                                    </Button>}
+
+
+                                </td>
                             </tr>)
                             })}
                         </tbody>
@@ -307,8 +367,8 @@ const MostrarCompras = ()=> {
                   <th>Id</th>
                   <th>Empleado</th>
                   <th>Fecha Solicitud</th>
-                  <th>Fecha Pago</th>
                   <th>Fecha Recibida</th>
+                  <th>Fecha Pago</th>
                   <th>Estado compra</th>
                   <th>Opciones</th>
                 </tr>
@@ -341,8 +401,15 @@ const MostrarCompras = ()=> {
                                 shadow
                                 color={'secondary'}
                                 onClick={()=>{
-                                    getCompraDetalles(compra.id)
-                                    activarModal('Detalles de compra', ``)
+                                    
+                                    
+                                    if (compra.estadoCompra == 'Recibida'){
+                                        getCompraDetalles(compra.id)
+                                        activarModal('Detalles de compra', ``)
+                                    }else{
+                                        activarModal('Error', 'Para poder ver o rechazar los detalles de una compra, esta debe estar recibida.')
+                                    }
+
                                 }}
                                 >Detalles de Compra</Button>
 

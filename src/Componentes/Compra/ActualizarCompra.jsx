@@ -179,18 +179,23 @@ const ActualizarCompra = () =>{
   //
   const actualizar = async (e)=>{
     e.preventDefault()
-    formatearProveedorId()
-    //console.log(empleadoId)
 
-    const response = await axios.put(`${endPointUpdateCompraEncabezado}/${id}`, {proveedorId: idProveedor, empleadoId: empleadoId,
-    fechaSolicitud: fechaSolicitud, fechaEntregaCompra: fechaEntrega, fechaPagoCompra: fechaPago, estadoCompra: compraEstado,
-    numeroFactura: numeroFactura, cai: cai, numeroFacturaCai: caiNumFactura, estado: 1})
-    
-    //console.log(response.data)
-
-    if (response.status !== 200){
-      activarModal('Error', `${response.data.Error}`)
+    if (compraEstado == 'Recibida' && fechaEntrega == null /*|| compraEstado == 'Recibida' && fechaPago == null*/){
+      activarModal('Error', 'Favor de ingresar la fecha de entrega y de pago.')
     }else{
+      
+      formatearProveedorId()
+      //console.log(empleadoId)
+
+      const response = await axios.put(`${endPointUpdateCompraEncabezado}/${id}`, {proveedorId: idProveedor, empleadoId: empleadoId,
+      fechaSolicitud: fechaSolicitud, fechaEntregaCompra: fechaEntrega, fechaPagoCompra: fechaPago, estadoCompra: compraEstado,
+      numeroFactura: numeroFactura, cai: cai, numeroFacturaCai: caiNumFactura, estado: 1})
+    
+      //console.log(response.data)
+
+      if (response.status !== 200){
+        activarModal('Error', `${response.data.Error}`)
+      }else{
 
       if (compraEstado == 'Recibida' && estadoEnCambio != compraEstado){
         cambiosEnInventario()
@@ -198,7 +203,9 @@ const ActualizarCompra = () =>{
         navigate('/Compras')
       }
       
+      }
     }
+
 
   }
 
@@ -253,8 +260,8 @@ const ActualizarCompra = () =>{
                 <div className='atributo'>
                   <label>Fecha Solicitud</label> 
                   <input type="date" 
+                  readOnly
                   value={fechaSolicitud}
-                  //onChange={(e)=>setFechaSolicitud(e.target.value)}
                   />
                 </div>
 
@@ -263,7 +270,7 @@ const ActualizarCompra = () =>{
                   <input type="date" 
                   min={`${date3.getFullYear()}-${date3.getMonth() < 9? '0':''}${date3.getMonth()+1}-${date3.getDate() < 10? '0':''}${date3.getDate()}`}
                   max={`${date4.getFullYear()}-${date4.getMonth() < 9? '0':''}${date4.getMonth()+1}-${date4.getDate() < 10? '0':''}${date4.getDate()}`}
-                  value={fechaEntrega}
+                  value={fechaEntrega == null? '' : fechaEntrega}
                   onChange={(e)=>setFechaEntrega(e.target.value)}
                   />
                 </div>
@@ -273,10 +280,10 @@ const ActualizarCompra = () =>{
                   <input type="date"
                   min={`${date5.getFullYear()}-${date5.getMonth() < 9? '0':''}${date5.getMonth()+1}-${date5.getDate() < 10? '0':''}${date5.getDate()}`}
                   max={`${date6.getFullYear()}-${date6.getMonth() < 9? '0':''}${date6.getMonth()+1}-${date6.getDate() < 10? '0':''}${date6.getDate()}`}
-                  value={fechaPago}
+                  value={fechaPago == null? '' : fechaPago}
                   onChange={(e)=>setFechaPago(e.target.value)}
                   />
-                </div>
+                </div> 
 
                 {compraEstado == 'Recibida'?    //IF Ya fue recibida
                 <div className='atributo'>

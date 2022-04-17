@@ -14,6 +14,7 @@ import Compra from './Componentes/Compra/Compra'
 import Comentario from './Componentes/Comentario/Comentario';
 import Producto from './Componentes/Producto/Producto';
 import Factura from './Componentes/Factura/Factura';
+import Impuesto from './Componentes/Impuesto/Impuesto';
 
 
 
@@ -38,6 +39,7 @@ function App() {
           <Route path='/Comentarios/*' element={<Comentario></Comentario>}></Route>
           <Route path='/Productos/*' element={<Producto></Producto>}></Route>
           <Route path='/Facturas/*' element={<Factura></Factura>}></Route>
+          <Route path='/Impuestos/*' element={<Impuesto></Impuesto>}></Route>
         </Routes>
       </section>
     </div>

@@ -3,6 +3,7 @@ import { Button, Input, Modal, Text, Textarea} from '@nextui-org/react'
 import axios from 'axios'
 import { Navigate, useNavigate } from 'react-router-dom'
 import jsPDF from 'jspdf'
+import moment from 'moment';
 
 const endPointGetProducto           = 'http://127.0.0.1:8000/api/Producto'
 const endPointGetInsunmos           = 'http://127.0.0.1:8000/api/Insumo'
@@ -18,6 +19,7 @@ const endPointGetAllParametrosCAI   = 'http://127.0.0.1:8000/api/ParametrosFactu
 const endPointUpdateParametroCAI    = 'http://127.0.0.1:8000/api/updateParametrosFactura'
 const endPointGetFormasPago         = 'http://127.0.0.1:8000/api/FormaPago'
 const endPointPostFactura           = 'http://127.0.0.1:8000/api/addFactura'
+const endPointGetImpuesto           = 'http://127.0.0.1:8000/api/Impuesto'
 
 function AgregarFactura() {
   const [productos, setProductos]               = useState([])
@@ -30,6 +32,7 @@ function AgregarFactura() {
   const [tiposEntrega, setTiposEntrega]         = useState([])
   const [parametrosCai, setParametrosCai]       = useState([])
   const [formasPago, setFormasPago]             = useState([])
+  const [descuentoGlobal, setDescuentoGlobal]   = useState(0)
 
 
 
@@ -51,6 +54,10 @@ function AgregarFactura() {
   let   idFormaPago                           = ''
   const [parametroCAIId, setParametroCAIId]   = useState('Seleccione')
   let   idParametroCAI                        = ''
+  const [efectivo, setEfectivo]               = useState('')
+  const [numeroTarjeta, setNumeroTarjeta]     = useState('')
+
+  const [totalConDescuento, setTotalConDescuento] = useState(0)
 
   /*INFORMACION DEL CAI*/
   let puntoEmision                            = ''
@@ -216,20 +223,51 @@ function AgregarFactura() {
     
   }
   //
-  const actualizarTotales = (nuevoCarrito)=>{
-    let subtotal = 0
+  const actualizarTotales = async (nuevoCarrito)=>{
+    let subtotal    = 0
+    let impuestoTotal = 0
+
+    const response = await axios.get(endPointGetImpuesto)
+    const impuestos = response.data
 
     nuevoCarrito.map((productoEnCarro)=>{
-      subtotal += productoEnCarro.precio * productoEnCarro.cantidadDeCompra
+      if (parseInt(productoEnCarro.descuento) > 0){
+        const descuento = parseFloat('0.'+productoEnCarro.descuento)
+
+        subtotal += ((productoEnCarro.precio-(productoEnCarro.precio*descuento)) * productoEnCarro.cantidadDeCompra)
+
+        impuestos.map((impuesto)=>{
+          if (impuesto.id == productoEnCarro.impuestoId){
+            const impuestoActual = parseFloat('0.'+impuesto.valorImpuesto) 
+            
+            impuestoTotal += ((productoEnCarro.precio-productoEnCarro.precio*descuento) * impuestoActual) * productoEnCarro.cantidadDeCompra
+          }
+        })
+
+      }else{
+        subtotal += productoEnCarro.precio * productoEnCarro.cantidadDeCompra
+
+        impuestos.map((impuesto)=>{
+          if (impuesto.id == productoEnCarro.impuestoId){
+            const impuestoActual = parseFloat('0.'+impuesto.valorImpuesto) 
+            
+            impuesto += (productoEnCarro.precio * impuestoActual) * productoEnCarro.cantidadDeCompra
+          }
+        })
+
+      }
     })
 
-    let impuesto = subtotal * 0.15
-    let total = subtotal + impuesto
+    
+    let total = subtotal + impuestoTotal
     
     
     setSubtotal(subtotal)
-    setImpuesto(impuesto)
+    setImpuesto(impuestoTotal)
     setTotal(total)
+    setTotalConDescuento(total - (total * parseFloat(descuentoGlobal/100)))
+
+    console.log(descuentoGlobal)
   }
   //
   const eliminarDelCarro = ()=>{
@@ -334,7 +372,7 @@ function AgregarFactura() {
 
       const response = await axios.post(endPointPostOrdenEncabezado, {clienteId: idCliente, empleadoMeseroId: idMesero, 
       empleadoCocinaId: idCocinero, tipoEntregaId: idTipoEntrega, fechaHora: fechaActual, estado: 1})
-      console.log(response.data)
+      //console.log(response.data)
       
       if (response.status != 200){
         activarModal('Error', `${response.data.Error}`)
@@ -391,12 +429,10 @@ function AgregarFactura() {
     }
 
     const numeroFacturaActual = `${puntoEmision}${establecimiento}${tipoDocumento}${ultimosDigitos}`
-    //console.log(numeroFacturaActual)
+    console.log(numeroFacturaActual)
 
     formatearFormaPagoId()
     formatearParametroCAI()
-
-    //console.log(encabezadoId, empleadoId, idParametroCAI, idFormaPago, fechaActual, numeroFacturaActual, impuesto, subtotal, total)
 
     const response = await axios.post(endPointPostFactura, {ordenEncabezadoId: encabezadoId, empleadoCajeroId: empleadoId, 
     parametroFacturaId: idParametroCAI, formaPagosId: idFormaPago, fechaHora: fechaActual, numeroFactura: numeroFacturaActual,
@@ -413,10 +449,11 @@ function AgregarFactura() {
     const nuevoNumeroFactura = (parseInt(parametroActual.numeroFacturaActual)+1)
 
     const response2 = await axios.put(`${endPointUpdateParametroCAI}/${idParametroCAI}`, 
-    {numeroCAI: parametroActual.numeroCAI, fechaDesde: parametroActual.fechaDesde, fechaHasta: parametroActual.fechaHasta,
-    rangoInicial: parametroActual.rangoInicial, rangoFinal: parametroActual.rangoFinal, numeroFacturaActual: nuevoNumeroFactura,
-    puntoEmision: parametroActual.puntoEmision, establecimiento: parametroActual.establecimiento, 
-    tipoDocumento: parametroActual.tipoDocumento, rtn_Restaurante: parametroActual.rtn_Restaurante, estado: parametroActual.estado})
+    {sucursalId :parametroActual.sucursalId, numeroCAI: parametroActual.numeroCAI, fechaDesde: parametroActual.fechaDesde,
+    fechaHasta: parametroActual.fechaHasta, rangoInicial: parametroActual.rangoInicial, rangoFinal: parametroActual.rangoFinal,
+    numeroFacturaActual: nuevoNumeroFactura, puntoEmision: parametroActual.puntoEmision, 
+    establecimiento: parametroActual.establecimiento, tipoDocumento: parametroActual.tipoDocumento, 
+    rtn_Restaurante: parametroActual.rtn_Restaurante, estado: parametroActual.estado})
 
     console.log(`Respuesta de UPDATE`)
     console.log(response2.data)
@@ -444,8 +481,8 @@ function AgregarFactura() {
     doc.setFontSize(10)
 
     doc.text(`RTN: ${RTN}`, 10, 20)
-    doc.text(`Fecha y Hora: ${fechaActual}`, 10, 25)
-    doc.text(`Usuario: ${nombreUsuario}`, 10, 30)
+    doc.text(`Fecha y Hora: ${moment(fechaActual).format("DD/MM/yy, hh:mm")}`, 10, 25)
+    doc.text(`Cajero: ${nombreUsuario}`, 10, 30)
     doc.text(`NUMERO DE FACTURA: ${numeroFacturaActual}`, 10, 35)
 
     doc.text(`Articulo: `, 10, 45)
@@ -455,16 +492,28 @@ function AgregarFactura() {
     for (let i = 0; i < carroProductos.length; i++){
       doc.text(`${carroProductos[i].productoNombre}`, 10, (55+(i*5)))
       doc.text(`${carroProductos[i].cantidadDeCompra}`, 40, (55+(i*5)))
-      doc.text(`L. ${carroProductos[i].precio}`, 80, (55+(i*5)))
+      doc.text(`${Intl.NumberFormat('ES-HN', {
+        style: 'currency',
+        currency: 'Hnl'
+      }).format(carroProductos[i].precio)}`, 80, (55+(i*5)))
     }
     doc.text(`-------------------------------------------------------------------`, 10, (55+(carroProductos.length*5)))
 
     doc.text(`Subtotal:`, 40, (55+(carroProductos.length*5)+5))
-    doc.text(`L. ${subtotal}`, 75, (55+(carroProductos.length*5)+5))
+    doc.text(`${Intl.NumberFormat('ES-HN', {
+      style: 'currency',
+      currency: 'Hnl'
+    }).format(subtotal)}`, 75, (55+(carroProductos.length*5)+5))
     doc.text(`Impuesto:`, 40, (55+(carroProductos.length*5)+10))
-    doc.text(`L. ${impuesto}`, 75, (55+(carroProductos.length*5)+10))
+    doc.text(`${Intl.NumberFormat('ES-HN', {
+      style: 'currency',
+      currency: 'Hnl'
+    }).format(impuesto)}`, 75, (55+(carroProductos.length*5)+10))
     doc.text(`Total:`, 40, (55+(carroProductos.length*5)+15))
-    doc.text(`L. ${total}`, 75, (55+(carroProductos.length*5)+15))
+    doc.text(`${Intl.NumberFormat('ES-HN', {
+      style: 'currency',
+      currency: 'Hnl'
+    }).format(total)}`, 75, (55+(carroProductos.length*5)+15))
 
     doc.text(`CAI: ${parametroCAIId}`, 10, (55+(carroProductos.length*5)+25))
     doc.text(`Rango Autorizado: ${rangoInicio} - ${rangoFinal}`, 10, (55+(carroProductos.length*5)+30))
@@ -616,7 +665,7 @@ function AgregarFactura() {
         <h1 className='text-white'>Registrar Factura</h1>
       </div>
 
-      <div className='layoutCompra'>
+      <div className='layoutFactura'>
 
         {/*Select e inputs de la compra*/}
         <div className='selectFactura'>
@@ -704,34 +753,140 @@ function AgregarFactura() {
 
           <div className='atributo'>
             <label>Subtotal</label>
-            <h4>{subtotal}</h4>
+            <h4>{Intl.NumberFormat('ES-HN', {
+              style: 'currency',
+              currency: 'Hnl'
+            }).format(subtotal)}</h4>
           </div>
 
           <div className='atributo'>
-            <label>Impuesto 15%</label>
-            <h4>{impuesto}</h4>
+            <label>Impuesto</label>
+            <h4>{Intl.NumberFormat('ES-HN', {
+              style: 'currency',
+              currency: 'Hnl'
+            }).format(impuesto)}</h4>
           </div>
 
           <div className='atributo'>
             <label>Total</label>
-            <h4>{total}</h4>
+            <h4>{Intl.NumberFormat('ES-HN', {
+              style: 'currency',
+              currency: 'Hnl'
+            }).format(totalConDescuento)}</h4>
           </div>
 
           <div className='atributo'>
             <label>Forma de pago</label>
             <select
             value={formaPagoId}
-            onChange={(e)=>setFormaPagoId(e.target.value)}
+            onChange={(e)=>{
+              setEfectivo(0)
+              setFormaPagoId(e.target.value)
+            }}
             className='select'> 
               <option>Seleccione forma de pago</option>
               {formasPago.map((formaDePago)=> <option key={formaDePago.id}>{formaDePago.nombreFormaPago}</option>)}
             </select>
           </div>
 
+          <div className='infoDePago'>
+
+            {formaPagoId=='Efectivo'?           //Efectivo
+              <div className='atributo'>
+                <label>Efectivo</label>
+                <input
+                type={'number'}
+                value={efectivo}
+                onChange={(e)=>setEfectivo(e.target.value)}
+                />
+              </div>
+            : formaPagoId=='Tarjeta'?         //Tarjeta
+            
+              <div className='atributo'>
+                <label>Número de tarjeta</label>
+                <input
+                type={'number'}
+                maxLength={16}
+                value={numeroTarjeta}
+                onChange={(e)=>setNumeroTarjeta(e.target.value)}
+                />
+              </div>
+            : formaPagoId=='Mixto'?           //Mixto
+              <div className='atributo'>
+                <label>Efectivo</label>
+                <input
+                type={'number'}
+                value={efectivo}
+                onChange={(e)=>{
+                  if(e.target.value >= total){
+                    activarModal('Error', 'Seleccione efectivo, el monto que quiere ingresar cubre el total.')
+                  }else{
+                    setEfectivo(e.target.value)
+                  }
+                }}
+                />
+             </div>
+            :
+            ''
+            }
+          </div>
+
+          <div>
+          {formaPagoId=='Efectivo'? 
+            <div>
+              <div className='atributo'>
+                <label>Devuelto</label>
+                <label>
+                  {
+                    efectivo < total?
+                    'Esperando'
+                    :
+                    Intl.NumberFormat('ES-HN', {
+                      style: 'currency',
+                      currency: 'Hnl'
+                    }).format(efectivo-total)
+                  }
+                </label>
+              </div>
+
+            </div>
+            :
+            null}
+          </div>
+
+          {formaPagoId=='Mixto'?
+          <div className='atributo'>
+            <label>Número de tarjeta</label>
+            <input
+            type={'number'}
+            maxLength={16}
+            value={numeroTarjeta}
+            onChange={(e)=>setNumeroTarjeta(e.target.value)}
+            />
+          </div>
+        :
+        null
+        }
+
+          <div className='atributo'>
+            <label>Descuento %</label>
+            <input
+            type={'number'}
+            value={descuentoGlobal}
+            onChange={(e)=>{
+              if (e.target.value > 100 || e.target.value < 0){
+                activarModal('Error', 'El descuento debe estar entre 0 y 100.')
+              }else{
+                setDescuentoGlobal(e.target.value)
+                setTotalConDescuento(total - (total * (e.target.value/100)))
+              }
+            }}
+            />
+          </div>
+          
         </div>
 
-
-        {/*Lista de los insumos*/}
+        {/*Lista de los productos*/}
         <div className='listaInsumos'>
 
           <div className='d-flex justify-content-center bg-dark mb-2'
@@ -761,7 +916,7 @@ function AgregarFactura() {
 
         </div>
 
-        {/*Insumos en el carrito*/}
+        {/*Productos en el carrito*/}
         <div className='insumosEnCarro'>
 
           <div className='d-flex justify-content-center bg-dark mb-2'
@@ -776,6 +931,7 @@ function AgregarFactura() {
                   <th>Nombre</th>
                   <th>Cantidad</th>
                   <th>Precio</th>
+                  <th>Descuento</th>
                   <th>Opciones</th>
                 </tr>
               </thead>
@@ -787,6 +943,7 @@ function AgregarFactura() {
                     <td>{producto.productoNombre}</td>
                     <td>{producto.cantidadDeCompra}</td>
                     <td>{producto.precio}</td>
+                    <td>{producto.descuento}%</td>
                     <td className='d-flex'>
                       <Button
                       className='d-flex'

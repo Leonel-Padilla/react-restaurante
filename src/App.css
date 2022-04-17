@@ -264,6 +264,12 @@ input[type="date"]{
 /*Estilo de sidebar*/
 
 /*Estilo Factura*/
+.layoutFactura{
+  display: grid;
+  grid-template-columns: repeat(2, 50%);
+  grid-template-rows: 350px 500px;
+}
+
 .selectFactura{
   display: grid;
   grid-row-start: 1;
@@ -273,7 +279,10 @@ input[type="date"]{
   justify-items: center;
   align-items: center;
   grid-template-columns: repeat(6, 16%);
-  grid-template-rows: repeat(2,50%);
+  grid-template-rows: repeat(2,35%);
 }
 
+
 /*Estilo Factura*/
+ 
+

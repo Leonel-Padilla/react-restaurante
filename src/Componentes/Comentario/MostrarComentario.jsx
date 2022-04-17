@@ -257,30 +257,6 @@ const MostrarComentario = () =>{
                                     activarModal('Cambiar', `¿Seguro que desea ${comentario.estado == 1 ? 'deshabilitar' : 'habilitar'} este registro?`)
                                 }}
                             ></Button>
-                            {/* <Tooltip
-                            placement='left'
-                            initialVisible={false}
-                            trigger='hover' 
-                            content={<div>
-                                        <p>Está seguro que desea cambiar este registro?</p> 
-
-                                        <Button 
-                                        auto
-                                        className='bg-dark text-light'
-                                        color={'dark'}
-                                        children={comentario.estado == 1 ? 'Deshabilitar' : 'Habilitar'}
-                                        onClick={()=> cambioEstado(comentario)}
-                                        ></Button>
-                                        
-                                    </div>}>
-                                <Button 
-                                light
-                                shadow
-                                children={comentario.estado == 1 ? 'Deshabilitar' : 'Habilitar'}
-                                color={'secondary'}
-                                ></Button>
-                            </Tooltip> */}
-
                         </td>
                         </tr>)
                     })}

@@ -9,19 +9,24 @@ import lapizEditar from '../../img/lapiz_editar.png'
 const endPointGetProductos          = 'http://127.0.0.1:8000/api/Producto'
 const endPointUpdateComentarios     = 'http://127.0.0.1:8000/api/updateProducto'
 const endPointGetSucursales         = 'http://127.0.0.1:8000/api/Sucursal'
+const endPointGetImpuesto           = 'http://127.0.0.1:8000/api/Impuesto'
 const MostrarProducto = () =>{
-    const [productos, setProductos]       = useState([])
-    const [productoActual, setProductoActual] = useState()
+    const [productos, setProductos]             = useState([])
+    const [productoActual, setProductoActual]   = useState()
+    const [impuestos, setImpuestos]             = useState([])
+    let impuestoNombre                          = ''
 
     const navigate = useNavigate()
     const [mensajeModal, setMensajeModal]   = useState('')
     const [tituloModal, setTituloModal]     = useState('')
     const [visible, setVisible]             = useState(false)
+
     const [parametroBusqueda, setParametroBusqueda]   = useState('Seleccione')
     const [valorBusqueda, setValorBusqueda]           = useState('Seleccione')
 
     useEffect(()=>{
         getAllProductos()
+        getAllImpuestos()
     },[])
 
     //
@@ -34,7 +39,11 @@ const MostrarProducto = () =>{
     const getAllProductos = async () =>{
         const response = await axios.get(endPointGetProductos)
         setProductos(response.data)
-        //console.log(response.data)
+    }
+    //
+    const getAllImpuestos = async () =>{
+        const response = await axios.get(endPointGetImpuesto)
+        setImpuestos(response.data)
     }
     //
     const cambioEstado = async ()=>{
@@ -46,6 +55,14 @@ const MostrarProducto = () =>{
         getAllProductos()
     }
     //
+    const formatearImpuestoId = (impuestoId)=>{
+        impuestos.map((impuesto)=>{
+            if(impuesto.id == impuestoId){
+                impuestoNombre = impuesto.nombreImpuesto
+            }
+        })
+    }
+    //
     const getByValorBusqueda = async (e)=>{
         e.preventDefault()
   
@@ -55,7 +72,6 @@ const MostrarProducto = () =>{
   
             if (parametroBusqueda == 'ID'){
                 const response = await axios.get(`${endPointGetProductos}/${valorBusqueda}`)
-                //console.log(response.data)
                 
                 if (response.status != 200){
                     activarModal('Error', `${response.data.Error}`)
@@ -68,9 +84,6 @@ const MostrarProducto = () =>{
                 const response = await axios.get(`${endPointGetProductos}N/${valorBusqueda}`)
                 const array = response.data
 
-                /*console.log(`${endPointGetProductos}N/${valorBusqueda}`)
-                console.log(response.data)*/
-        
                 if (array.length < 1){
                     activarModal('Error', 'No hay Productos con ese nombre.')
                 }else{
@@ -197,17 +210,21 @@ const MostrarProducto = () =>{
                         <th>Producto Nombre</th>
                         <th>Producto Precio</th>
                         <td>Descripcion</td>
+                        <td>Impuesto</td>
                         <th>Estado</th>
                         <th>Opciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {productos.map(producto =>
+                    {productos.map(producto =>{
+                        formatearImpuestoId(producto.impuestoId)
+                        return(
                         <tr key={producto.id}>
                             <td>{producto.id}</td>
                             <td>{producto.productoNombre}</td>
                             <td>{producto.precio}</td>
                             <td>{producto.productoDescripcion}</td>
+                            <td>{impuestoNombre}</td>
                             <td>{producto.estado == 1 ? 'Habilitado' : 'Deshabilitado'}</td>
                             <td>
                                 <Button
@@ -229,8 +246,8 @@ const MostrarProducto = () =>{
                                     }}
                                 ></Button>
                                 </td>
-                            </tr>
-                    )}
+                            </tr>)
+                    })}
                 </tbody>
 
             </table>
