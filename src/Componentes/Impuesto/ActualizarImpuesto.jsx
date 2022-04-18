@@ -77,7 +77,7 @@ function ActualizarFactura() {
       const response = await axios.put(`${endPointUpdateImpuesto}/${id}`, {valorImpuesto: valorImpuesto, nombreImpuesto: nombreImpuesto,
       estado: estado})
 
-      console.log(response.data)
+      //console.log(response.data)
 
       if (response.status !== 200){
         activarModal('Error', `${response.data.Error}`)
@@ -103,7 +103,7 @@ function ActualizarFactura() {
           historialImpuesto.fechaFinal = fechaFin
 
           const response = await axios.put(`${endPointUpdateImpuestoHistorial}/${historialImpuesto.id}`, historialImpuesto)
-          console.log(response.data)
+          //console.log(response.data)
         }
       })
 
@@ -111,7 +111,7 @@ function ActualizarFactura() {
       const response1 = await axios.post(endPointAddImpuestoHistorial, {impuestoId: id, valorImpuesto: valorImpuesto,
       fechaInicio: fechaHoy, estado: 1})
       
-      console.log(response1.data)
+      //console.log(response1.data)
       navigate('/Impuestos')
     }else{
       navigate('/Impuesto')

@@ -77,6 +77,16 @@ function Sidebar () {
                 </Collapse>
 
                 <Collapse 
+                title = {<Text h6 className="text-white">Delivery</Text>}
+                contentLeft={
+                <Avatar size="md" squared icon={<img src={Factura}/>} />}>
+                    <Button light color={'default'} onClick={()=>navigate('/Deliveries')} className="text-white"> 
+                        Mostrar Deliveries</Button>
+                    <Button light color={'default'} onClick={()=>navigate('/Deliveries/addDelivery')}className="text-white">
+                        Registrar Delivery</Button>
+                </Collapse>
+
+                <Collapse 
                 title = {<Text h6 className="text-white">Empleado</Text>}
                 contentLeft={
                 <Avatar size="md" icon={<img src={Gerente}/>}/>}>
