@@ -271,7 +271,15 @@ function AgregarReservacion() {
           <label>Hora Inicio</label>
           <input
           value={horaInicio}
-          onChange={(e)=>setHoraInicio(e.target.value)}
+          onChange={(e)=>{
+
+            if (e.target.value.split(':')[1] > 0){
+              activarModal('Error', 'Solo puede seleccionar horas en punto.')
+            }else{
+              setHoraInicio(e.target.value)
+            }
+
+          }}
           className='form-control'
           type='time'> 
           </input>
@@ -281,7 +289,15 @@ function AgregarReservacion() {
           <label>Hora Final</label>
           <input
           value={horaFinal}
-          onChange={(e)=>setHoraFinal(e.target.value)}
+          onChange={(e)=>{
+
+            if (e.target.value.split(':')[1] > 0){
+              activarModal('Error', 'Solo puede seleccionar horas en punto.')
+            }else{
+              setHoraFinal(e.target.value)
+            }
+            
+          }}
           className='form-control'
           type='time'> 
           </input>
