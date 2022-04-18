@@ -157,6 +157,16 @@ function Sidebar () {
                 </Collapse>
 
                 <Collapse 
+                title = {<Text h6 className="text-white">Reservacion</Text>}
+                contentLeft={
+                <Avatar size="md" icon={<img src={Proveedor1}/>}/>}> 
+                    <Button light color={'default'} onClick={()=>navigate('/Reservaciones')}className="text-white"> 
+                        Mostrar Reservaciones</Button>
+                    <Button light color={'default'} onClick={()=>navigate('/Reservaciones/addReservacion')}className="text-white"> 
+                        Registrar Reservacion</Button>
+                </Collapse>
+
+                <Collapse 
                 title = {<Text h6 className="text-white">Sucursal</Text>}
                 contentLeft={
                 <Avatar size="md" squared icon={<img src={Sucursal}/>} />}>
