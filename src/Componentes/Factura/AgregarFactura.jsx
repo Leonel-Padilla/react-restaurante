@@ -3,6 +3,7 @@ import { Button, Input, Modal, Text, Textarea} from '@nextui-org/react'
 import axios from 'axios'
 import { Navigate, useNavigate } from 'react-router-dom'
 import jsPDF from 'jspdf'
+import Logo from '../../img/LOGO.png'
 import moment from 'moment';
 
 const endPointGetProducto           = 'http://127.0.0.1:8000/api/Producto'
@@ -64,6 +65,8 @@ function AgregarFactura() {
   let establecimiento                         = ''
   let tipoDocumento                           = ''
   let numeroFactura                           = ''
+  let fechaEmision                            = ''
+  let fechaLimiteEmision                      = ''
   /*INFORMACION DEL CAI*/
 
 
@@ -194,10 +197,12 @@ function AgregarFactura() {
     parametrosCai.map(parametroCAI=>{
       if (parametroCAI.numeroCAI == parametroCAIId){
 
-        puntoEmision    = parametroCAI.puntoEmision
-        establecimiento = parametroCAI.establecimiento
-        tipoDocumento   = parametroCAI.tipoDocumento
-        numeroFactura   = parametroCAI.numeroFacturaActual
+        puntoEmision        = parametroCAI.puntoEmision
+        establecimiento     = parametroCAI.establecimiento
+        tipoDocumento       = parametroCAI.tipoDocumento
+        numeroFactura       = parametroCAI.numeroFacturaActual
+        fechaEmision        = parametroCAI.fechaDesde 
+        fechaLimiteEmision  = parametroCAI.fechaHasta
       }
     })
   }
@@ -436,7 +441,8 @@ function AgregarFactura() {
 
     const response = await axios.post(endPointPostFactura, {ordenEncabezadoId: encabezadoId, empleadoCajeroId: empleadoId, 
     parametroFacturaId: idParametroCAI, formaPagosId: idFormaPago, fechaHora: fechaActual, numeroFactura: numeroFacturaActual,
-    impuesto: impuesto, subTotal: subtotal, total: total, estado: 1})
+    impuesto: impuesto, subTotal: subtotal, total: total, informacionPago: `${efectivo}/${numeroTarjeta}`, 
+    descuentoPorcentaje: descuentoGlobal, descuentoCantidad: (total*(descuentoGlobal/100)) ,estado: 1})
 
     console.log(response.data)
 
@@ -477,6 +483,7 @@ function AgregarFactura() {
     
     doc.setFontSize(15)
     doc.text(`FIVE FORKS`, 10, 10)
+    doc.addImage(Logo, 'JPEG', 70, 0, 30, 30)
 
     doc.setFontSize(10)
 
@@ -486,48 +493,57 @@ function AgregarFactura() {
     doc.text(`NUMERO DE FACTURA: ${numeroFacturaActual}`, 10, 35)
 
     doc.text(`Articulo: `, 10, 45)
-    doc.text(`Cantidad: `, 40, 45)
+    doc.text(`Cantidad: `, 35, 45)
+    doc.text(`Descuento: `, 53, 45)
     doc.text(`Precio: `, 80, 45)
     doc.text(`-------------------------------------------------------------------`, 10, (50))
     for (let i = 0; i < carroProductos.length; i++){
       doc.text(`${carroProductos[i].productoNombre}`, 10, (55+(i*5)))
-      doc.text(`${carroProductos[i].cantidadDeCompra}`, 40, (55+(i*5)))
+      doc.text(`${carroProductos[i].cantidadDeCompra}`, 35, (55+(i*5)))
+      doc.text(`${carroProductos[i].descuento}%`, 53, (55+(i*5)))
       doc.text(`${Intl.NumberFormat('ES-HN', {
         style: 'currency',
         currency: 'Hnl'
       }).format(carroProductos[i].precio)}`, 80, (55+(i*5)))
     }
     doc.text(`-------------------------------------------------------------------`, 10, (55+(carroProductos.length*5)))
+    
+    doc.text(`Descuento Global:`, 40, (55+(carroProductos.length*5)+5))
+    doc.text(`${descuentoGlobal} %`, 75, (55+(carroProductos.length*5)+5))
 
-    doc.text(`Subtotal:`, 40, (55+(carroProductos.length*5)+5))
+    doc.text(`Subtotal:`, 40, (55+(carroProductos.length*5)+10))
     doc.text(`${Intl.NumberFormat('ES-HN', {
       style: 'currency',
       currency: 'Hnl'
-    }).format(subtotal)}`, 75, (55+(carroProductos.length*5)+5))
-    doc.text(`Impuesto:`, 40, (55+(carroProductos.length*5)+10))
+    }).format(subtotal)}`, 75, (55+(carroProductos.length*5)+10))
+
+    doc.text(`Impuesto:`, 40, (55+(carroProductos.length*5)+15))
     doc.text(`${Intl.NumberFormat('ES-HN', {
       style: 'currency',
       currency: 'Hnl'
-    }).format(impuesto)}`, 75, (55+(carroProductos.length*5)+10))
-    doc.text(`Total:`, 40, (55+(carroProductos.length*5)+15))
+    }).format(impuesto)}`, 75, (55+(carroProductos.length*5)+15))
+
+    doc.text(`Total:`, 40, (55+(carroProductos.length*5)+20))
     doc.text(`${Intl.NumberFormat('ES-HN', {
       style: 'currency',
       currency: 'Hnl'
-    }).format(total)}`, 75, (55+(carroProductos.length*5)+15))
+    }).format(total)}`, 75, (55+(carroProductos.length*5)+20))
 
-    doc.text(`CAI: ${parametroCAIId}`, 10, (55+(carroProductos.length*5)+25))
-    doc.text(`Rango Autorizado: ${rangoInicio} - ${rangoFinal}`, 10, (55+(carroProductos.length*5)+30))
-    doc.text(`Cliente: ${clienteId}`, 10, (55+(carroProductos.length*5)+35))
-    doc.text(`Cliente RTN: ${clienteRTN}`, 10, (55+(carroProductos.length*5)+40))
-    doc.text(`Cocinero: ${cocineroId}`, 10, (55+(carroProductos.length*5)+45))
-    doc.text(`Mesero: ${meseroId}`, 10, (55+(carroProductos.length*5)+50))
+    doc.text(`CAI: ${parametroCAIId}`, 10, (55+(carroProductos.length*5)+30))
+    doc.text(`Rango Autorizado: ${rangoInicio} - ${rangoFinal}`, 10, (55+(carroProductos.length*5)+35))
+    doc.text(`Cliente: ${clienteId}`, 10, (55+(carroProductos.length*5)+40))
+    doc.text(`Cliente RTN: ${clienteRTN}`, 10, (55+(carroProductos.length*5)+45))
+    doc.text(`Cocinero: ${cocineroId}`, 10, (55+(carroProductos.length*5)+50))
+    doc.text(`Mesero: ${meseroId}`, 10, (55+(carroProductos.length*5)+55))
+    //doc.text(`Fecha Emision: ${moment(fechaEmision).format("DD/MM/yy")}`, 10, (55+(carroProductos.length*5)+60))
+    doc.text(`Fecha Limite Emision: ${moment(fechaLimiteEmision).format("DD/MM/yy")}`, 10, (55+(carroProductos.length*5)+60))
 
-    doc.text(`La factura es beneficio de todos, EXIJALA.`, 10, (55+(carroProductos.length*5)+60))
+    doc.text(`La factura es beneficio de todos, EXIJALA.`, 10, (55+(carroProductos.length*5)+80))
 
     
     doc.save(`Factura ${numeroFacturaActual}.pdf`)
 
-    navigate('/Facturas')
+    //navigate('/Facturas')
   }
 
 
@@ -844,7 +860,7 @@ function AgregarFactura() {
                     Intl.NumberFormat('ES-HN', {
                       style: 'currency',
                       currency: 'Hnl'
-                    }).format(efectivo-total)
+                    }).format(efectivo-totalConDescuento)
                   }
                 </label>
               </div>

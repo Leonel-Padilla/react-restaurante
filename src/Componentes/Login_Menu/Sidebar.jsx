@@ -2,6 +2,7 @@ import React from "react";
 import { Collapse, Button, Avatar, Text} from '@nextui-org/react';
 import Gerente from '../../img/gerente.png'
 import Cargo from '../../img/headhunting.png'
+import Delivery from '../../img/delivery.png'
 import Proveedor1 from '../../img/paquetes.png'
 import Sucursal from "../../img/tienda.png"
 import Cliente from "../../img/cliente.png"
@@ -13,6 +14,8 @@ import Comenatario from '../../img/chat.png'
 import Comida from '../../img/comida.png'
 import Compra from '../../img/compras.png'
 import Factura from '../../img/factura.png'
+import Reservacion from '../../img/reservacion.png'
+import Impuesto from '../../img/impuesto.png'
 import { useNavigate } from "react-router-dom";
 
 
@@ -79,7 +82,7 @@ function Sidebar () {
                 <Collapse 
                 title = {<Text h6 className="text-white">Delivery</Text>}
                 contentLeft={
-                <Avatar size="md" squared icon={<img src={Factura}/>} />}>
+                <Avatar size="md" squared icon={<img src={Delivery}/>} />}>
                     <Button light color={'default'} onClick={()=>navigate('/Deliveries')} className="text-white"> 
                         Mostrar Deliveries</Button>
                     <Button light color={'default'} onClick={()=>navigate('/Deliveries/addDelivery')}className="text-white">
@@ -119,7 +122,7 @@ function Sidebar () {
                 <Collapse 
                 title = {<Text h6 className="text-white">Impuesto</Text>}
                 contentLeft={
-                <Avatar size="md" squared icon={<img src={Factura}/>} />}>
+                <Avatar size="md" squared icon={<img src={Impuesto}/>} />}>
                     <Button light color={'default'} onClick={()=>navigate('/Impuestos')} className="text-white"> 
                         Mostrar Impuestos</Button>
                     <Button light color={'default'} onClick={()=>navigate('/Impuestos/addImpuesto')}className="text-white">
@@ -159,7 +162,7 @@ function Sidebar () {
                 <Collapse 
                 title = {<Text h6 className="text-white">Reservacion</Text>}
                 contentLeft={
-                <Avatar size="md" icon={<img src={Proveedor1}/>}/>}> 
+                <Avatar size="md" icon={<img src={Reservacion}/>}/>}> 
                     <Button light color={'default'} onClick={()=>navigate('/Reservaciones')}className="text-white"> 
                         Mostrar Reservaciones</Button>
                     <Button light color={'default'} onClick={()=>navigate('/Reservaciones/addReservacion')}className="text-white"> 

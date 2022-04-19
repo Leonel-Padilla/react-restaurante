@@ -17,8 +17,6 @@ function ActualizarFactura() {
   const [estado, setEstado]               = useState('')
 
   const [factura, setFactura]             = useState({})
-
-  
   const {id} = useParams()
   
   useEffect(()=>{
@@ -46,10 +44,17 @@ function ActualizarFactura() {
     if (estado.includes('Seleccione')){
       activarModal('Error', 'Debe seleccionar un estado')
     }else{
-      factura.estado = estado == 'Habilitado'? 1: 0
-      factura.descripcion = justificacion
+      factura.estado        = estado == 'Habilitado'? 1 : 0
+      factura.justificacion = justificacion
 
-      console.log(factura)
+      const response = await axios.put(`${endPointUpdateFactura}/${id}`, factura)
+      console.log(response.data)
+
+      if (response.status != 200){
+        activarModal('Error', `${response.data.Error}`)
+      }else{
+        navigate('/Facturas')
+      }
     }
     
     
@@ -88,7 +93,7 @@ function ActualizarFactura() {
           value={estado}
           onChange={(e)=>setEstado(e.target.value)}
           className='select'>
-            <option>Seleccione CAI</option>
+            <option>Seleccione Estado</option>
             <option>Habilitado</option>
             <option>Deshabilitado</option>
             
