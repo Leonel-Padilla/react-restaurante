@@ -197,7 +197,7 @@ function AgregarReservacion() {
 
       <div className='d-flex justify-content-center bg-dark mb-2'
       style={{backgroundColor: 'whitesmoke'}}>
-        <h1 className='text-white'>Registrar Reservacion</h1>
+        <h1 className='text-white'>Registrar Reservación</h1>
       </div>
 
       <form onSubmit={registrar} className='formulario'>
@@ -216,7 +216,7 @@ function AgregarReservacion() {
         </div>
 
         <div className='atributo'>
-          <label>Sucural</label>
+          <label>Sucursal</label>
           <select
           value={sucursalId}
           onChange={(e)=>{
@@ -257,7 +257,7 @@ function AgregarReservacion() {
         </div>}
 
         <div className='atributo'>
-          <label>Fecha Reservacion</label>
+          <label>Fecha Reservación</label>
           <input
           value={fecha}
           onChange={(e)=>setFecha(e.target.value)}

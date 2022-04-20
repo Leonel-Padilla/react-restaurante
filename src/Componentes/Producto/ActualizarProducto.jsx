@@ -2,6 +2,7 @@ import { useNavigate, useParams} from "react-router-dom";
 import React, {useState, useEffect, useRef} from 'react'
 import { Button, Input, Modal, Text} from '@nextui-org/react'
 import axios from "axios";
+import moment from 'moment';
 
 
 const endPointGetProducto               = 'http://127.0.0.1:8000/api/Producto'
@@ -178,8 +179,8 @@ const ActualizarProducto = () =>{
                                     return(
                                     <tr key={historialProducto.id}>
                                         <td>{historialProducto.precio}</td>
-                                        <td>{historialProducto.fechaInicio}</td>
-                                        <td>{historialProducto.fechaFinal}</td>
+                                        <td>{moment(historialProducto.fechaInicio).format("DD/MM/yy")}</td>
+                                        <td>{moment( historialProducto.fechaFinal).format("DD/MM/yy")}</td>
                                     </tr>)
                                 }
 

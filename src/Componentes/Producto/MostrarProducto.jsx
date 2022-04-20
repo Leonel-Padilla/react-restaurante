@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { Button, Input,Tooltip, Modal, Text } from '@nextui-org/react';
 import buscarLupa from '../../img/buscar_lupa.png';
 import lapizEditar from '../../img/lapiz_editar.png'
-
+import moment from 'moment';
 
 const endPointGetProductos          = 'http://127.0.0.1:8000/api/Producto'
 const endPointUpdateComentarios     = 'http://127.0.0.1:8000/api/updateProducto'

@@ -3,6 +3,7 @@ import axios from 'axios'
 import { useNavigate, useParams} from 'react-router-dom'
 import { Button, Modal, Text,} from '@nextui-org/react'
 import { CONNECTING } from 'ws'
+import moment from 'moment';
 
 const endPointGetImpuesto               = 'http://127.0.0.1:8000/api/Impuesto'
 const endPointUpdateImpuesto            = 'http://127.0.0.1:8000/api/updateImpuesto'
@@ -154,8 +155,8 @@ function ActualizarFactura() {
                       return(
                         <tr key={historialImpuesto.id}>
                           <td>{historialImpuesto.valorImpuesto}</td>
-                          <td>{historialImpuesto.fechaInicio}</td>
-                          <td>{historialImpuesto.fechaFinal}</td>
+                          <td>{moment(historialImpuesto.fechaInicio).format("DD/MM/yy")}</td>
+                          <td>{moment(historialImpuesto.fechaFin).format("DD/MM/yy")}</td>
                         </tr>)
                     }
 

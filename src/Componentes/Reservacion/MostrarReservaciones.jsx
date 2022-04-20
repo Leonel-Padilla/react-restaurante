@@ -295,7 +295,7 @@ function MostrarReservaciones() {
                 <td>{reservacion.id}</td>
                 <td>{nombreCliente}</td>
                 <td>{numeroMesa}</td>
-                <td>{reservacionMesaActual.fecha}</td>
+                <td>{moment(reservacionMesaActual.fecha).format("DD/MM/yy")}</td>
                 <td>{reservacionMesaActual.horaInicio}</td>
                 <td>{reservacionMesaActual.horaFinal}</td>
                 <td>{reservacion.estado == 1? 'Habilitado': 'Deshabilitado'}</td>

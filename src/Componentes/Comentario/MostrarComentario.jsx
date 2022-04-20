@@ -222,7 +222,7 @@ const MostrarComentario = () =>{
                     <tr>
                         <th>Id</th>
                         <th>Sucursal</th>
-                        <th>Descripcion</th>
+                        <th>Descripción</th>
                         <th>Estado</th>
                         <th>Opciones</th>
                     </tr>
