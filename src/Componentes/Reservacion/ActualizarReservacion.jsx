@@ -53,44 +53,42 @@ function ActualizarReservacion() {
   //
   const getReservacion = async ()=>{
     const response = await axios.get(`${endPointGetReservacion}/${id}`)
-    //console.log(response.data)
     
     const response1 = await axios.get(`${endPointGetReservacionMesa}R/${id}`)
-    //console.log(response1.data[0])
+    //console.log(response1.data)
     setIdReservacionMesa(response1.data[0].id)
 
     const response2 = await axios.get(endPointGetCliente)
     setClientes(response2.data)
-    //console.log(response2.data)
 
     response2.data.map(cliente=>{
       if(cliente.id === response.data.clienteId){
         setClienteId(cliente.clienteNombre)
-        //idCliente = cliente.id
       }
     })
 
     const response3 = await axios.get(endPointGetSucursal)
     setSucursales(response3.data)
-    //console.log(response3.data)
 
     response3.data.map(sucursal=>{
       if(sucursal.id === response.data.sucursalId){
         setSucursalId(sucursal.sucursalNombre)
-        //idSucursal = sucursal.id
       }
     })
 
     const response4 = await axios.get(`${endPointGetMesa}N/${response.data.sucursalId}`)
-    //console.log(response4.data)
     setMesas(response4.data)
 
     response4.data.map(mesa=>{
       if(mesa.id === response1.data[0].mesaId){
         setMesaId(mesa.numero)
-        //idMesa = mesa.id
       }
     })
+
+    const response5 = await axios.get(`${endPointGetReservacionMesa}M/${response1.data[0].mesaId}`)  //////////////////
+    setReservacionesMesa(response5.data)
+    //console.log(response5.data)
+
 
     setFecha(response1.data[0].fecha)
     setHoraInicio(response1.data[0].horaInicio)
@@ -298,7 +296,7 @@ function ActualizarReservacion() {
           value={fecha}
           onChange={(e)=>setFecha(e.target.value)}
           className='form-control'
-          min={fechaHoy}
+          //min={fechaHoy}
           type='date'> 
           </input>
         </div>

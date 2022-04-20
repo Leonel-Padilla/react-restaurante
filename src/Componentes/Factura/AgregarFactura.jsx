@@ -53,13 +53,15 @@ function AgregarFactura() {
   const [total, setTotal]                     = useState(0)
   const [formaPagoId, setFormaPagoId]         = useState('Seleccione')
   let   idFormaPago                           = ''
-  const [parametroCAIId, setParametroCAIId]   = useState('Seleccione')
+  const [parametroCAIId, setParametroCAIId]   = useState()
   let   idParametroCAI                        = ''
   const [efectivo, setEfectivo]               = useState('')
   const [numeroTarjeta, setNumeroTarjeta]     = useState('')
 
   const [totalConDescuento, setTotalConDescuento] = useState(0)
 
+
+  const [sucursalId, setSucursalId] = useState('')
   /*INFORMACION DEL CAI*/
   let puntoEmision                            = ''
   let establecimiento                         = ''
@@ -88,7 +90,7 @@ function AgregarFactura() {
     getAllTiposEntrega()
     getAllInsumos()
     getAllFormasPago()
-    getAllCAI()
+    //getAllCAI()
   },[])
 
   //
@@ -98,7 +100,7 @@ function AgregarFactura() {
     setVisible(true)
   }
   //
-  const getAllCAI = async ()=>{
+  /*const getAllCAI = async ()=>{
     const response = await axios.get(endPointGetAllParametrosCAI)
 
     const array = response.data.filter(parametro => parametro.fechaDesde < fechaActual && parametro.fechaHasta > fechaActual
@@ -106,7 +108,7 @@ function AgregarFactura() {
 
     //console.log(array)
     setParametrosCai(array)
-  }
+  }*/
   //
   const getAllFormasPago = async ()=>{
     const response = await axios.get(endPointGetFormasPago)
@@ -126,8 +128,20 @@ function AgregarFactura() {
   const getEmpleado = async () => {
     const response = await axios.get(`${endPointGetEmpleado}U/${sessionStorage.getItem('userName')}`)
     
+
     setEmpleadoId(response.data[0].id)
     setNombreUsuario(response.data[0].empleadoUsuario)
+    //setSucursalId(response.data[0].sucursalId)
+
+    //////
+    const response1 = await axios.get(`${endPointGetAllParametrosCAI}I/${response.data[0].sucursalId}`)
+
+    const array = response1.data.filter(parametro => parametro.fechaDesde < fechaActual && parametro.fechaHasta > fechaActual
+    && parseInt(parametro.rangoFinal) > parseInt(parametro.numeroFacturaActual))
+
+    //console.log(array)
+    setParametrosCai(array)
+    setParametroCAIId(array[0].numeroCAI)
   }
   //
   const getAllClientes = async () => {
@@ -367,8 +381,9 @@ function AgregarFactura() {
       activarModal('Error', 'Debe seleccionar un cocinero, un mesero, tipo de entrega, forma de pago y un CAI.')
     }else if (carroProductos.length == 0){
       activarModal('Error', 'Debe agregar al menos un producto a la orden.')
-    }
-    else{
+    }if (efectivo < totalConDescuento){
+      activarModal('Error', 'El efectivo no es suficiente para pagar la cuenta.')
+    }else{
       buscarParametroCAI()
       formatearClienteId()
       formatearMeseoId()
@@ -543,7 +558,7 @@ function AgregarFactura() {
     
     doc.save(`Factura ${numeroFacturaActual}.pdf`)
 
-    //navigate('/Facturas')
+    navigate('/Facturas')
   }
 
 
@@ -736,14 +751,10 @@ function AgregarFactura() {
           </div>
 
           <div className='atributo'>
-            <label>CAI de Factura</label>
-            <select
+            <label>Número CAI</label>
+            <input
             value={parametroCAIId}
-            onChange={(e)=>setParametroCAIId(e.target.value)}
-            className='select'> 
-              <option>Seleccione CAI</option>
-              {parametrosCai.map((parametro)=> <option key={parametro.id}>{parametro.numeroCAI}</option>)}
-            </select>
+            readOnly/>
           </div>
 
           <Button

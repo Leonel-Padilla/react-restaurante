@@ -47,10 +47,10 @@ const MostrarProducto = () =>{
     }
     //
     const cambioEstado = async ()=>{
-        const response = await axios.put(`${endPointUpdateComentarios}/${productoActual.id}`, {productoNombre: productoActual.productoNombre, 
-        productoDescripcion: productoActual.productoDescripcion, precio: productoActual.precio,
-        estado: productoActual.estado == 1 ? 0 : 1})
-        console.log(response.data)
+        const response = await axios.put(`${endPointUpdateComentarios}/${productoActual.id}`, {impuestoId: productoActual.impuestoId,
+        productoNombre: productoActual.productoNombre, productoDescripcion: productoActual.productoDescripcion,
+        precio: productoActual.precio, estado: productoActual.estado == 1 ? 0 : 1})
+        //console.log(response.data)
 
         getAllProductos()
     }

@@ -14,6 +14,8 @@ const ActualizarMesa = ()=>{
     let idSucursal                                  = ''
     const [cantidadAsientos, setCantidadAsientos]   = useState(0)
     const [mesaEstado, setMesaEstado]               = useState(1)
+    const [descripcion, setDescripcion]             = useState('')
+    const [numero, setNumero]                       = useState('')
 
     const navigate = useNavigate()
     const [mensajeModal, setMensajeModal] = useState('')
@@ -41,6 +43,8 @@ const ActualizarMesa = ()=>{
 
         setCantidadAsientos(response.data.cantidadAsientos)
         setSucursalId(response1.data.sucursalNombre)
+        setDescripcion(response.data.descripcion)
+        setNumero(response.data.numero)
         setMesaEstado(response.data.estado)
     }
 
@@ -73,7 +77,7 @@ const ActualizarMesa = ()=>{
             formatearSucursalId()
 
             const response = await axios.put(`${endPointUpdateMesa}/${id}`, {sucursalId: idSucursal ,cantidadAsientos: cantidadAsientos,
-            estado: mesaEstado})
+            descripcion: descripcion, numero: numero, estado: mesaEstado, estado: mesaEstado})
 
             //console.log(response.data)     
             

@@ -36,6 +36,7 @@ function ActualizarFactura() {
     setFactura(response.data)
 
     response.data.estado == 1? setEstado('Habilitado'): setEstado('Deshabilitado')
+    setJustificacion(response.data.justificacion)
   }
   //
   const actualizar = async (e)=>{

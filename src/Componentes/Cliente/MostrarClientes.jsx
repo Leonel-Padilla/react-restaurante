@@ -48,12 +48,13 @@ const getAllClientes = async ()=>{
 //
 const cambioEstado = async (cliente)=>{
 
-  await axios.put(`${endPointUpdate}/${cliente.id}`, {clienteNombre: cliente.clienteNombre,
-      clienteNumero: cliente.clienteNumero, clienteCorreo: cliente.clienteCorreo,
-      clienteRTN: cliente.clienteRTN, estado: cliente.estado == 1? 0 : 1})
+    const response = await axios.put(`${endPointUpdate}/${cliente.id}`, {tipoDocumentoId: cliente.tipoDocumentoId,
+    numeroDocumento: cliente.numeroDocumento, clienteNombre: cliente.clienteNombre, clienteNumero: cliente.clienteNumero, 
+    clienteCorreo: cliente.clienteCorreo, clienteRTN: cliente.clienteRTN, estado: cliente.estado == 1? 0 : 1})
 
-      getAllClientes()
-  }
+    getAllClientes()
+    
+    }
 
   //
   const getByValorBusqueda = async (e)=>{

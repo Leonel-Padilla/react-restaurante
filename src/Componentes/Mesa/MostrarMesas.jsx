@@ -46,9 +46,9 @@ const MostrarMesas = ()=>{
 
     //
     const cambioEstado = async (mesa)=>{
-        console.log('HGoaaa')
         const response = await axios.put(`${endPointUpdateMesa}/${mesa.id}`, {sucursalId: mesa.sucursalId, 
-        cantidadAsientos: mesa.cantidadAsientos, estado: mesa.estado == 1? 0 : 1})
+        cantidadAsientos: mesa.cantidadAsientos, descripcion: mesa.descripcion, numero: mesa.numero,
+        estado: mesa.estado == 1? 0 : 1})
         
         console.log(response.data)
         

@@ -44,12 +44,15 @@ const MostrarEmpleados = ()=>{
     //
     const cambioEstado = async (empleado)=>{
 
-        await axios.put(`${endPointUpdate}/${empleado.id}`, {tipoDocumentoId:empleado.tipoDocumentoId,
-        numeroDocumento: empleado.numeroDocumento, empleadoNombre: empleado.empleadoNombre, empleadoNumero: empleado.empleadoNumero,
-        empleadoCorreo: empleado.empleadoCorreo, empleadoUsuario: empleado.empleadoUsuario,
-        empleadoContrasenia: empleado.empleadoContrasenia, empleadoDireccion: empleado.empleadoDireccion, 
-        empleadoSueldo: empleado.empleadoSueldo, cargoActualId: empleado.cargoActualId, fechaContratacion: empleado.fechaContratacion,
+        const response = await axios.put(`${endPointUpdate}/${empleado.id}`, {tipoDocumentoId:empleado.tipoDocumentoId,
+        sucursalId: empleado.sucursalId, numeroDocumento: empleado.numeroDocumento, empleadoNombre: empleado.empleadoNombre,
+        empleadoNumero: empleado.empleadoNumero, empleadoCorreo: empleado.empleadoCorreo,
+        empleadoUsuario: empleado.empleadoUsuario, empleadoContrasenia: empleado.empleadoContrasenia, 
+        empleadoDireccion: empleado.empleadoDireccion,  empleadoSueldo: empleado.empleadoSueldo, 
+        cargoActualId: empleado.cargoActualId, fechaContratacion: empleado.fechaContratacion,
         fechaNacimiento: empleado.fechaNacimiento, estado: empleado.estado == 1? 0 : 1})
+
+        //console.log(response.data)
 
         getAllEmpleados()
     }
