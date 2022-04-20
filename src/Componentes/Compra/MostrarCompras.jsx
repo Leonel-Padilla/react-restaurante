@@ -231,7 +231,7 @@ const MostrarCompras = ()=> {
                             <tr>
                                 <th>Insumo</th>
                                 <th>Precio</th>
-                                <th>cantidad</th>
+                                <th>Cantidad</th>
                                 <th>Opciones</th>
                             </tr>
                         </thead>

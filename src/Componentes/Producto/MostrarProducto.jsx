@@ -209,8 +209,8 @@ const MostrarProducto = () =>{
                         <th>ID</th>
                         <th>Producto Nombre</th>
                         <th>Producto Precio</th>
-                        <td>Descripcion</td>
-                        <td>Impuesto</td>
+                        <th>Descripción</th>
+                        <th>Impuesto</th>
                         <th>Estado</th>
                         <th>Opciones</th>
                     </tr>

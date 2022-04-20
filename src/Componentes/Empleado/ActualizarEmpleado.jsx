@@ -7,6 +7,7 @@ import Datepicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 import subDays from "date-fns/subDays"
 import addDays from "date-fns/addDays"
+import moment from 'moment';
 
 
 const endpointGetEmpleado               = 'http://127.0.0.1:8000/api/Empleado'
@@ -348,8 +349,8 @@ const ActualizarEmpleado = () =>{
                                     return(
                                     <tr key={empleadoCargo.id}>
                                         <td>{empleadoCargoNombre}</td>
-                                        <td>{empleadoCargo.fechaInicio}</td>
-                                        <td>{empleadoCargo.fechaFinal}</td>
+                                        <td>{moment(empleadoCargo.fechaInicio).format("DD/MM/yy") }</td>
+                                        <td>{moment(empleadoCargo.fechaFinal).format("DD/MM/yy")}</td>
                                     </tr>)
                                 }
 
@@ -376,8 +377,8 @@ const ActualizarEmpleado = () =>{
                                     return(
                                     <tr key={sueldo.id}>
                                         <td>{sueldo.sueldo}</td>
-                                        <td>{sueldo.fechaInicio}</td>
-                                        <td>{sueldo.fechaFinal}</td>
+                                        <td>{moment(sueldo.fechaInicio).format("DD/MM/yy")}</td>
+                                        <td>{moment(sueldo.fechaFinal).format("DD/MM/yy")}</td>
                                     </tr>)
                                 }
 

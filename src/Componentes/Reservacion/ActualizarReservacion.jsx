@@ -250,7 +250,7 @@ function ActualizarReservacion() {
         </div>
 
         <div className='atributo'>
-          <label>Sucural</label>
+          <label>Sucursal</label>
           <select
           value={sucursalId}
           onChange={(e)=>{

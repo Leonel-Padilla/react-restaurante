@@ -127,7 +127,7 @@ const AgregarComentario = () =>{
                     <label>Teléfono Cliente:</label>
                     <input
                     aria-label='aria-describedby'
-                    placeholder='Excelente servicio'
+                    placeholder='98515484'
                     value={telefonoCliente}
                     onChange={(e)=>setTelefonoCliente(e.target.value)}
                     type='number'
@@ -139,7 +139,7 @@ const AgregarComentario = () =>{
                     <label>Correo Cliente:</label>
                     <input
                     aria-label='aria-describedby'
-                    placeholder='Excelente servicio'
+                    placeholder='ejem@gmail.com'
                     value={correoCliente}
                     onChange={(e)=>setCorreoCliente(e.target.value)}
                     type='email'

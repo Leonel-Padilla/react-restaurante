@@ -505,9 +505,9 @@ function AgregarFactura() {
     doc.text(`RTN: ${RTN}`, 10, 20)
     doc.text(`Fecha y Hora: ${moment(fechaActual).format("DD/MM/yy, hh:mm")}`, 10, 25)
     doc.text(`Cajero: ${nombreUsuario}`, 10, 30)
-    doc.text(`NUMERO DE FACTURA: ${numeroFacturaActual}`, 10, 35)
+    doc.text(`NÚMERO DE FACTURA: ${numeroFacturaActual}`, 10, 35)
 
-    doc.text(`Articulo: `, 10, 45)
+    doc.text(`Artículo: `, 10, 45)
     doc.text(`Cantidad: `, 35, 45)
     doc.text(`Descuento: `, 53, 45)
     doc.text(`Precio: `, 80, 45)
@@ -551,9 +551,9 @@ function AgregarFactura() {
     doc.text(`Cocinero: ${cocineroId}`, 10, (55+(carroProductos.length*5)+50))
     doc.text(`Mesero: ${meseroId}`, 10, (55+(carroProductos.length*5)+55))
     //doc.text(`Fecha Emision: ${moment(fechaEmision).format("DD/MM/yy")}`, 10, (55+(carroProductos.length*5)+60))
-    doc.text(`Fecha Limite Emision: ${moment(fechaLimiteEmision).format("DD/MM/yy")}`, 10, (55+(carroProductos.length*5)+60))
+    doc.text(`Fecha Límite Emisión: ${moment(fechaLimiteEmision).format("DD/MM/yy")}`, 10, (55+(carroProductos.length*5)+60))
 
-    doc.text(`La factura es beneficio de todos, EXIJALA.`, 10, (55+(carroProductos.length*5)+80))
+    doc.text(`La factura es beneficio de todos, EXÍJALA.`, 10, (55+(carroProductos.length*5)+80))
 
     
     doc.save(`Factura ${numeroFacturaActual}.pdf`)

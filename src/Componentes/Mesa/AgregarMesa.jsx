@@ -122,7 +122,7 @@ const AgregarMesa = () =>{
                 </div>
 
                 <div className='atributo'>
-                    <label>Numero de mesa:</label>
+                    <label>Número de mesa:</label>
                     <input
                     aria-label='aria-describedby'
                     value={numeroMesa}

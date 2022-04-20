@@ -236,7 +236,7 @@ const MostrarMesas = ()=>{
                 <thead className='bg-dark text-white'> 
                     <tr>
                         <th>Id Mesa</th>
-                        <th>Numero Mesa</th>
+                        <th>Número Mesa</th>
                         <th>Cantidad de asientos</th>
                         <th>Sucursal nombre</th>
                         <th>Estado</th>
