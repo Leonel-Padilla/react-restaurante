@@ -285,7 +285,7 @@ const ActualizarEmpleado = () =>{
     //
     const formatearSucursalId = ()=>{
         todasSucursales.map((sucursal)=>{
-            if(sucursal.nombreSucursal == sucursalId){
+            if(sucursal.sucursalNombre == sucursalId){
                 idSucursal = sucursal.id
             }
         })
