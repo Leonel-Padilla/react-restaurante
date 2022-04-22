@@ -2,6 +2,7 @@ import React, {useEffect, useRef, useState} from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { Button, Modal, Text,} from '@nextui-org/react'
+import Swal from 'sweetalert2'
 
 const endPointGetCliente          = 'http://127.0.0.1:8000/api/Cliente'
 const endPointGetSucursal         = 'http://127.0.0.1:8000/api/Sucursal'
@@ -49,8 +50,9 @@ function AgregarReservacion() {
   //
   const getAllClientes = async () =>{
     const response = await axios.get(endPointGetCliente)
-    setClientes(response.data)
-    //console.log(response.data)
+    
+    const array = response.data.filter(cliente => cliente.clienteNombre != 'Consumidor Final')
+    setClientes(array)
   }
   //
   const getAllSucursales = async () =>{
@@ -170,7 +172,24 @@ function AgregarReservacion() {
       const response1 = await axios.delete(`${endPointDeleteReservacion}/${id}`)
       console.log(response1.data)
     }else{
-      navigate('/Reservaciones')
+      (async ()=>{
+
+        const {value: confirmacion} = await Swal.fire({
+            title: 'Registro exitoso',
+            text: `La reservacion ha sido registrado con éxito.`,
+            width: '410px',
+            confirmButtonText: 'Aceptar',
+            confirmButtonColor: '#7109BF',
+            background: 'black',
+            color: 'white',
+        })
+
+        if (confirmacion){
+          navigate('/Reservaciones')
+        }
+      })()
+
+      
     }
   }
 

@@ -2,6 +2,8 @@ import React, {useEffect, useRef, useState} from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { Button, Input, Modal, Text, Textarea} from '@nextui-org/react'
+import Swal from 'sweetalert2'
+
 
 const endPointGetAllProveedores     = 'http://127.0.0.1:8000/api/Proveedor'
 const endPointAddInsumo            = 'http://127.0.0.1:8000/api/addInsumo'
@@ -62,7 +64,24 @@ const AgregarInsumo = () =>{
                     setMensajeModal(response.data.Error)
                     setVisible(true)
                 }else{
-                    navigate('/Insumos')
+                    
+                    (async ()=>{
+
+                        const {value: confirmacion} = await Swal.fire({
+                            title: 'Registro exitoso',
+                            text: `El insumo ${insumoNombre} ha sido registrado con éxito.`,
+                            width: '410px',
+                            confirmButtonText: 'Aceptar',
+                            confirmButtonColor: '#7109BF',
+                            background: 'black',
+                            color: 'white',
+                        })
+                
+                        if (confirmacion){
+                            navigate('/Insumos')
+                        }
+                    })()
+                    
                 }
             }
         }

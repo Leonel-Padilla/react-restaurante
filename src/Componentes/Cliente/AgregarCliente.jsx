@@ -2,6 +2,7 @@ import React, {useEffect, useRef, useState} from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { Button, Input, Modal, Text, Textarea} from '@nextui-org/react'
+import Swal from 'sweetalert2'
 
 
 const endPointRegistarCliente   = 'http://127.0.0.1:8000/api/addCliente'
@@ -75,7 +76,25 @@ const AgregarCliente = ()=>{
                     setMensajeModal(response.data.Error)
                     setVisible(true)
                 }else{
-                    navigate('/Clientes')
+                    (async ()=>{
+
+                        const {value: confirmacion} = await Swal.fire({
+                            title: 'Registro exitoso',
+                            text: `El cliente ${clienteNombre} ha sido registrado con éxito.`,
+                            width: '410px',
+                            height: '800px',
+                            confirmButtonText: 'Aceptar',
+                            confirmButtonColor: '#7109BF',
+                            background: 'black',
+                            color: 'white',
+                        })
+                
+                        if (confirmacion){
+                            navigate('/Clientes')
+                        }
+                    })()
+
+                    
                 }
         }
     }

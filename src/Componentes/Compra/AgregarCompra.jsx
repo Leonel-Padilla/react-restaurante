@@ -2,6 +2,7 @@ import React, {useRef, useState, useEffect} from 'react'
 import { Button, Input, Modal, Text, Textarea} from '@nextui-org/react'
 import axios from 'axios'
 import { Navigate, useNavigate } from 'react-router-dom'
+import Swal from 'sweetalert2'
 
 
 const endPointGetInsunmos           = 'http://127.0.0.1:8000/api/Insumo'
@@ -223,7 +224,21 @@ const AgregarCompra = () => {
 
       //console.log(response1.data)
     })
-    navigate('/compras')
+
+    const {value: confirmacion} = await Swal.fire({
+      title: 'Registro exitoso',
+      text: `La compra ha sido registrado con éxito.`,
+      width: '410px',
+      confirmButtonText: 'Aceptar',
+      confirmButtonColor: '#7109BF',
+      background: 'black',
+      color: 'white',
+    })
+
+    if (confirmacion){
+      navigate('/compras')
+    }
+    
 
   }
 
@@ -407,7 +422,7 @@ const AgregarCompra = () => {
                  value={numeroFactura}
                  onChange={(e)=>setNUmeroFactura(e.target.value)}
                  type='number'
-                 pattern='[0-9]{1,}'
+                 pattern='[0-9]{16,}'
                  maxLength={16}
                  className='form-control'
                  />

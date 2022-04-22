@@ -2,6 +2,7 @@ import React, {useRef, useState} from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { Button, Modal, Text,} from '@nextui-org/react'
+import Swal from 'sweetalert2'
 
 const endPointRegistarCargo = 'http://127.0.0.1:8000/api/addCargo'
 
@@ -35,15 +36,32 @@ function AgregarCargo() {
             setVisible(true)
         }else{
             const response = await axios.post(endPointRegistarCargo, {cargoNombre: cargoNombre, 
-                cargoDescripcion: cargoDescripcion, estado: cargoEstado})
+            cargoDescripcion: cargoDescripcion, estado: cargoEstado})
         
-                if (response.status !== 200){
-                    setTituloModal('Error')
-                    setMensajeModal(response.data.Error)
-                    setVisible(true)
-                }else{
-                    navigate('/Cargos')
-                }
+            if (response.status !== 200){
+                setTituloModal('Error')
+                setMensajeModal(response.data.Error)
+                setVisible(true)
+            }else{
+
+                (async ()=>{
+
+                    const {value: confirmacion} = await Swal.fire({
+                        title: 'Registro exitoso',
+                        text: `El cargo ${cargoNombre} ha sido registrado con éxito.`,
+                        width: '410px',
+                        confirmButtonText: 'Aceptar',
+                        confirmButtonColor: '#7109BF',
+                        background: 'black',
+                        color: 'white',
+                    })
+            
+                    if (confirmacion){
+                        navigate('/Cargos')
+                    }
+                })()
+
+            }
         }
 
         

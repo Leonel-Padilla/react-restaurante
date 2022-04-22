@@ -2,7 +2,8 @@ import React, {useEffect, useRef, useState} from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { Button, Modal, Text,} from '@nextui-org/react'
-
+import Swal from 'sweetalert2'
+import moment from 'moment';
 
 const endPointGetCliente          = 'http://127.0.0.1:8000/api/Cliente'
 const endPointGetEmpleado         = 'http://127.0.0.1:8000/api/Empleado'
@@ -34,7 +35,7 @@ function AgregarDelivery() {
   useEffect(()=>{
     getAllClientes()
     getAllEmpleados()
-    getAllOrdenes()
+    //getAllOrdenes()
   },[])
 
   
@@ -47,7 +48,9 @@ function AgregarDelivery() {
   //
   const getAllClientes = async () =>{
     const response = await axios.get(endPointGetCliente)
-    setClientes(response.data)
+
+    const array = response.data.filter(cliente=> cliente.clienteNombre != 'Consumidor Final' )
+    setClientes(array)
   }
   //
   const getAllEmpleados = async () =>{
@@ -55,7 +58,7 @@ function AgregarDelivery() {
     setEmpleados(response.data)
   }
   //
-  const getAllOrdenes = async () =>{
+  const getAllOrdenes = async (id) =>{
     const response = await axios.get(endPointGetTipoEntrega)
     let entregaId = 0
     response.data.map(tipoEntrega=>{
@@ -65,12 +68,17 @@ function AgregarDelivery() {
     })
 
     const response1 = await axios.get(`${endPointGetOrdenEncabezado}E/${entregaId}`)
-    setOrdenes(response1.data)
+
+    const date2 = new Date()
+    formatearClienteId(id)
+    const array1 = response1.data.filter(orden => orden.clienteId == idCliente && (moment(orden.fechaHora).format("DD/MM/yy")) == moment(date2).format("DD/MM/yy"))
+    
+    setOrdenes(array1)
   }
   //
-  const formatearClienteId = ()=>{
+  const formatearClienteId = (id)=>{
     clientes.map(cliente=>{
-      if(cliente.clienteNombre === clienteId){
+      if(cliente.clienteNombre === id){
         idCliente = cliente.id
       }
     })
@@ -84,17 +92,13 @@ function AgregarDelivery() {
     })
   }
   //
-  const formatearOrdenEncabezadoId = ()=>{
-
-  }
-  //
   const registrar = async (e) =>{
     e.preventDefault()
     
     if (clienteId.includes('Seleccione') || empleadoId.includes('Seleccione') || ordenEncabezadoId.includes('Seleccione')){
       activarModal('Error', 'Debe seleccionar un cliente, un repartidor y la orden del delivery')
     }else{
-      formatearClienteId()
+      formatearClienteId(clienteId)
       formatearEmpleadoId()
       
       const date = new Date()
@@ -109,7 +113,24 @@ function AgregarDelivery() {
       if(response.status != 200){
         activarModal('Error', response.data.Error)
       }else{
-        navigate('/Deliveries')
+        (async ()=>{
+
+          const {value: confirmacion} = await Swal.fire({
+              title: 'Registro exitoso',
+              text: `El delivery ha sido registrado con éxito.`,
+              width: '410px',
+              height: '800px',
+              confirmButtonText: 'Aceptar',
+              confirmButtonColor: '#7109BF',
+              background: 'black',
+              color: 'white',
+          })
+  
+          if (confirmacion){
+            navigate('/Deliveries')
+          }
+      })()
+        
       }
     }
   }
@@ -146,7 +167,10 @@ function AgregarDelivery() {
           <label>Cliente</label>
           <select
           value={clienteId}
-          onChange={(e)=>setClienteId(e.target.value)}
+          onChange={(e)=>{
+            setClienteId(e.target.value)
+            getAllOrdenes(e.target.value)
+          }}
           className='select'> 
             <option>Seleccione un Cliente</option>
 
@@ -172,12 +196,15 @@ function AgregarDelivery() {
           <label>Orden</label>
           <select
           value={ordenEncabezadoId}
-          onChange={(e)=>setOrdenEncabezadoId(e.target.value)}
+          onChange={(e)=>{
+            const datos = e.target.value.split(' ')
+            setOrdenEncabezadoId(datos[0])
+          }}
           className='select'> 
             <option>Seleccione una orden</option>
 
             {ordenes.map(orden=>
-              <option key={orden.id}>{orden.id}</option>)}
+              <option key={orden.id}>{orden.id} - {orden.fechaHora}</option>)}
           </select>
         </div>
 

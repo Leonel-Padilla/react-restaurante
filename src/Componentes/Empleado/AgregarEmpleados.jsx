@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { Button, Input, Modal, Text} from '@nextui-org/react'
+import Swal from 'sweetalert2'
 
 const endPointRegistrarEmpleado         = 'http://127.0.0.1:8000/api/addEmpleado'
 const endPointBuscarTodosCargos         = 'http://127.0.0.1:8000/api/Cargo'
@@ -119,7 +120,24 @@ const AgregarEmpleado = () =>{
                             
                         const response3 = await axios.post(endPointRegistrarSueldoHistorico, {empleadoId: response1.data[0].id,
                         sueldo: empleadoSueldo, fechaInicio: fechaContratacion, estado: 1})
-                        navigate('/Empleados')
+
+                        
+
+                        const {value: confirmacion} = await Swal.fire({
+                            title: 'Registro exitoso',
+                            text: `El Empleado ${empleadoNombre} ha sido registrado con éxito.`,
+                            width: '410px',
+                            confirmButtonText: 'Aceptar',
+                            confirmButtonColor: '#7109BF',
+                            background: 'black',
+                            color: 'white',
+                        })
+                    
+                        if (confirmacion){
+                            navigate('/Empleados')
+                        }
+
+                        
 
                     }
                 }

@@ -2,6 +2,7 @@ import React, {useState, useRef} from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { Button, Input, Modal, Text} from '@nextui-org/react'
+import Swal from 'sweetalert2'
 
 const endPointRegistarProveedor = 'http://127.0.0.1:8000/api/addProveedor'
 
@@ -47,7 +48,23 @@ const AgregarProveedor = ()=>{
                     setMensajeModal(response.data.Error)
                     setVisible(true)
                 }else{
-                    navigate('/Proveedores')
+                    (async ()=>{
+
+                        const {value: confirmacion} = await Swal.fire({
+                            title: 'Registro exitoso',
+                            text: `El proveedor ${proveedorNombre} ha sido registrado con éxito.`,
+                            width: '410px',
+                            confirmButtonText: 'Aceptar',
+                            confirmButtonColor: '#7109BF',
+                            background: 'black',
+                            color: 'white',
+                        })
+                
+                        if (confirmacion){
+                            navigate('/Proveedores')
+                        }
+                    })()
+                    
                 }
         }
         

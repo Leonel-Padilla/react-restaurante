@@ -150,7 +150,7 @@ const ActualizarCompra = () =>{
 
 
         const response = await axios.put(`${endPointUpdateCompraEncabezado}/${id}`, {proveedorId: idProveedor, empleadoId: empleadoId,
-        fechaSolicitud: fechaSolicitud, fechaEntregaCompra: fechaEntrega, fechaPagoCompra: fechaPago, estadoCompra: compraEstado,
+        fechaSolicitud: fechaSolicitud, fechaEntregaCompra: fechaEntrega, fechaPagoCompra: fechaPago, estadoCompra: 'Pendiente',
         numeroFactura: numeroFactura, cai: cai, numeroFacturaCai: caiNumFactura, estado: 1})
 
         //console.log(response.data)

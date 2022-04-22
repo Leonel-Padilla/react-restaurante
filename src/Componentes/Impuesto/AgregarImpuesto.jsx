@@ -2,6 +2,7 @@ import React, {useEffect, useRef, useState} from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { Button, Modal, Text,} from '@nextui-org/react'
+import Swal from 'sweetalert2'
 
 
 const endPointAddImpuesto           = 'http://127.0.0.1:8000/api/addImpuesto'
@@ -46,7 +47,6 @@ function AgregarImpuesto() {
         activarModal('Error', `${response.data.Error}`)
       }else{
         registrarImpuestoHistorial(response.data.id)
-        navigate('/Impuestos')
       }
 
     }
@@ -60,7 +60,22 @@ function AgregarImpuesto() {
     const response = await axios.post(endPointAddImpuestoHistorial, {impuestoId: impuestoId, valorImpuesto: valorImpuesto,
     fechaInicio: fechaHoy, estado: 1})
 
-    console.log(response.data)
+    //console.log(response.data)
+
+    const {value: confirmacion} = await Swal.fire({
+      title: 'Registro exitoso',
+      text: `El impuesto ${nombreImpuesto} ha sido registrado con éxito.`,
+      width: '410px',
+      confirmButtonText: 'Aceptar',
+      confirmButtonColor: '#7109BF',
+      background: 'black',
+      color: 'white',
+    })
+
+    if (confirmacion){
+      navigate('/Impuestos')
+    }
+
   }
 
   return (

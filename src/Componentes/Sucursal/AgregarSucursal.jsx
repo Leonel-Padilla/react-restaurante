@@ -2,6 +2,7 @@ import React, {useEffect, useRef, useState} from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { Button, Modal, Text, Textarea} from '@nextui-org/react'
+import Swal from 'sweetalert2'
 
 const endPointRegistrarSucursal = 'http://127.0.0.1:8000/api/addSucursal'
 const endPointGetAllEmpleados   = 'http://127.0.0.1:8000/api/Empleado'
@@ -60,16 +61,30 @@ function AgregarSucursal() {
                 const response = await axios.post(endPointRegistrarSucursal, {empleadoId: empleadoId, sucursalNombre: sucursalNombre,
                 sucursalDireccion: sucursalDireccion, estado: sucursalEstado})
 
-
-            
                 if (response.status !== 200){
                     setTituloModal('Error')
                     setMensajeModal(response.data.Error)
                     setVisible(true)
 
-
                 }else{
-                    navigate('/Sucursales')
+
+                    (async ()=>{
+
+                        const {value: confirmacion} = await Swal.fire({
+                            title: 'Registro exitoso',
+                            text: `El Sucursa ${sucursalNombre} ha sido registrado con éxito.`,
+                            width: '410px',
+                            confirmButtonText: 'Aceptar',
+                            confirmButtonColor: '#7109BF',
+                            background: 'black',
+                            color: 'white',
+                        })
+                
+                        if (confirmacion){
+                            navigate('/Sucursales')
+                        }
+                    })()
+                    
                 }
             }
 

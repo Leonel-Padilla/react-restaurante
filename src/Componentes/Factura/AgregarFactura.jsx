@@ -5,6 +5,7 @@ import { Navigate, useNavigate } from 'react-router-dom'
 import jsPDF from 'jspdf'
 import Logo from '../../img/LOGO.png'
 import moment from 'moment';
+import Swal from 'sweetalert2'
 
 const endPointGetProducto           = 'http://127.0.0.1:8000/api/Producto'
 const endPointGetInsunmos           = 'http://127.0.0.1:8000/api/Insumo'
@@ -35,8 +36,6 @@ function AgregarFactura() {
   const [formasPago, setFormasPago]             = useState([])
   const [descuentoGlobal, setDescuentoGlobal]   = useState(0)
 
-
-
   const [empleadoId, setEmpleadoId]           = useState('')
   const [nombreUsuario, setNombreUsuario]     = useState('')
   const [cocineroId, setCocineroId]           = useState('Seleccione')
@@ -58,7 +57,8 @@ function AgregarFactura() {
   const [efectivo, setEfectivo]               = useState('')
   const [numeroTarjeta, setNumeroTarjeta]     = useState('')
 
-  const [totalConDescuento, setTotalConDescuento] = useState(0)
+  const [contraseniaGerente, setContraseniaGerente] = useState('')
+  const [totalConDescuento, setTotalConDescuento]   = useState(0)
 
 
   const [sucursalId, setSucursalId] = useState('')
@@ -99,16 +99,6 @@ function AgregarFactura() {
     setMensajeModal(mensajeModal)
     setVisible(true)
   }
-  //
-  /*const getAllCAI = async ()=>{
-    const response = await axios.get(endPointGetAllParametrosCAI)
-
-    const array = response.data.filter(parametro => parametro.fechaDesde < fechaActual && parametro.fechaHasta > fechaActual
-    && parseInt(parametro.rangoFinal) > parseInt(parametro.numeroFacturaActual))
-
-    //console.log(array)
-    setParametrosCai(array)
-  }*/
   //
   const getAllFormasPago = async ()=>{
     const response = await axios.get(endPointGetFormasPago)
@@ -376,12 +366,17 @@ function AgregarFactura() {
   }
   //
   const registrarOrdenEncabezado = async ()=>{
-
+    console.log(descuentoGlobal)
     if (cocineroId.includes('Seleccione') || meseroId.includes('Seleccione') || tipoEntregaId.includes('Seleccione') || formaPagoId.includes('Seleccione') || parametroCAIId.includes('Seleccione')){
       activarModal('Error', 'Debe seleccionar un cocinero, un mesero, tipo de entrega, forma de pago y un CAI.')
     }else if (carroProductos.length == 0){
       activarModal('Error', 'Debe agregar al menos un producto a la orden.')
-    }if (efectivo < totalConDescuento){
+    }else if(tipoEntregaId == 'Delivery' && clienteId == 'Consumidor Final'){
+      activarModal('Error', 'Para entregar la orden por delivery debe seleccionar un cliente registrado.')
+    }else if(descuentoGlobal > 0 && contraseniaGerente != '123'){         ///SE COMPARARÁ CON EL VALOR DE LA VARIABLE GLOBAL CONTRASENIA GERENTE
+      setContraseniaGerente('')
+      activarModal('Verificación de Descuento', 'Se ha detectado un descuento, se necesita la contraseña del gerente.')
+    }else if (formaPagoId == 'Efectivo' && efectivo < totalConDescuento){
       activarModal('Error', 'El efectivo no es suficiente para pagar la cuenta.')
     }else{
       buscarParametroCAI()
@@ -558,7 +553,23 @@ function AgregarFactura() {
     
     doc.save(`Factura ${numeroFacturaActual}.pdf`)
 
-    navigate('/Facturas')
+    
+
+    const {value: confirmacion} = await Swal.fire({
+      title: 'Registro exitoso',
+      text: `La factura ${numeroFacturaActual} ha sido registrado con éxito.`,
+      width: '410px',
+      confirmButtonText: 'Aceptar',
+      confirmButtonColor: '#7109BF',
+      background: 'black',
+      color: 'white',
+    })
+
+    if (confirmacion){
+      navigate('/Facturas')
+    }
+    
+    
   }
 
 
@@ -579,6 +590,43 @@ function AgregarFactura() {
         </Modal.Header>
         <Modal.Body>
           {tituloModal.includes('Error')?   /*If*/ mensajeModal: //ERROR
+          tituloModal.includes('Verificación')?     //Verificación
+          <div>                               
+            {mensajeModal}                                
+            
+            <br />
+            <label>Contraseña: </label>
+            <input
+              type='password'
+              className='form-control'
+              value={contraseniaGerente}
+              onChange={(e)=>setContraseniaGerente(e.target.value)}/>
+
+            <div className='botonesModal mt-4'>
+                <Button
+                className='me-4'
+                onClick={()=>setVisible(false)}
+                auto>
+                  Cancelar
+                </Button>
+
+                <Button
+                className='ms-4'
+                onClick={()=>{
+
+                  if (contraseniaGerente == '123'){   //SE COMPRARÁ CON LA VARIABLE GOLBAL DE LA CONTRASEÑA DEL GERENTE
+                    verificarInventario()
+                  }else{
+                    activarModal('Error', 'Contraseña incorrecta')
+                  }
+                  
+                }}
+                auto>
+                  Aceptar
+                </Button>
+              </div>
+          </div>
+          :
           tituloModal.includes('Advertencia')?   /*ADVERTENCIA*/
             <div>
               {mensajeModal}

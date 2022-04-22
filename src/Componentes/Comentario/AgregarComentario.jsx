@@ -2,6 +2,7 @@ import React, {useEffect, useRef, useState} from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { Button, Modal, Text,} from '@nextui-org/react'
+import Swal from 'sweetalert2'
 
 const endPointGetSucursales           = 'http://127.0.0.1:8000/api/Sucursal'
 const endPointAddComentario           = 'http://127.0.0.1:8000/api/addComentario'
@@ -58,7 +59,24 @@ const AgregarComentario = () =>{
                 if (response.status !== 200){
                     activarModal('Error', `${response.data.Error}`)
                 }else{
-                    navigate('/Comentarios')
+                    (async ()=>{
+
+                        const {value: confirmacion} = await Swal.fire({
+                            title: 'Registro exitoso',
+                            text: `El comentario ha sido registrado con éxito.`,
+                            width: '410px',
+                            height: '800px',
+                            confirmButtonText: 'Aceptar',
+                            confirmButtonColor: '#7109BF',
+                            background: 'black',
+                            color: 'white',
+                        })
+                
+                        if (confirmacion){
+                            navigate('/Comentarios')
+                        }
+                    })()
+                    
                 }
             }
         }
@@ -128,9 +146,11 @@ const AgregarComentario = () =>{
                     <input
                     aria-label='aria-describedby'
                     placeholder='98515484'
+                    pattern='[0-9]{8,}'
+                    maxLength={8}
                     value={telefonoCliente}
                     onChange={(e)=>setTelefonoCliente(e.target.value)}
-                    type='number'
+                    type='text'
                     className='form-control'
                     />
                 </div>
