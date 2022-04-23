@@ -52,7 +52,7 @@ function AgregarFactura() {
   const [total, setTotal]                     = useState(0)
   const [formaPagoId, setFormaPagoId]         = useState('Seleccione')
   let   idFormaPago                           = ''
-  const [parametroCAIId, setParametroCAIId]   = useState()
+  const [parametroCAIId, setParametroCAIId]   = useState('')
   let   idParametroCAI                        = ''
   const [efectivo, setEfectivo]               = useState('')
   const [numeroTarjeta, setNumeroTarjeta]     = useState('')
@@ -260,7 +260,7 @@ function AgregarFactura() {
           if (impuesto.id == productoEnCarro.impuestoId){
             const impuestoActual = parseFloat('0.'+impuesto.valorImpuesto) 
             
-            impuesto += (productoEnCarro.precio * impuestoActual) * productoEnCarro.cantidadDeCompra
+            impuestoTotal += (productoEnCarro.precio * impuestoActual) * productoEnCarro.cantidadDeCompra
           }
         })
 
@@ -276,7 +276,7 @@ function AgregarFactura() {
     setTotal(total)
     setTotalConDescuento(total - (total * parseFloat(descuentoGlobal/100)))
 
-    console.log(descuentoGlobal)
+    //console.log(descuentoGlobal)
   }
   //
   const eliminarDelCarro = ()=>{
@@ -399,14 +399,28 @@ function AgregarFactura() {
   }
   //
   const registrarOrdenDetalles = async (encabezadoId)=>{
+    const response1 = await axios.get(endPointGetImpuesto)
+    const impuestos = response1.data
+
     carroProductos.map(async(producto)=>{
 
+      let productoImpuesto = 0
+      impuestos.map((impuesto)=>{
+        if(producto.impuestoId == impuesto.id){
+          productoImpuesto = impuesto.valorImpuesto
+        }
+      })
+
+      const descuentoProducto = producto.descuento
       const precioDeCompra = (producto.precio*producto.cantidadDeCompra)
 
-      const response = await axios.post(endPointPostOrdenDetalle, {ordenEncabezadoId: encabezadoId,
-      productoId: producto.id, precio: precioDeCompra, cantidad: producto.cantidadDeCompra, estado: 1})
+      console.log(producto.productoNombre, descuentoProducto, productoImpuesto)
 
-      //console.log(response.data)
+      const response = await axios.post(endPointPostOrdenDetalle, {ordenEncabezadoId: encabezadoId,
+      productoId: producto.id, precio: precioDeCompra, descuentoProducto: descuentoProducto, impuestoProducto: productoImpuesto,
+      cantidad: producto.cantidadDeCompra, estado: 1})
+
+      console.log(response.data)
 
     })
 
@@ -802,7 +816,8 @@ function AgregarFactura() {
             <label>Número CAI</label>
             <input
             value={parametroCAIId}
-            readOnly/>
+            readOnly
+            />
           </div>
 
           <Button
