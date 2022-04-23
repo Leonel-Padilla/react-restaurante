@@ -55,7 +55,9 @@ const AgregarProducto = () =>{
     //
     const getAllImpuestos = async() =>{
         const response = await axios.get(endPointGetImpuesto)
-        setImpuestos(response.data)
+
+        const array = response.data.filter(impuesto => impuesto.estado == 1)
+        setImpuestos(array)
     }
     //
     const agregarAlCarro = ()=>{

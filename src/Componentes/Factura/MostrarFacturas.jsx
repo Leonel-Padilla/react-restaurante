@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { Button, Input, Tooltip, Modal, Text } from '@nextui-org/react';
 import buscarLupa from '../../img/buscar_lupa.png';
 import lapizEditar from '../../img/lapiz_editar.png'
+import impresora from '../../img/impresora.png'
 import moment from 'moment';
 import Logo from '../../img/LOGO.png';
 import jsPDF from 'jspdf'
@@ -523,7 +524,7 @@ function MostrarFacturas() {
                             <Button
                             className='mb-1'
                             color={'gradient'}
-                            iconRight={<img src={lapizEditar}/>}
+                            iconRight={<img src={impresora}/>}
                             onClick={()=>{
                               //getDetallesOrden(factura.ordenEncabezadoId)
                               getDatosDeFactura(factura)
