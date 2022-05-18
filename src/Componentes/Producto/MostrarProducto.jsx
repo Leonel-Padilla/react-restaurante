@@ -10,11 +10,16 @@ const endPointGetProductos          = 'http://127.0.0.1:8000/api/Producto'
 const endPointUpdateComentarios     = 'http://127.0.0.1:8000/api/updateProducto'
 const endPointGetSucursales         = 'http://127.0.0.1:8000/api/Sucursal'
 const endPointGetImpuesto           = 'http://127.0.0.1:8000/api/Impuesto'
+const endPointGetInsumo             = 'http://127.0.0.1:8000/api/Insumo'
+const endPointGetProductoInsumo     = 'http://127.0.0.1:8000/api/ProductoInsumo'
 const MostrarProducto = () =>{
     const [productos, setProductos]             = useState([])
     const [productoActual, setProductoActual]   = useState()
     const [impuestos, setImpuestos]             = useState([])
+    const [insumos, setInsumos]                 = useState([])
+    const [productoInsumos, setproductoInsumos] = useState([])
     let impuestoNombre                          = ''
+    let insumoNombre                            = ''
 
     const navigate = useNavigate()
     const [mensajeModal, setMensajeModal]   = useState('')
@@ -27,6 +32,7 @@ const MostrarProducto = () =>{
     useEffect(()=>{
         getAllProductos()
         getAllImpuestos()
+        getAllInsumos()
     },[])
 
     //
@@ -46,6 +52,11 @@ const MostrarProducto = () =>{
         setImpuestos(response.data)
     }
     //
+    const getAllInsumos = async () =>{
+        const response = await axios.get(endPointGetInsumo)
+        setInsumos(response.data)
+    }
+    //
     const cambioEstado = async ()=>{
         const response = await axios.put(`${endPointUpdateComentarios}/${productoActual.id}`, {impuestoId: productoActual.impuestoId,
         productoNombre: productoActual.productoNombre, productoDescripcion: productoActual.productoDescripcion,
@@ -61,6 +72,19 @@ const MostrarProducto = () =>{
                 impuestoNombre = impuesto.nombreImpuesto
             }
         })
+    }
+    //
+    const formatearInsumoId = (insumoId)=>{
+        insumos.map((insumo)=>{
+            if(insumo.id == insumoId){
+                insumoNombre = insumo.insumoNombre
+            }
+        })
+    }
+    //
+    const getProductoInsumos = async (idPorducto)=>{
+        const response = await axios.get(`${endPointGetProductoInsumo}P/${idPorducto}`)
+        setproductoInsumos(response.data)
     }
     //
     const getByValorBusqueda = async (e)=>{
@@ -110,7 +134,31 @@ const MostrarProducto = () =>{
                     </Text>
                 </Modal.Header>
                 <Modal.Body>
-                {tituloModal.includes('Error')?     //IF ERROR
+                {tituloModal.includes('Insumos')?
+                <div>
+                    <table className='table mt-2 text-white'>
+                        <thead>
+                            <tr>
+                                <th>Insumo</th>
+                                <th>Cantidad</th>
+                            </tr>
+                        </thead>
+
+                        <tbody> 
+                            {productoInsumos.map((productoInsumo)=>{
+                            formatearInsumoId(productoInsumo.insumoId)
+                            
+                            return(
+                            <tr key={productoInsumo.id}>
+                                <td>{insumoNombre}</td>
+                                <td>{productoInsumo.cantidad}</td>
+                            </tr>)
+                            })}
+                        </tbody>
+                    </table>
+                </div>
+                :
+                tituloModal.includes('Error')?     //IF ERROR
                 mensajeModal
                 :                                   //ELSE ELIMINAR
                 <div>
@@ -245,8 +293,18 @@ const MostrarProducto = () =>{
                                         activarModal('Cambiar', `¿Seguro que desea ${producto.estado == 1 ? 'deshabilitar' : 'habilitar'} este registro?`)
                                     }}
                                 ></Button>
-                                </td>
-                            </tr>)
+
+                                <Button 
+                                    children='Ver Insumos'
+                                    color={'gradient'}
+                                    onClick={()=>{
+                                        activarModal('Insumos', '')
+                                        getProductoInsumos(producto.id)
+                                    }}
+                                >
+                                </Button>
+                            </td>
+                        </tr>)
                     })}
                 </tbody>
 

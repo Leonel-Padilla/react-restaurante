@@ -304,7 +304,7 @@ const AgregarProducto = () =>{
             <div className='d-flex justify-content-center bg-dark mb-2'
             style={{backgroundColor: 'whitesmoke'}}>
               <h1 className='text-white'>Registrar Producto</h1>
-          </div>
+            </div>
 
             <form onSubmit={registrar} className='formulario'>
 
@@ -338,7 +338,7 @@ const AgregarProducto = () =>{
                 <div className='atributo'>
                     <label>Precio Producto:</label>
                     <input
-                    placeholder='L. 100'
+                    placeholder='L. 10'
                     value={precio}
                     onChange={(e)=>setPrecio(e.target.value)}
                     type='text'

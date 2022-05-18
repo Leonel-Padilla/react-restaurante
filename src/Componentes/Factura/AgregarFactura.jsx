@@ -378,6 +378,8 @@ function AgregarFactura() {
       activarModal('Verificación de Descuento', 'Se ha detectado un descuento, se necesita la contraseña del gerente.')
     }else if (formaPagoId == 'Efectivo' && efectivo < totalConDescuento){
       activarModal('Error', 'El efectivo no es suficiente para pagar la cuenta.')
+    }else if(formaPagoId == 'Mixto' && efectivo <= 0|| formaPagoId == 'Mixto' && numeroTarjeta <= 0){
+      activarModal('Error', 'Debe de ingresar efectivo y e información de la tarjeta.')
     }else{
       buscarParametroCAI()
       formatearClienteId()
