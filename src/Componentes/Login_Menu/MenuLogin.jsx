@@ -96,12 +96,15 @@ function MenuLogin () {
                         setMensajeModal('Usuario deshabilitado debido a muchos intentos fallidos.')
                         setVisible(true)
                             //console.log(empleado)
-                            const response2 = await axios.put(`${endPointUpdateEmpleado}/${empleadoActual.id}`, {tipoDocumentoId:
+                            /*const response2 = await axios.put(`${endPointUpdateEmpleado}/${empleadoActual.id}`, {tipoDocumentoId:
                             empleado.tipoDocumentoId, numeroDocumento: empleado.numeroDocumento, empleadoNombre: empleado.empleadoNombre, empleadoNumero: empleado.empleadoNumero,
                             empleadoCorreo: empleado.empleadoCorreo, empleadoUsuario: empleado.empleadoUsuario,
                             empleadoContrasenia: empleado.empleadoContrasenia, empleadoDireccion: empleado.empleadoDireccion, 
                             empleadoSueldo: empleado.empleadoSueldo, cargoActualId: empleado.cargoActualId, fechaContratacion: empleado.fechaContratacion,
-                            fechaNacimiento: empleado.fechaNacimiento, estado: empleado.estado = 1, fechaBloqueo: fechaBloqueoU})
+                            fechaNacimiento: empleado.fechaNacimiento, estado: empleado.estado = 1, fechaBloqueo: fechaBloqueoU})*/
+
+                            const response2 = await axios.put(`${endPointUpdateEmpleado}/${empleadoActual.id}`, {...empleado, 
+                            fechaBloqueo: fechaBloqueoU})
 
                             empleadoActual.contador = 0
                             let nuevos = empleados.filter((empleado)=> empleado.id != empleadoActual.id)
