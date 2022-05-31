@@ -26,7 +26,7 @@ function MenuLogin () {
     /*let valor = fechaHoy.getDate()
     fechaHoy.setDate(valor+1)*/
     let valor = fechaHoy.getMinutes()
-    fechaHoy.setMinutes(valor+1)
+    fechaHoy.setMinutes(valor+5)
 
     let fechaBloqueoU = `${fechaHoy.getFullYear()}-${fechaHoy.getMonth() < 9? '0':''}${fechaHoy.getMonth()+1}-${fechaHoy.getDate() < 10? '0':''}${fechaHoy.getDate()} ${fechaHoy.getHours() < 10? '0':''}${fechaHoy.getHours()}:${fechaHoy.getMinutes() < 10? '0':''}${fechaHoy.getMinutes()}`
 
