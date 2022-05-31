@@ -152,7 +152,7 @@ const cambioEstado = async (cliente)=>{
             <select style={{height: '35px'}}
             className='align-self-center me-2'
             onChange={(e)=>setParametroBusqueda(e.target.value)}>
-                <option>Seleccione tipo busqueda</option>
+                <option>Seleccione tipo búsqueda</option>
                 <option>ID</option>
                 <option>Nombre</option>
             </select>

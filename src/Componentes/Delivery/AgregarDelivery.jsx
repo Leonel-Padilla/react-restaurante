@@ -194,18 +194,29 @@ function AgregarDelivery() {
 
         <div className='atributo'>
           <label>Orden</label>
-          <select
-          value={ordenEncabezadoId}
-          onChange={(e)=>{
-            const datos = e.target.value.split(' ')
-            setOrdenEncabezadoId(datos[0])
-          }}
-          className='select'> 
-            <option>Seleccione una orden</option>
+          
+          {ordenes.length < 1? 
+            <input 
+              readOnly
+              value='Cliente sin ordenes'
+              className='form-control'
+            ></input>
+          :
+            <select
+            value={ordenEncabezadoId}
+            onChange={(e)=>{
+              const datos = e.target.value.split(' ')
+              setOrdenEncabezadoId(datos[0])
+            }}
+            className='select'> 
+              <option>Seleccione una orden</option>
 
-            {ordenes.map(orden=>
-              <option key={orden.id}>{orden.id} - {orden.fechaHora}</option>)}
-          </select>
+              {ordenes.map(orden=>
+                <option key={orden.id}>{orden.id} - {orden.fechaHora}</option>)}
+            </select>
+          }
+
+
         </div>
 
         <div className='atributo'>

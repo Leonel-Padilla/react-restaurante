@@ -231,7 +231,7 @@ function ActualizarReservacion() {
 
       <div className='d-flex justify-content-center bg-dark mb-2'
       style={{backgroundColor: 'whitesmoke'}}>
-        <h1 className='text-white'>Actualizar Reservacion</h1>
+        <h1 className='text-white'>Actualizar Reservación</h1>
       </div>
 
       <form onSubmit={actualizar} className='formulario'>
@@ -291,7 +291,7 @@ function ActualizarReservacion() {
         </div>}
 
         <div className='atributo'>
-          <label>Fecha Reservacion</label>
+          <label>Fecha Reservación</label>
           <input
           value={fecha}
           onChange={(e)=>setFecha(e.target.value)}

@@ -380,11 +380,13 @@ const AgregarEmpleado = () =>{
                 <label>Contraseña:</label>
                 <input
                  value={empleadoContrasenia}
+                 placeholder='Admin1'
                  onChange={(e)=>setEmpleadoContrasenia(e.target.value)}
                  type='password'
-                 maxLength={50}
+                 maxLength={16}
                  pattern='^(?=\w*\d)(?=\w*[A-Z])(?=\w*[a-z])\S{5,16}$'
                  className='form-control'
+                 title='Debe incluir al menos una letra mayúscula, una letra minúscula y un número, máximo 16 y mínimo de 5.'
                  />
                 </div>
 
@@ -392,10 +394,12 @@ const AgregarEmpleado = () =>{
                 <label>Confirmar contraseña:</label>
                 <input
                  value={empleadoContrasenia2}
+                 placeholder='Admin1'
                  onChange={(e)=>setEmpleadoContrasenia2(e.target.value)}
                  type='password'
-                 maxLength={50}
+                 maxLength={16}
                  pattern='^(?=\w*\d)(?=\w*[A-Z])(?=\w*[a-z])\S{5,16}$'
+                 title='Debe incluir al menos una letra mayúscula, una letra minúscula y un número, máximo 16 y mínimo de 5.'
                  className='form-control'
                  />
                 </div>

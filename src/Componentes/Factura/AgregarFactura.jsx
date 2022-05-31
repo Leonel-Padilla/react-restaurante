@@ -839,7 +839,7 @@ function AgregarFactura() {
           onClick={()=>{
             //registrarFactura()
             contarInsumosNecesarios()
-            activarModal('Advertencia', 'Al registrar la orden se creará una factura automaticamente')}}>
+            activarModal('Advertencia', 'Al registrar la orden se creará una factura automáticamente')}}>
             Guardar
           </Button>
 

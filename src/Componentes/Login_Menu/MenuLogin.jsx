@@ -40,7 +40,7 @@ function MenuLogin () {
 
         if (nombreUsuario == '' || contrasenia == ''){
             setTituloModal('Error')
-            setMensajeModal('Credenciales Invalidas. Ingrese Usuario y contraseña.')
+            setMensajeModal('Credenciales Inválidas. Ingrese Usuario y contraseña.')
             setVisible(true)
         }else{
             const response = await axios.get(`${endPointGetEmpleado}U/${nombreUsuario}`)
@@ -49,7 +49,7 @@ function MenuLogin () {
       
             if (array.length < 1){
                 setTituloModal('Error')
-                setMensajeModal('Credenciales Invalidas. Intente nuevamente.')
+                setMensajeModal('Credenciales Inválidas. Intente nuevamente.')
                 setVisible(true)
             }else{
                 
@@ -115,7 +115,7 @@ function MenuLogin () {
                         nuevos.push(empleadoActual)
                         
                         setTituloModal('Error')
-                        setMensajeModal('Credenciales Invalidas. Intente nuevamente. Intentos restantes: ' + (3-empleadoActual.contador))
+                        setMensajeModal('Credenciales Inválidas. Intente nuevamente. Intentos restantes: ' + (3-empleadoActual.contador))
                         setVisible(true)
                     }
                 }

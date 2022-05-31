@@ -158,7 +158,7 @@ function MostrarCargos() {
             style={{left: '300px'}} 
             onSubmit={getByValorBusqueda}>
                 <input
-                placeholder={`ingrese ${parametroBusqueda}`}
+                placeholder={parametroBusqueda.includes('Seleccione')? '': `${parametroBusqueda}`}
                 aria-label='aria-describedby'
                 onChange={(e)=>setValorBusqueda(e.target.value)}
                 type={parametroBusqueda == 'ID'? 'number':'text'}

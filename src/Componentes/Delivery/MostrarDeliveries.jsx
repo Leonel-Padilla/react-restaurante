@@ -164,7 +164,7 @@ function MostrarDeliverys() {
         className='align-self-center me-2'
         onChange={(e)=>setParametroBusqueda(e.target.value)} 
         >   
-          <option>Seleccione tipo busqueda</option>
+          <option>Seleccione tipo búsqueda</option>
           <option>ID</option>
           <option>Cliente</option>
         </select>
