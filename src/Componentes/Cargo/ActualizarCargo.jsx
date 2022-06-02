@@ -24,6 +24,17 @@ function ActualizarCargo() {
     getCargo()
   }, [])
 
+  //
+    const validarTexto = (texto) =>{
+        if(/([A-Z]{2}|[A-Z]\s)/.test(texto) || /\s\s/.test(texto) || /(.)\1\1/.test(texto) || /[0-9]/.test(texto)){
+            setTituloModal('Error')
+            setMensajeModal('No ingrese números, caracteres repetidos ni deje espacios de forma incorrecta.')
+            setVisible(true)
+        }else{
+            return false
+        }
+    }
+  //
   const getCargo = async ()=>{
       const response =  await axios.get(`${endPointGetCargo}/${id}`)
 
@@ -127,7 +138,11 @@ const verificar = (setear = () => {}, cadenaTexto)=>{
                     <label>Descripción del cargo:</label>
                     <textarea
                     value={cargoDescripcion}
-                    onChange={(e)=> setCargoDescripcion(e.target.value)}
+                    onChange={(e)=>{
+                        if (validarTexto(e.target.value) == false){
+                            setCargoDescripcion(e.target.value)
+                        }
+                    }}
                     aria-label='aria-describedby'
                     placeholder='Descripcion'
                     maxLength={100}
