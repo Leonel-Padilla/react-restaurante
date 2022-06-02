@@ -166,7 +166,15 @@ const AgregarInsumo = () =>{
                     placeholder='Producto necesita estar refrigerado'
                     value={insumoDescripcion}
                     maxLength={100}
-                    onChange={(e)=>setInsumoDescripcion(e.target.value)}
+                    onChange={(e)=>{
+                        if(/([A-Z]{2}|[A-Z]\s)/.test(e.target.value) || /\s\s/.test(e.target.value) || /(.)\1\1/.test(e.target.value)){
+                            setTituloModal('Error')
+                            setMensajeModal('No ingrese caracteres ni deje espacios de forma incorrecta.')
+                            setVisible(true)
+                        }else{
+                            setInsumoDescripcion(e.target.value)
+                        }
+                    }}
                     type='text'
                     className='form-control p-4'
                     />

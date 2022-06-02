@@ -131,7 +131,15 @@ const AgregarMesa = () =>{
                     aria-label='aria-describedby'
                     value={descripcionMesa}
                     placeholder='Mesa para reservar'
-                    onChange={(e)=>setDescripcionMesa(e.target.value)}
+                    onChange={(e)=>{
+                        if(/([A-Z]{2}|[A-Z]\s)/.test(e.target.value) || /\s\s/.test(e.target.value) || /(.)\1\1/.test(e.target.value)){
+                            setTituloModal('Error')
+                            setMensajeModal( 'No ingrese caracteres ni deje espacios de forma incorrecta.')
+                            setVisible(true)
+                        }else{
+                            setDescripcionMesa(e.target.value)
+                        }
+                    }}
                     type='text'
                     title='Solo acepta números'
                     className='form-control'

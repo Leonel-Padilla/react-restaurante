@@ -20,7 +20,17 @@ const AgregarProveedor = ()=>{
     const [visible, setVisible] = useState(false)
     const refButton = useRef()
 
-
+    //
+    const validarTexto = (texto) =>{
+        if(/([A-Z]{2}|[A-Z]\s)/.test(texto) || /\s\s/.test(texto) || /(.)\1\1/.test(texto)){
+            setTituloModal('Error')
+            setMensajeModal('No ingrese caracteres ni deje espacios de forma incorrecta.')
+            setVisible(true)
+        }else{
+            return false
+        }
+    }
+    //
     const registrar = async (e)=>{
         e.preventDefault()
 
@@ -39,33 +49,33 @@ const AgregarProveedor = ()=>{
             setVisible(true)
         }else{
             const response = await axios.post(endPointRegistarProveedor, {proveedorNombre: proveedorNombre, 
-                proveedorNumero: proveedorNumero, proveedorCorreo: proveedorCorreo,
-                proveedorEncargado: proveedorEncargado,  proveedorRTN: proveedorRTN, 
-                estado: proveedorEstado})
+            proveedorNumero: proveedorNumero, proveedorCorreo: proveedorCorreo,
+            proveedorEncargado: proveedorEncargado,  proveedorRTN: proveedorRTN, 
+            estado: proveedorEstado})
         
-                if (response.status !== 200){
-                    setTituloModal('Error')
-                    setMensajeModal(response.data.Error)
-                    setVisible(true)
-                }else{
-                    (async ()=>{
+            if (response.status !== 200){
+                setTituloModal('Error')
+                setMensajeModal(response.data.Error)
+                setVisible(true)
+            }else{
+                (async ()=>{
 
-                        const {value: confirmacion} = await Swal.fire({
-                            title: 'Registro exitoso',
-                            text: `El proveedor ${proveedorNombre} ha sido registrado con éxito.`,
-                            width: '410px',
-                            confirmButtonText: 'Aceptar',
-                            confirmButtonColor: '#7109BF',
-                            background: 'black',
-                            color: 'white',
-                        })
+                    const {value: confirmacion} = await Swal.fire({
+                        title: 'Registro exitoso',
+                        text: `El proveedor ${proveedorNombre} ha sido registrado con éxito.`,
+                        width: '410px',
+                        confirmButtonText: 'Aceptar',
+                        confirmButtonColor: '#7109BF',
+                        background: 'black',
+                        color: 'white',
+                    })
                 
-                        if (confirmacion){
-                            navigate('/Proveedores')
-                        }
-                    })()
+                    if (confirmacion){
+                        navigate('/Proveedores')
+                    }
+                })()
                     
-                }
+            }
         }
         
     }
@@ -143,7 +153,11 @@ const AgregarProveedor = ()=>{
                     <input
                     placeholder='Encargado'
                     value={proveedorEncargado}
-                    onChange={(e)=>setProveedorEncagado(e.target.value)}
+                    onChange={(e)=>{
+                        if (validarTexto(e.target.value) == false){
+                            setProveedorEncagado(e.target.value)
+                        }
+                    }}
                     type='text'
                     pattern='[A-Za-z ]{3,}'
                     maxLength={50}

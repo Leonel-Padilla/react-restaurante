@@ -28,7 +28,16 @@ function AgregarSucursal() {
         getAllEmpleados()
     },[])
 
-
+    //
+    const validarTexto = (texto) =>{
+        if(/([A-Z]{2}|[A-Z]\s)/.test(texto) || /\s\s/.test(texto) || /(.)\1\1/.test(texto)){
+            setTituloModal('Error')
+            setMensajeModal('No ingrese caracteres ni deje espacios de forma incorrecta.')
+            setVisible(true)
+        }else{
+            return false
+        }
+    }
     //
     const registrar = async (e)=>{
         e.preventDefault()
@@ -140,7 +149,11 @@ function AgregarSucursal() {
                     <input
                     placeholder='Sucursal de las uvas'
                     value={sucursalNombre}
-                    onChange={(e)=>setSucursalNombre(e.target.value)}
+                    onChange={(e)=>{
+                        if (validarTexto(e.target.value) == false){
+                            setSucursalNombre(e.target.value)
+                        }
+                    }}
                     type='text'
                     maxLength={40}
                     pattern='[A-Za-z ]{3,}'
@@ -156,7 +169,11 @@ function AgregarSucursal() {
                     placeholder='Colonia Las Uvas'
                     value={sucursalDireccion}
                     maxLength={100}
-                    onChange={(e)=> setSucursalDireccion(e.target.value)}
+                    onChange={(e)=>{
+                        if (validarTexto(e.target.value) == false){
+                            setSucursalDireccion(e.target.value)
+                        }
+                    }}
                     type='text'
                     className='form-control p-4'
                     />

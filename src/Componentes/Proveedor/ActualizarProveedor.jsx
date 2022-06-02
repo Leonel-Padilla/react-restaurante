@@ -27,6 +27,17 @@ const ActualizarProveedor = ()=>{
         getProveedor()
     }, [])
 
+    //
+    const validarTexto = (texto) =>{
+        if(/([A-Z]{2}|[A-Z]\s)/.test(texto) || /\s\s/.test(texto) || /(.)\1\1/.test(texto)){
+            setTituloModal('Error')
+            setMensajeModal('No ingrese caracteres ni deje espacios de forma incorrecta.')
+            setVisible(true)
+        }else{
+            return false
+        }
+    }
+    //
     const getProveedor = async ()=>{
         const response =  await axios.get(`${endPointGetProveedor}/${id}`)
 
@@ -142,7 +153,11 @@ const ActualizarProveedor = ()=>{
                     <input
                     placeholder='Encargado'
                     value={proveedorEncargado}
-                    onChange={(e)=>setProveedorEncagado(e.target.value)}
+                    onChange={(e)=>{
+                        if (validarTexto(e.target.value) == false){
+                            setProveedorEncagado(e.target.value)
+                        }
+                    }}
                     type='text'
                     maxLength={50}
                     pattern='[A-Za-z ]{3,}'

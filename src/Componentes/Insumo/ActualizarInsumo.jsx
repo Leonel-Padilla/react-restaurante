@@ -164,7 +164,15 @@ const ActualizarInsumo = () =>{
                     aria-label='aria-describedby'
                     placeholder='Producto necesita estar refrigerado'
                     value={insumoDescripcion}
-                    onChange={(e)=>setInsumoDescripcion(e.target.value)}
+                    onChange={(e)=>{
+                        if(/([A-Z]{2}|[A-Z]\s)/.test(e.target.value) || /\s\s/.test(e.target.value) || /(.)\1\1/.test(e.target.value)){
+                            setTituloModal('Error')
+                            setMensajeModal('No ingrese caracteres ni deje espacios de forma incorrecta.')
+                            setVisible(true)
+                        }else{
+                            setInsumoDescripcion(e.target.value)
+                        }
+                    }}
                     type='text'
                     maxLength={100}
                     className='form-control p-4'
