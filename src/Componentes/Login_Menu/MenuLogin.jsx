@@ -1,7 +1,6 @@
 import React, {useState} from 'react'
-import { Link, Navigate, useNavigate, useNavigationType } from 'react-router-dom'
-import { Row, Button, Modal, Text, Input } from '@nextui-org/react';
-import FondoLogin from '../../img/FondoLogin.jpg'
+import {useNavigate } from 'react-router-dom'
+import {Button, Modal, Text, Input } from '@nextui-org/react';
 import axios from 'axios';
 
 

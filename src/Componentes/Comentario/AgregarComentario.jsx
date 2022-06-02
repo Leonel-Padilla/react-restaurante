@@ -174,7 +174,13 @@ const AgregarComentario = () =>{
                     placeholder='Excelente servicio'
                     maxLength={100}
                     value={descripcion}
-                    onChange={(e)=>setDescripcion(e.target.value)}
+                    onChange={(e)=>{
+                        if (/(.)\1\1/.test(e.target.value) || /\s\s/.test(e.target.value)) {
+                            activarModal('Error', 'No ingrese caracteres ni deje espacios de forma incorrecta.')
+                        }else{
+                            setDescripcion(e.target.value)
+                        }
+                    }}
                     type='text'
                     className='form-control p-4'
                     />

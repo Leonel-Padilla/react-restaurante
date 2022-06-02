@@ -40,7 +40,14 @@ const AgregarProducto = () =>{
         getAllImpuestos()
     }, [])
 
-
+    //
+    const validarTexto = (texto) =>{
+        if(/([A-Z]{2}|[A-Z]\s)/.test(texto) || /\s\s/.test(texto) || /(.)\1\1/.test(texto)){
+            activarModal('Error', 'No ingrese caracteres ni deje espacios de forma incorrecta.')
+        }else{
+            return false
+        }
+    }
     //
     const activarModal = (titulo, mensajeModal)=>{
         setTituloModal(titulo)
@@ -315,7 +322,11 @@ const AgregarProducto = () =>{
                     pattern='[A-Za-z ]{3,}'
                     maxLength={50}
                     value={productoNombre}
-                    onChange={(e)=>setProductoNombre(e.target.value)}
+                    onChange={(e)=>{
+                        if(validarTexto(e.target.value) == false){
+                            setProductoNombre(e.target.value)
+                        }
+                    }}
                     type='text'
                     className='form-control'
                     />
@@ -329,7 +340,11 @@ const AgregarProducto = () =>{
                     placeholder='Hamburguesa con queso'
                     maxLength={100}
                     value={productoDescripcion}
-                    onChange={(e)=>setProductoDescripcion(e.target.value)}
+                    onChange={(e)=>{
+                        if(validarTexto(e.target.value) == false){
+                            setProductoDescripcion(e.target.value)
+                        }
+                    }}
                     type='text'
                     className='form-control p-4'
                     />

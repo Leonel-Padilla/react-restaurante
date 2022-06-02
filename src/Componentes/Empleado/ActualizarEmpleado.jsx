@@ -454,7 +454,7 @@ const ActualizarEmpleado = () =>{
                 <input
                 placeholder='ejem@gmail.com'
                 value={empleadoCorreo}
-                onChange={(e)=> setEmpleadoCorreo(e.target.value)}
+                onChange={(e)=> setEmpleadoCorreo(e.target.value.toLocaleLowerCase())}
                 type='email'
                 maxLength={50}
                 className='form-control'
