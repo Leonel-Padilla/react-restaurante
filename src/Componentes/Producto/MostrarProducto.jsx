@@ -91,7 +91,7 @@ const MostrarProducto = () =>{
         e.preventDefault()
   
         if (parametroBusqueda.includes('Seleccione')){
-            activarModal('Error', 'Seleccione un parametro de busqueda.')
+            activarModal('Error', 'Seleccione un parametro de búsqueda.')
         }else{
   
             if (parametroBusqueda == 'ID'){
@@ -195,7 +195,7 @@ const MostrarProducto = () =>{
                         className='align-self-center me-2'
                         onChange={(e)=>setParametroBusqueda(e.target.value)} 
                         >   
-                        <option>Seleccione tipo busqueda</option>
+                        <option>Seleccione tipo Búsqueda</option>
                         <option>ID</option>
                         <option>Nombre</option>
                     </select>

@@ -148,7 +148,7 @@ function MostrarCargos() {
             <select style={{height: '35px'}}
             className='align-self-center me-2'
             onChange={(e)=>setParametroBusqueda(e.target.value)}>
-                <option>Seleccione Tipo Busqueda</option>
+                <option>Seleccione Tipo Búsqueda</option>
                 <option value="ID">ID</option>
                 <option value="Nombre">Nombre</option>
             </select>

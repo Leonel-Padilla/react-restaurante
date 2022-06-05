@@ -442,6 +442,25 @@ const ActualizarEmpleado = () =>{
                 placeholder='88922711'
                 value={empleadoNumero}
                 onChange={(e)=> setEmpleadoNumero(e.target.value)}
+                onBlur={async (e)=>{
+                    if (e.target.value.length == 8){
+                        const response = await axios.get(`${endpointGetEmpleado}Num/${e.target.value}`)
+
+                        if (response.data.length > 0 && response.data[0].id != id){
+                            setTituloModal('Error')
+                            setMensajeModal('El número telefónico ya está registrado.')
+                            setVisible(true)
+
+                            setEmpleadoNumero('')
+                        }
+
+
+                    }else if (e.target.value != ''){
+                        setTituloModal('Error')
+                        setMensajeModal('El número telefónico debe tener 8 dígitos.')
+                        setVisible(true)
+                    }
+                }}
                 type='text'
                 pattern='^[0-9]+$'
                 maxLength={8}
@@ -517,6 +536,17 @@ const ActualizarEmpleado = () =>{
                 title = {tipoDocumentoId == 'Visa' || tipoDocumentoId == 'Pasaporte'? 'ejem: A12345678':
                 tipoDocumentoId == 'Identidad'? 'ejem: 0801456789123': tipoDocumentoId == 'RTN'?'01234567891234': 'ejem: 191234569'}
                 onChange={(e)=> setNumeroDocumento(e.target.value)}
+                onBlur={(e)=>{
+                    if (tipoDocumentoId == 'Identidad'){
+                        if (e.target.value[0] != 1 && e.target.value[0] != 0 || e.target.value.length != 13){
+                            setTituloModal('Error')
+                            setMensajeModal('El número de identidad debe ser de 13 dígitos y empezar con 1 o 0.')
+                            setVisible(true)
+
+                            setNumeroDocumento('')
+                        }
+                    }
+                }}
                 type='text'
                 className='form-control'
                 />
@@ -540,6 +570,22 @@ const ActualizarEmpleado = () =>{
                  placeholder='empleado1'
                  value={empleadoUsuario}
                  onChange={(e)=>setEmpleadoUsuario(e.target.value)}
+                 onBlur={async (e)=>{
+                    if (e.target.value != ''){
+                        const response = await axios.get(`${endpointGetEmpleado}U/${e.target.value}`)
+                        
+                        response.data.map((empleado)=>{
+                            if (empleado.empleadoUsuario == e.target.value && id != empleado.id){
+                                setTituloModal('Error')
+                                setMensajeModal(`El nombre de usuario ${e.target.value} ya está en uso.`)
+                                setVisible(true)
+
+                                setEmpleadoUsuario('')
+                            }
+                        })
+
+                    }
+                 }}
                  type='text'
                  maxLength={20}
                  className='form-control'

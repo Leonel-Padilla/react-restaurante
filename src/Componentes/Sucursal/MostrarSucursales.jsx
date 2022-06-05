@@ -77,7 +77,7 @@ function MostrarSucursales() {
         }else{
     
             const response = await axios.get(`${endPointGet}N/${valorBusqueda}`)
-            console.log(response.data)
+            //console.log(response.data)
             
             const array = response.data
     

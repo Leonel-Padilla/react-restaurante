@@ -142,7 +142,16 @@ const AgregarProveedor = ()=>{
                     <input
                     placeholder='Correo'
                     value={proveedorCorreo}
-                    onChange={(e)=> setProveedorCorreo(e.target.value)}
+                    onChange={(e)=> setProveedorCorreo(e.target.value.toLocaleLowerCase())}
+                    onBlur={(e)=>{
+                        if (!/[a-z]{3,}\@[a-z]{4,}\.[a-z]{2,}/.test(e.target.value) && e.target.value !== ''){
+                            setTituloModal('Error')
+                            setMensajeModal('Ingrese un correo electrónico con formato valido: "username@gmail.com".')
+                            setVisible(true)
+
+                            setProveedorCorreo('')
+                        }
+                    }}
                     type='email'
                     maxLength={50}
                     className='form-control'
