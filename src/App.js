@@ -1,6 +1,5 @@
 import './App.css';
-import { Route, Routes, useNavigate} from 'react-router-dom';
-import { Button} from '@nextui-org/react'
+import { Route, Routes } from 'react-router-dom';
 import Empleado from './Componentes/Empleado/Empleado'
 import Proveedor from './Componentes/Proveedor/Proveedor'
 import Cargo from './Componentes/Cargo/Cargo'
@@ -17,12 +16,17 @@ import Factura from './Componentes/Factura/Factura';
 import Impuesto from './Componentes/Impuesto/Impuesto';
 import Delivery from './Componentes/Delivery/Delivery';
 import Reservacion from './Componentes/Reservacion/Reservacion';
+//import Advertencia from './Componentes/Permisos/Advertencia';
+import Permiso from './Componentes/Permisos/Permiso'
 
 
 
 
 function App() {
-  const navigate = useNavigate()
+
+  /*const usuario = sessionStorage.getItem('userName')
+  console.log(usuario)*/
+
   return (
 
     <div>
@@ -44,6 +48,7 @@ function App() {
           <Route path='/Impuestos/*' element={<Impuesto></Impuesto>}></Route>
           <Route path='/Deliveries/*' element={<Delivery></Delivery>}></Route>
           <Route path='/Reservaciones/*' element={<Reservacion></Reservacion>}></Route>
+          <Route path='/Permisos/*' element={<Permiso></Permiso>}></Route>
         </Routes>
       </section>
     </div>

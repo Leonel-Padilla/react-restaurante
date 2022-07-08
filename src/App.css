@@ -288,5 +288,15 @@ input[type="time"]{
 
 
 /*Estilo Factura*/
+
+.acciones {
+  background-color: white;
+  width: 210px;
+  padding:5px;
+}
+
+.containerAcciones {
+  margin: 15px 10px;
+}
  
 

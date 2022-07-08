@@ -1,11 +1,14 @@
 
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { Button, Input,Tooltip, Modal, Text } from '@nextui-org/react';
 import buscarLupa from '../../img/buscar_lupa.png';
-import lapizEditar from '../../img/lapiz_editar.png'
-
+import lapizEditar from '../../img/lapiz_editar.png';
+import Logo from '../../img/LOGO.png';
+import jsPDF from 'jspdf';
+import * as XLSX from 'xlsx'
+import 'jspdf-autotable'
 
 const endPoint          = 'http://127.0.0.1:8000/api/Cargo'
 const endPointUpdate    = 'http://127.0.0.1:8000/api/updateCargo'
@@ -13,7 +16,8 @@ const endPointGet       = 'http://127.0.0.1:8000/api/Cargo'
 
 
 function MostrarCargos() {
-
+    
+  const tablaExcel = useRef(null);
   const [cargos, setCargos]                         = useState([])
   const [cargoActual, setCargoActual]               = useState()
   const navigate                                    = useNavigate()
@@ -22,7 +26,8 @@ function MostrarCargos() {
   const [mensajeModal, setMensajeModal]             = useState('')
   const [tituloModal, setTituloModal]               = useState('')
   const [visible, setVisible]                       = useState(false)
-  
+
+  const date = new Date()
 
   useEffect(()=>{
     getAllCargos()
@@ -88,6 +93,144 @@ function MostrarCargos() {
             }
         }
     } 
+}
+//
+const createExcel = ()=>{
+    const libro = XLSX.utils.book_new()
+
+    const copiaCargos = [...cargos]
+    copiaCargos.map((cargo)=>{
+        cargo.estado = cargo.estado == 1? 'Habilitado' : 'Desabilitado'
+
+        delete cargo.created_at
+        delete cargo.updated_at
+    })
+
+    const pagina = XLSX.utils.json_to_sheet(copiaCargos, {origin: 'A3'})
+
+    XLSX.utils.sheet_add_aoa(pagina, [[`Usuario: ${sessionStorage.getItem('userName')}`, 
+    `Fecha: ${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`,
+    `Hora: ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`]],
+    {origin: `B1`})
+
+    XLSX.utils.book_append_sheet(libro, pagina, 'Cargos')
+    pagina["!cols"] = [ 
+        {wch: 3},
+        {wch: 15},
+        {wch: 35},
+        {wch: 13}
+    ];
+    XLSX.utils.sheet_add_aoa(pagina, [['Nombre', 'Descripción', 'Estado']], {origin: 'B3'})
+
+    XLSX.writeFile(libro, 'Reporte Cargos.xlsx')
+}
+//
+/*const createPDF = ()=>{
+    const doc = new jsPDF({
+        format: 'a4'
+    })
+
+    
+    doc.setFontSize(15)
+    doc.text(`Reporte Cargos`, 70, 10)
+    doc.text(`FIVE FORKS`, 70, 20)
+    doc.addImage(Logo, 'JPEG', 105, 0, 30, 30)
+
+    doc.setFontSize(10)
+    doc.text(`Usuario: ${sessionStorage.getItem('userName')}`, 165, 10)
+    doc.text(`Fecha: ${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`, 165, 15)
+    doc.text(`Hora: ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`, 165, 20)
+    doc.text('--------------------------------------------------------------------------------'+
+    '------------------------------------------------------------------------',
+    15, 35)
+    
+
+    const copiaCargos = [...cargos]
+    copiaCargos.map((cargo)=>{
+        cargo.estado = cargo.estado == 1? 'Habilitado' : 'Desabilitado'
+
+        delete cargo.created_at
+        delete cargo.updated_at
+    })
+
+    doc.autoTable({
+        head: [['Id', 'Nombre', 'Descripción', 'Estado']],
+
+        body: copiaCargos.map((cargo)=> Object.values(cargo)),
+        startY: 40,
+    })
+
+    doc.text('--------------------------------------------------------------------------------'+
+    '------------------------------------------------------------------------',
+    15, 280)
+
+    doc.text(`${doc.getCurrentPageInfo().pageNumber} / ${doc.getNumberOfPages()}`, 185, 285)
+    doc.save('Reporte Cargos')
+}*/
+//
+const createPDF = ()=>{
+    const copiaDatos = [...cargos]
+    copiaDatos.map((dato)=>{
+        dato.estado = dato.estado == 1? 'Habilitado' : 'Desabilitado'
+
+        delete dato.created_at
+        delete dato.updated_at
+    })
+
+    const matrizDeDatos = []
+    let repeticiones = 0 
+
+
+    if(Number.isInteger(copiaDatos.length/30)){
+        repeticiones = (copiaDatos.length/30)
+    }else{
+        repeticiones = Math.trunc((copiaDatos.length/30)+1)
+    }
+
+    for (let i = 0; i < repeticiones; i++){
+        const array = copiaDatos.slice(i*30, (i+1)*30)
+        matrizDeDatos.push(array)
+    }
+
+    
+    const doc = new jsPDF({
+        format: 'a4'
+    })
+
+    matrizDeDatos.map((array, index)=>{
+
+        
+        doc.setFontSize(15)
+        doc.text(`Reporte Cargos`, 70, 10)
+        doc.text(`FIVE FORKS`, 70, 20)
+        doc.addImage(Logo, 'JPEG', 105, 0, 30, 30)
+        
+        doc.setFontSize(10)
+        doc.text(`Usuario: ${sessionStorage.getItem('userName')}`, 165, 10)
+        doc.text(`Fecha: ${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`, 165, 15)
+        doc.text(`Hora: ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`, 165, 20)
+        doc.text('--------------------------------------------------------------------------------'+
+        '------------------------------------------------------------------------',
+        15, 35)
+
+        doc.autoTable({
+            head: [['Id', 'Cargo', 'Descripción','Estado']],
+        
+            body: array.map((dato)=> Object.values(dato)),
+            startY: 40,
+        })
+                        
+        doc.text('--------------------------------------------------------------------------------'+
+        '------------------------------------------------------------------------',
+        15, 280)
+        doc.text(`${index+1} / ${repeticiones}`, 185, 285)
+        
+        if ((index+1 != repeticiones)){
+            doc.addPage()
+        }
+    })
+
+    doc.save('Reporte Comentarios')
 }
 
 
@@ -201,10 +344,30 @@ function MostrarCargos() {
             onClick={()=>navigate('/Cargos/addCargo')}>
                 Registrar
             </Button>
+
+            <Button 
+            auto
+            color={'gradient'}
+            bordered
+            style={{right: '0px'}}
+            className='align-self-center ms-2 me-2' 
+            onClick={()=>createPDF()}>
+                Reporte PDF
+            </Button>
+
+            <Button 
+            auto
+            color={'gradient'}
+            bordered
+            style={{right: '0px'}}
+            className='align-self-center ms-2 me-2' 
+            onClick={()=>createExcel()}>
+                Reporte Excel
+            </Button>
         </div>
 
 
-            <table className='table mt-2'> 
+            <table className='table mt-2' id='tabla'> 
                 <thead className='bg-dark text-white'> 
                     <tr>
                         <th>Id</th>

@@ -207,6 +207,7 @@ const AgregarProducto = () =>{
             blur
             className='bg-dark text-white'
             open={visible}
+            onOpen={() => {console.log(mensajeModal)}}
             onClose={()=>setVisible(false)}>
                 <Modal.Header>
                     <Text 
@@ -275,6 +276,7 @@ const AgregarProducto = () =>{
                     <div>
                       <label>Cantidad</label>
                       <input
+                      placeholder='Cantidad'
                       type='number'
                       className='form-control'
                       value={cantidadInsumo}

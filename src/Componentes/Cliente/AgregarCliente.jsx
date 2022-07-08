@@ -123,7 +123,9 @@ const AgregarCliente = ()=>{
             blur
             className='bg-dark text-white'
             open={visible}
-            onClose={()=>setVisible(false)}>
+            onClose={()=>setVisible(false)}
+            onOpen={()=>{console.log(mensajeModal)}}
+            >
                 <Modal.Header>
                     <Text 
                     h4
@@ -145,8 +147,9 @@ const AgregarCliente = ()=>{
             <form onSubmit={registrar} className='formulario'>
 
                 <div className='atributo'>
-                    <label>Tipo Documento</label>
+                    <label htmlFor='tipoDocumento'>Tipo Documento</label>
                     <select
+                    id='tipoDocumento'
                     value={tipoDocumentoId}
                     onChange={(e)=> setTipoDocumentoId(e.target.value)}
                     type='number'
@@ -169,6 +172,7 @@ const AgregarCliente = ()=>{
                     required={true}
                     minLength={digitosNumero}
                     maxLength={digitosNumero}
+                    placeholder='Numero documento'
                     value={numeroDocumento}
                     pattern={tipoDocumentoId == 'Visa' || tipoDocumentoId == 'Pasaporte'? '^[A-Z][0-9]+$':
                     tipoDocumentoId == 'RTN' || tipoDocumentoId == 'Identidad'? '^[0-1][0-9]+$': '^[1][0-9]+$'}

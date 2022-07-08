@@ -105,7 +105,9 @@ const AgregarComentario = () =>{
             blur
             className='bg-dark text-white'
             open={visible}
-            onClose={()=>setVisible(false)}>
+            onClose={()=>setVisible(false)}
+            onOpen={()=>{console.log(mensajeModal)}}
+            >
                 <Modal.Header>
                     <Text 
                     h4

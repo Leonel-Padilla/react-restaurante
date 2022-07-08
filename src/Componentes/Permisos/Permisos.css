@@ -1,0 +1,18 @@
+.contenedor {
+  display: grid;
+  grid-template-rows: 100px repeat(4, 150px);
+  grid-template-columns: repeat(4, 25%);
+  justify-items: center;
+}
+
+.rol {
+  display: grid;
+  grid-column-start: 1;
+  grid-column-end: 5;
+}
+
+.buttons {
+  display: flex;
+  justify-content: center;
+}
+

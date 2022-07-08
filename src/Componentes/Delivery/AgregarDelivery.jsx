@@ -108,7 +108,7 @@ function AgregarDelivery() {
       ordenEncabezadoId: ordenEncabezadoId, fechaEntrega: fechaHoy,  comentario: comentario, horaDespacho: horaDespacho, 
       horaEntrega: horaEntrega, estado: 1})
 
-      console.log(response.data)
+      //console.log(response.data)
 
       if(response.status != 200){
         activarModal('Error', response.data.Error)
@@ -142,6 +142,7 @@ function AgregarDelivery() {
       blur
       className='bg-dark text-white'
       open={visible}
+      onOpen={()=>{console.log(mensajeModal)}}
       onClose={()=>setVisible(false)}>
         <Modal.Header>
           <Text 
@@ -223,14 +224,16 @@ function AgregarDelivery() {
           <label>Comentario</label>
           <input
           value={comentario}
+          placeholder='Al llegar toque el timbre.'
           onChange={(e)=>setComentario(e.target.value)}
           className='form-control'> 
           </input>
         </div>
         
         <div className='atributo'>
-          <label>Hora Despacho</label>
+          <label htmlFor='horaDespacho'>Hora Despacho</label>
           <input
+          id='horaDespacho'
           value={horaDespacho}
           onChange={(e)=>setHoraDespacho(e.target.value)}
           className='form-control'
@@ -239,8 +242,9 @@ function AgregarDelivery() {
         </div>
 
         <div className='atributo'>
-          <label>Hora Entrega</label>
+          <label htmlFor='horaEntrega'>Hora Entrega</label>
           <input
+          id='horaEntrega'
           value={horaEntrega}
           onChange={(e)=>setHoraEntrega(e.target.value)}
           className='form-control'

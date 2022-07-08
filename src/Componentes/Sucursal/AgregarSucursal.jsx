@@ -124,6 +124,7 @@ function AgregarSucursal() {
             blur
             className='bg-dark text-white'
             open={visible}
+            onOpen={()=>{console.log(mensajeModal)}}
             onClose={()=>setVisible(false)}>
                 <Modal.Header>
                     <Text 

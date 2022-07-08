@@ -40,10 +40,10 @@ function AgregarImpuesto() {
     }else{
       const response = await axios.post(endPointAddImpuesto, {valorImpuesto: valorImpuesto, nombreImpuesto: nombreImpuesto,
       estado: 1})
-
-      console.log(response.data)
+      
 
       if (response.status !== 200){
+        console.log(response.data)
         activarModal('Error', `${response.data.Error}`)
       }else{
         registrarImpuestoHistorial(response.data.id)
@@ -108,8 +108,9 @@ function AgregarImpuesto() {
       <form onSubmit={registrar} className='formulario'>
 
         <div className='atributo'>
-          <label>Valor Impuesto:</label>
+          <label htmlFor='valorImpuesto'>Valor Impuesto:</label>
           <input
+          id='valorImpuesto'
           aria-label='aria-describedby'
           placeholder='15%'
           value={valorImpuesto}
@@ -119,8 +120,9 @@ function AgregarImpuesto() {
         </div>
 
         <div className='atributo'>
-          <label>Nobre Impuesto:</label>
+          <label htmlFor='nombreImpuesto'>Nombre Impuesto:</label>
           <input
+          id='nombreImpuesto'
           aria-label='aria-describedby'
           placeholder='Gravado'
           value={nombreImpuesto}

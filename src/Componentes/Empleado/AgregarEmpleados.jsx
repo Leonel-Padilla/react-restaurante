@@ -216,6 +216,7 @@ const AgregarEmpleado = () =>{
             preventClose
             className='bg-dark text-white'
             open={visible}
+            onOpen={() =>{console.log(mensajeModal)}}
             onClose={()=>setVisible(false)}>
                 <Modal.Header>
                     <Text 
@@ -341,6 +342,7 @@ const AgregarEmpleado = () =>{
                 <label>Número documento:</label>
                 <input
                 required={true}
+                placeholder='1234567890123'
                 minLength={digitosNumero}
                 maxLength={digitosNumero}
                 value={numeroDocumento}
@@ -364,8 +366,9 @@ const AgregarEmpleado = () =>{
                 </div>
 
                 <div className='atributo'>
-                <label>Fecha Nacimiento:</label>
+                <label htmlFor='fechaNacimiento'>Fecha Nacimiento:</label>
                 <input
+                id='fechaNacimiento'
                 max={`${fechaEdad.getFullYear()}-${fechaEdad.getMonth() < 9? '0':''}${fechaEdad.getMonth()+1}-${fechaEdad.getDate() < 10? '0':''}${fechaEdad.getDate()}`}
                 type={'date'}
                 onChange={(e)=> setFechaNacimiento(e.target.value)}
@@ -373,8 +376,9 @@ const AgregarEmpleado = () =>{
                 </div>
 
                 <div className='atributo'>
-                <label>Fecha Contrato:</label>
+                <label htmlFor='fechaContrato'>Fecha Contrato:</label>
                 <input
+                id='fechaContrato'
                 max={`${fechaHoy.getFullYear()}-${fechaHoy.getMonth() < 9? '0':''}${fechaHoy.getMonth()+1}-${fechaHoy.getDate() < 10? '0':''}${fechaHoy.getDate()}`}
                 min={`${fechaMin.getFullYear()}-${fechaMin.getMonth() < 9? '0':''}${fechaMin.getMonth()+1}-${fechaMin.getDate() < 10? '0':''}${fechaMin.getDate()}`}
                 type={'date'}
@@ -386,6 +390,7 @@ const AgregarEmpleado = () =>{
                 <label>Sueldo:</label>
                 <input
                 value={empleadoSueldo}
+                placeholder='5000'
                 onChange={(e)=> setEmpleadoSueldo(e.target.value)}
                 type='number'
                 pattern='^[0-9]+$'
@@ -423,8 +428,9 @@ const AgregarEmpleado = () =>{
                 </div>
 
                 <div className='atributo'>
-                <label>Contraseña:</label>
+                <label htmlFor='contrasenia'>Contraseña:</label>
                 <input
+                id='contrasenia'
                  value={empleadoContrasenia}
                  placeholder='Admin1'
                  onChange={(e)=>setEmpleadoContrasenia(e.target.value)}
@@ -437,8 +443,9 @@ const AgregarEmpleado = () =>{
                 </div>
 
                 <div className='atributo'>
-                <label>Confirmar contraseña:</label>
+                <label htmlFor='confirmasContrania'>Confirmar contraseña:</label>
                 <input
+                id='confirmasContrania'
                  value={empleadoContrasenia2}
                  placeholder='Admin1'
                  onChange={(e)=>setEmpleadoContrasenia2(e.target.value)}

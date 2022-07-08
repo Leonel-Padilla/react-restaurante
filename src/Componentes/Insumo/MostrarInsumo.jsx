@@ -4,8 +4,10 @@ import { useNavigate } from 'react-router-dom'
 import { Button, Input, Tooltip, Modal, Text } from '@nextui-org/react';
 import buscarLupa from '../../img/buscar_lupa.png';
 import lapizEditar from '../../img/lapiz_editar.png'
-
-
+import Logo from '../../img/LOGO.png';
+import jsPDF from 'jspdf';
+import * as XLSX from 'xlsx'
+import 'jspdf-autotable'
 
 const endPointGetInsumos        = 'http://127.0.0.1:8000/api/Insumo'
 const endPointUpdateInsumos     = 'http://127.0.0.1:8000/api/updateInsumo'
@@ -25,6 +27,7 @@ const MostrarInsumo = () =>{
     const [tituloModal, setTituloModal]     = useState('')
     const [visible, setVisible]             = useState(false)
     const navigate                          = useNavigate()
+    const date = new Date()
 
     useEffect(()=>{
         getAllInsumos()
@@ -105,6 +108,116 @@ const MostrarInsumo = () =>{
           }
       } 
   }
+
+  //
+  const createExcel = ()=>{
+    const libro = XLSX.utils.book_new()
+
+    const copiaDatos = [...insumos]
+    copiaDatos.map((dato)=>{
+        dato.estado = dato.estado == 1? 'Habilitado' : 'Desabilitado'
+
+        delete dato.created_at
+        delete dato.updated_at
+        delete dato.cantidadMin
+        delete dato.cantidadMax
+        delete dato.insumoDescripcion
+
+        formatearProveedor(dato)
+        dato.proveedorId = proveedorNombre
+    })
+
+    const pagina = XLSX.utils.json_to_sheet(copiaDatos, {origin: 'A3'})
+
+    XLSX.utils.sheet_add_aoa(pagina, [[`Usuario: ${sessionStorage.getItem('userName')}`, 
+    `Fecha: ${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`,
+    `Hora: ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`]],
+    {origin: `B1`})
+
+    XLSX.utils.book_append_sheet(libro, pagina, 'Insumos')
+    pagina["!cols"] = [ 
+        {wch: 3},
+        {wch: 20},
+        {wch: 20},
+        {wch: 20},
+        {wch: 20}
+    ];
+    XLSX.utils.sheet_add_aoa(pagina, [[' Proveedor', 'Nombre', 'Cantidad Actual', 'Estado']], {origin: 'B3'})
+
+    XLSX.writeFile(libro, 'Reporte Insumos.xlsx')
+}
+
+//
+const createPDF = ()=>{
+    const copiaDatos = [...insumos]
+    copiaDatos.map((dato)=>{
+        dato.estado = dato.estado == 1? 'Habilitado' : 'Desabilitado'
+
+        delete dato.created_at
+        delete dato.updated_at
+        delete dato.cantidadMin
+        delete dato.cantidadMax
+        delete dato.insumoDescripcion
+
+        formatearProveedor(dato)
+        dato.proveedorId = proveedorNombre
+    })
+
+    const matrizDeDatos = []
+    let repeticiones = 0 
+
+
+    if(Number.isInteger(copiaDatos.length/30)){
+        repeticiones = (copiaDatos.length/30)
+    }else{
+        repeticiones = Math.trunc((copiaDatos.length/30)+1)
+    }
+
+    for (let i = 0; i < repeticiones; i++){
+        const array = copiaDatos.slice(i*30, (i+1)*30)
+        matrizDeDatos.push(array)
+    }
+
+    
+    const doc = new jsPDF({
+        format: 'a4'
+    })
+
+    matrizDeDatos.map((array, index)=>{
+
+        
+        doc.setFontSize(15)
+        doc.text(`Reporte Insumos`, 70, 10)
+        doc.text(`FIVE FORKS`, 70, 20)
+        doc.addImage(Logo, 'JPEG', 105, 0, 30, 30)
+        
+        doc.setFontSize(10)
+        doc.text(`Usuario: ${sessionStorage.getItem('userName')}`, 165, 10)
+        doc.text(`Fecha: ${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`, 165, 15)
+        doc.text(`Hora: ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`, 165, 20)
+        doc.text('--------------------------------------------------------------------------------'+
+        '------------------------------------------------------------------------',
+        15, 35)
+
+        doc.autoTable({
+            head: [['Id', 'Proveedor', 'Nombre', 'Cantidad Actual', 'Estado']],
+        
+            body: array.map((dato)=> Object.values(dato)),
+            startY: 40,
+        })
+                        
+        doc.text('--------------------------------------------------------------------------------'+
+        '------------------------------------------------------------------------',
+        15, 280)
+        doc.text(`${index+1} / ${repeticiones}`, 185, 285)
+        
+        if ((index+1 != repeticiones)){
+            doc.addPage()
+        }
+    })
+
+    doc.save('Reporte Insumos')
+}
     
     return (
         <div>
@@ -215,6 +328,26 @@ const MostrarInsumo = () =>{
             bordered
             onClick={()=>navigate('/Insumos/addInsumo')}>
                 Registrar
+            </Button>
+
+            <Button 
+                auto
+                color={'gradient'}
+                bordered
+                style={{right: '0px'}}
+                className='align-self-center ms-2 me-2' 
+                onClick={()=>createPDF()}
+                >Reporte PDF
+            </Button>
+
+            <Button 
+                auto
+                color={'gradient'}
+                bordered
+                style={{right: '0px'}}
+                className='align-self-center ms-2 me-2' 
+                onClick={()=>createExcel()}
+                >Reporte Excel
             </Button>
             
         </div>

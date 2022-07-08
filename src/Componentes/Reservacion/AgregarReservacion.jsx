@@ -200,6 +200,7 @@ function AgregarReservacion() {
       blur
       className='bg-dark text-white'
       open={visible}
+      onOpen={() => {console.log(mensajeModal)}}
       onClose={()=>setVisible(false)}>
         <Modal.Header>
           <Text 
@@ -276,8 +277,9 @@ function AgregarReservacion() {
         </div>}
 
         <div className='atributo'>
-          <label>Fecha Reservación</label>
+          <label htmlFor='fechaReservacion'>Fecha Reservación</label>
           <input
+          id='fechaReservacion'
           value={fecha}
           onChange={(e)=>setFecha(e.target.value)}
           className='form-control'
@@ -287,8 +289,9 @@ function AgregarReservacion() {
         </div>
 
         <div className='atributo'>
-          <label>Hora Inicio</label>
+          <label htmlFor='horaInicio'>Hora Inicio</label>
           <input
+          id='horaInicio'
           value={horaInicio}
           onChange={(e)=>{
 
@@ -305,8 +308,9 @@ function AgregarReservacion() {
         </div>
 
         <div className='atributo'>
-          <label>Hora Final</label>
+          <label htmlFor='horaFinal'>Hora Final</label>
           <input
+          id='horaFinal'
           value={horaFinal}
           onChange={(e)=>{
 

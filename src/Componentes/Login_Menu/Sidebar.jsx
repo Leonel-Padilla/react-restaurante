@@ -138,6 +138,16 @@ function Sidebar () {
                     <Button light color={'default'} onClick={()=>navigate('/Mesas/addMesa')}className="text-white"> 
                         Registrar Mesa</Button>
                 </Collapse>
+                
+                <Collapse 
+                title = {<Text h6 className="text-white">Permisos</Text>}
+                contentLeft={
+                <Avatar size="md" squared icon={<img src={Comida}/>} />}>
+                    <Button light color={'default'} onClick={()=>navigate('/Permisos/addPermiso')} className="text-white"> 
+                        Agregar Permisos</Button>
+                    <Button light color={'default'} onClick={()=>navigate('/Permisos')} className="text-white"> 
+                        Actualizar Permisos</Button>
+                </Collapse>
 
                 <Collapse 
                 title = {<Text h6 className="text-white">Producto</Text>}

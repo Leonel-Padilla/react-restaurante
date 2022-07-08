@@ -110,6 +110,7 @@ const AgregarInsumo = () =>{
             preventClose
             className='bg-dark text-white'
             open={visible}
+            onOpen={() =>{console.log(mensajeModal)}}
             onClose={()=>setVisible(false)}>
                 <Modal.Header>
                     <Text 
@@ -184,7 +185,7 @@ const AgregarInsumo = () =>{
                     <label>Cantidad actual:</label>
                     <input
                     aria-label='aria-describedby'
-                    placeholder='numeros del 0-9'
+                    placeholder='80'
                     value={cantidad}
                     onChange={(e)=>setCantidad(e.target.value)}
                     type='text'
@@ -199,7 +200,7 @@ const AgregarInsumo = () =>{
                     <label>Cantidad mínima:</label>
                     <input
                     aria-label='aria-describedby'
-                    placeholder='numeros del 0-9'
+                    placeholder='20'
                     value={cantidadMin}
                     onChange={(e)=>setCantidadMin(e.target.value)}
                     type='text'
@@ -214,7 +215,7 @@ const AgregarInsumo = () =>{
                     <label>Cantidad máxima:</label>
                     <input
                     aria-label='aria-describedby'
-                    placeholder='numeros del 0-9'
+                    placeholder='100'
                     value={cantidadMax}
                     onChange={(e)=>setCantidadMax(e.target.value)}
                     type='text'

@@ -90,6 +90,7 @@ const AgregarMesa = () =>{
             preventClose
             className='bg-dark text-white'
             open={visible}
+            onOpen={() => console.log(mensajeModal)}
             onClose={()=>setVisible(false)}>
                 <Modal.Header>
                     <Text 
@@ -151,7 +152,7 @@ const AgregarMesa = () =>{
                     <input
                     aria-label='aria-describedby'
                     value={numeroMesa}
-                    placeholder='numeros 0-9'
+                    placeholder='1'
                     onChange={(e)=>setNumeroMesa(e.target.value)}
                     type='text'
                     pattern='[0-9]{1,}'
@@ -166,7 +167,7 @@ const AgregarMesa = () =>{
                     <input
                     aria-label='aria-describedby'
                     value={cantidadAsientos}
-                    placeholder='numeros 0-9'
+                    placeholder='5'
                     onChange={(e)=>setCantidadAsientos(e.target.value)}
                     type='text'
                     pattern='[0-9]{1,}'

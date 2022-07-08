@@ -5,13 +5,17 @@ import { Button, Input,Tooltip, Modal, Text } from '@nextui-org/react';
 import buscarLupa from '../../img/buscar_lupa.png';
 import lapizEditar from '../../img/lapiz_editar.png'
 import moment from 'moment';
+import Logo from '../../img/LOGO.png';
+import jsPDF from 'jspdf';
+import * as XLSX from 'xlsx'
+import 'jspdf-autotable'
 
 const endPointGetProductos          = 'http://127.0.0.1:8000/api/Producto'
 const endPointUpdateComentarios     = 'http://127.0.0.1:8000/api/updateProducto'
-const endPointGetSucursales         = 'http://127.0.0.1:8000/api/Sucursal'
 const endPointGetImpuesto           = 'http://127.0.0.1:8000/api/Impuesto'
 const endPointGetInsumo             = 'http://127.0.0.1:8000/api/Insumo'
 const endPointGetProductoInsumo     = 'http://127.0.0.1:8000/api/ProductoInsumo'
+
 const MostrarProducto = () =>{
     const [productos, setProductos]             = useState([])
     const [productoActual, setProductoActual]   = useState()
@@ -28,6 +32,7 @@ const MostrarProducto = () =>{
 
     const [parametroBusqueda, setParametroBusqueda]   = useState('Seleccione')
     const [valorBusqueda, setValorBusqueda]           = useState('Seleccione')
+    const date = new Date()
 
     useEffect(()=>{
         getAllProductos()
@@ -115,6 +120,113 @@ const MostrarProducto = () =>{
                 }
             }
         } 
+    }
+
+    //
+    const createExcel = ()=>{
+        const libro = XLSX.utils.book_new()
+    
+        const copiaDatos = [...productos]
+        copiaDatos.map((dato)=>{
+            dato.estado = dato.estado == 1? 'Habilitado' : 'Desabilitado'
+    
+            delete dato.created_at
+            delete dato.updated_at
+            delete dato.descuento
+
+            formatearImpuestoId(dato.impuestoId)
+            dato.impuestoId = impuestoNombre
+        })
+    
+        const pagina = XLSX.utils.json_to_sheet(copiaDatos, {origin: 'A3'})
+    
+        XLSX.utils.sheet_add_aoa(pagina, [[`Usuario: ${sessionStorage.getItem('userName')}`, 
+        `Fecha: ${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`,
+        `Hora: ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`]],
+        {origin: `B1`})
+    
+        XLSX.utils.book_append_sheet(libro, pagina, 'Productos')
+        pagina["!cols"] = [ 
+            {wch: 3},
+            {wch: 20},
+            {wch: 20},
+            {wch: 20},
+            {wch: 20},
+            {wch: 20}
+        ];
+        XLSX.utils.sheet_add_aoa(pagina, [['Impuesto', 'Nombre', 'Descripción', 'Precio', 'Estado']], {origin: 'B3'})
+    
+        XLSX.writeFile(libro, 'Reporte Productos.xlsx')
+    }
+
+    //
+    const createPDF = ()=>{
+        const copiaDatos = [...productos]
+        copiaDatos.map((dato)=>{
+            dato.estado = dato.estado == 1? 'Habilitado' : 'Desabilitado'
+    
+            delete dato.created_at
+            delete dato.updated_at
+            delete dato.descuento
+
+            formatearImpuestoId(dato.impuestoId)
+            dato.impuestoId = impuestoNombre
+        })
+
+        const matrizDeDatos = []
+        let repeticiones = 0 
+
+
+        if(Number.isInteger(copiaDatos.length/30)){
+            repeticiones = (copiaDatos.length/30)
+        }else{
+            repeticiones = Math.trunc((copiaDatos.length/30)+1)
+        }
+
+        for (let i = 0; i < repeticiones; i++){
+            const array = copiaDatos.slice(i*30, (i+1)*30)
+            matrizDeDatos.push(array)
+        }
+    
+        
+        const doc = new jsPDF({
+            format: 'a4'
+        })
+
+        matrizDeDatos.map((array, index)=>{
+
+            
+            doc.setFontSize(15)
+            doc.text(`Reporte Productos`, 70, 10)
+            doc.text(`FIVE FORKS`, 70, 20)
+            doc.addImage(Logo, 'JPEG', 105, 0, 30, 30)
+            
+            doc.setFontSize(10)
+            doc.text(`Usuario: ${sessionStorage.getItem('userName')}`, 165, 10)
+            doc.text(`Fecha: ${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`, 165, 15)
+            doc.text(`Hora: ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`, 165, 20)
+            doc.text('--------------------------------------------------------------------------------'+
+            '------------------------------------------------------------------------',
+            15, 35)
+
+            doc.autoTable({
+                head: [['Id', 'Impuesto', 'Nombre', 'Descripción', 'Precio', 'Estado']],
+            
+                body: array.map((dato)=> Object.values(dato)),
+                startY: 40,
+            })
+                            
+            doc.text('--------------------------------------------------------------------------------'+
+            '------------------------------------------------------------------------',
+            15, 280)
+            doc.text(`${index+1} / ${repeticiones}`, 185, 285)
+            
+            if ((index+1 != repeticiones)){
+                doc.addPage()
+            }
+        })
+
+        doc.save('Reporte Productos')
     }
 
     return (
@@ -248,6 +360,26 @@ const MostrarProducto = () =>{
                         bordered
                         onClick={()=>navigate('/Productos/addProducto')}
                         >Registrar  
+                    </Button>
+
+                    <Button 
+                        auto
+                        color={'gradient'}
+                        bordered
+                        style={{right: '0px'}}
+                        className='align-self-center ms-2 me-2' 
+                        onClick={()=>createPDF()}
+                        >Reporte PDF
+                    </Button>
+
+                    <Button 
+                        auto
+                        color={'gradient'}
+                        bordered
+                        style={{right: '0px'}}
+                        className='align-self-center ms-2 me-2' 
+                        onClick={()=>createExcel()}
+                        >Reporte Excel
                     </Button>
             </div>
                 

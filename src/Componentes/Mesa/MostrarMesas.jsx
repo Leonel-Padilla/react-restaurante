@@ -4,8 +4,10 @@ import { useNavigate } from 'react-router-dom'
 import { Button, Input, Tooltip, Modal, Text } from '@nextui-org/react';
 import buscarLupa from '../../img/buscar_lupa.png';
 import lapizEditar from '../../img/lapiz_editar.png'
-
-
+import Logo from '../../img/LOGO.png';
+import jsPDF from 'jspdf';
+import * as XLSX from 'xlsx'
+import 'jspdf-autotable'
 
 const endPointGetMesas      = 'http://127.0.0.1:8000/api/Mesa'
 const endPointUpdateMesa    = 'http://127.0.0.1:8000/api/updateMesa'
@@ -25,6 +27,7 @@ const MostrarMesas = ()=>{
     const [tituloModal, setTituloModal]     = useState('')
     const [visible, setVisible]             = useState(false)
     const navigate                          = useNavigate()
+    const date = new Date()
 
     useEffect(()=>{
         getAllMesas()
@@ -116,6 +119,111 @@ const MostrarMesas = ()=>{
                 sucursalNombre = sucursal.sucursalNombre
             }
         })
+    }
+
+    //
+    const createExcel = ()=>{
+        const libro = XLSX.utils.book_new()
+    
+        const copiaDatos = [...mesas]
+        copiaDatos.map((dato)=>{
+            dato.estado = dato.estado == 1? 'Habilitado' : 'Desabilitado'
+    
+            delete dato.created_at
+            delete dato.updated_at
+            delete dato.descripcion
+
+            formatearSucursalId(dato)
+            dato.sucursalId = sucursalNombre
+        })
+    
+        const pagina = XLSX.utils.json_to_sheet(copiaDatos, {origin: 'A3'})
+    
+        XLSX.utils.sheet_add_aoa(pagina, [[`Usuario: ${sessionStorage.getItem('userName')}`, 
+        `Fecha: ${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`,
+        `Hora: ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`]],
+        {origin: `B1`})
+    
+        XLSX.utils.book_append_sheet(libro, pagina, 'Mesas')
+        pagina["!cols"] = [ 
+            {wch: 3},
+            {wch: 20},
+            {wch: 20},
+            {wch: 20},
+        ];
+        XLSX.utils.sheet_add_aoa(pagina, [['Nombre Sucursal', 'Cantidad Asientos', 'Número Mesa', 'Estado']], {origin: 'B3'})
+    
+        XLSX.writeFile(libro, 'Reporte Mesas.xlsx')
+    }
+
+    //
+    const createPDF = ()=>{
+        const copiaDatos = [...mesas]
+        copiaDatos.map((dato)=>{
+            dato.estado = dato.estado == 1? 'Habilitado' : 'Desabilitado'
+    
+            delete dato.created_at
+            delete dato.updated_at
+            delete dato.descripcion
+
+            formatearSucursalId(dato)
+            dato.sucursalId = sucursalNombre
+        })
+
+        const matrizDeDatos = []
+        let repeticiones = 0 
+
+
+        if(Number.isInteger(copiaDatos.length/30)){
+            repeticiones = (copiaDatos.length/30)
+        }else{
+            repeticiones = Math.trunc((copiaDatos.length/30)+1)
+        }
+
+        for (let i = 0; i < repeticiones; i++){
+            const array = copiaDatos.slice(i*30, (i+1)*30)
+            matrizDeDatos.push(array)
+        }
+    
+        
+        const doc = new jsPDF({
+            format: 'a4'
+        })
+
+        matrizDeDatos.map((array, index)=>{
+
+            
+            doc.setFontSize(15)
+            doc.text(`Reporte Mesas`, 70, 10)
+            doc.text(`FIVE FORKS`, 70, 20)
+            doc.addImage(Logo, 'JPEG', 105, 0, 30, 30)
+            
+            doc.setFontSize(10)
+            doc.text(`Usuario: ${sessionStorage.getItem('userName')}`, 165, 10)
+            doc.text(`Fecha: ${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`, 165, 15)
+            doc.text(`Hora: ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`, 165, 20)
+            doc.text('--------------------------------------------------------------------------------'+
+            '------------------------------------------------------------------------',
+            15, 35)
+
+            doc.autoTable({
+                head: [['Id', 'Nombre Sucursal', 'Cantidad Asientos', 'Número Mesa', 'Estado']],
+            
+                body: array.map((dato)=> Object.values(dato)),
+                startY: 40,
+            })
+                            
+            doc.text('--------------------------------------------------------------------------------'+
+            '------------------------------------------------------------------------',
+            15, 280)
+            doc.text(`${index+1} / ${repeticiones}`, 185, 285)
+            
+            if ((index+1 != repeticiones)){
+                doc.addPage()
+            }
+        })
+
+        doc.save('Reporte Mesas')
     }
 
     return (
@@ -230,6 +338,26 @@ const MostrarMesas = ()=>{
                 Registrar
             </Button>
             
+            <Button 
+                auto
+                color={'gradient'}
+                bordered
+                style={{right: '0px'}}
+                className='align-self-center ms-2 me-2' 
+                onClick={()=>createPDF()}
+                >Reporte PDF
+            </Button>
+
+            <Button 
+                auto
+                color={'gradient'}
+                bordered
+                style={{right: '0px'}}
+                className='align-self-center ms-2 me-2' 
+                onClick={()=>createExcel()}
+                >Reporte Excel
+            </Button>
+
         </div>
 
             <table className='table mt-2'> 
