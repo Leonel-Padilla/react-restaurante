@@ -96,7 +96,9 @@ function AgregarDelivery() {
     e.preventDefault()
     
     if (clienteId.includes('Seleccione') || empleadoId.includes('Seleccione') || ordenEncabezadoId.includes('Seleccione')){
-      activarModal('Error', 'Debe seleccionar un cliente, un repartidor y la orden del delivery')
+      activarModal('Error', 'Debe seleccionar un cliente, un repartidor y la orden del delivery.')
+    }else if (horaDespacho === '' || horaEntrega === '') {
+      activarModal('Error', 'Debe seleccionar hora de entrega y hora de despacho.')
     }else{
       formatearClienteId(clienteId)
       formatearEmpleadoId()
@@ -104,8 +106,10 @@ function AgregarDelivery() {
       const date = new Date()
       const fechaHoy = `${date.getFullYear()}-${date.getMonth() < 9? '0':''}${date.getMonth()+1}-${date.getDate() < 10? '0':''}${date.getDate()}`
 
+      const datos = ordenEncabezadoId.split(' ')
+
       const response = await axios.post(endPointAddDelivaery, {clienteId: idCliente, empleadoId: idEmpleado, 
-      ordenEncabezadoId: ordenEncabezadoId, fechaEntrega: fechaHoy,  comentario: comentario, horaDespacho: horaDespacho, 
+      ordenEncabezadoId: datos[0], fechaEntrega: fechaHoy,  comentario: comentario, horaDespacho: horaDespacho, 
       horaEntrega: horaEntrega, estado: 1})
 
       //console.log(response.data)
@@ -206,8 +210,8 @@ function AgregarDelivery() {
             <select
             value={ordenEncabezadoId}
             onChange={(e)=>{
-              const datos = e.target.value.split(' ')
-              setOrdenEncabezadoId(datos[0])
+              
+              setOrdenEncabezadoId(e.target.value)
             }}
             className='select'> 
               <option>Seleccione una orden</option>
