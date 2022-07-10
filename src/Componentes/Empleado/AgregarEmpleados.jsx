@@ -6,6 +6,7 @@ import Swal from 'sweetalert2'
 
 const endPointRegistrarEmpleado         = 'http://127.0.0.1:8000/api/addEmpleado'
 const endPointBuscarTodosCargos         = 'http://127.0.0.1:8000/api/Cargo'
+const endPointBuscarTodosRoles          = 'http://127.0.0.1:8000/api/Rol'
 const endPointBuscarSucursales          = 'http://127.0.0.1:8000/api/Sucursal'
 const endPointBuscarTodosDocumentos     = 'http://127.0.0.1:8000/api/TipoDocumento'
 const endPointBuscarEmpleado            = 'http://127.0.0.1:8000/api/Empleado'
@@ -28,6 +29,7 @@ const AgregarEmpleado = () =>{
     const [fechaNacimiento, setFechaNacimiento]             = useState()
     const [empleadoSueldo, setEmpleadoSueldo]               = useState(0)
     const [empleadoEstado, setEmpleadoEstado]               = useState(1)
+    const [rolId, setRolId]                                 = useState('Seleccione')
     let digitosNumero   = 14
     let idDocumento     = 1
     let idCargo         = 1
@@ -47,6 +49,7 @@ const AgregarEmpleado = () =>{
     const [todosDocumentos, setTodosDocumentos] = useState([])
     const [todosCargos, setTodosCargos]         = useState([])
     const [todasSucursales, setTodasSucursales] = useState([])
+    const [todosRoles, setTodosRoles]           = useState([])
     const navigate                              = useNavigate()
 
     const [startDate, setStartDate]         = useState(new Date());
@@ -54,23 +57,21 @@ const AgregarEmpleado = () =>{
     const [tituloModal, setTituloModal]     = useState('')
     const [visible, setVisible]             = useState(false)
 
-    /*if (sessionStorage.getItem('userName') == null){
-        navigate('/')
-    }*/
-
 
     useEffect(()=>{
         getAllDocumentos()
         getAllCargos()
         getAllSucursales()
+        getAllRoles()
     },[])
     
     const registrar = async (e)=>{
         e.preventDefault()
 
-        if (tipoDocumentoId.includes('Seleccione') || cargoActualId.includes('Seleccion') || sucursalId.includes('Seleccione')){
+        if (tipoDocumentoId.includes('Seleccione') || cargoActualId.includes('Seleccione') 
+            || sucursalId.includes('Seleccione') || rolId.includes('Seleccione')){
             setTituloModal('Error')
-            setMensajeModal('Debe seleccionar un Cargo Actual, un Tipo Documento, y una Sucursal')
+            setMensajeModal('Debe seleccionar un Cargo Actual, un Tipo Documento, una Sucursal y un rol.')
             setVisible(true)
         }else{
 
@@ -103,7 +104,7 @@ const AgregarEmpleado = () =>{
                         numeroDocumento: numeroDocumento, empleadoNombre: empleadoNombre, empleadoNumero: empleadoNumero,
                         empleadoCorreo: empleadoCorreo, empleadoUsuario: empleadoUsuario, empleadoContrasenia: empleadoContrasenia, 
                         empleadoDireccion: empleadoDireccion, empleadoSueldo: empleadoSueldo, cargoActualId: idCargo,
-                        fechaContratacion: fechaContratacion, fechaNacimiento: fechaNacimiento, estado: empleadoEstado})
+                        rolId: rolId, fechaContratacion: fechaContratacion, fechaNacimiento: fechaNacimiento, estado: empleadoEstado})
 
                 
                     if (response.status !== 200){
@@ -150,6 +151,12 @@ const AgregarEmpleado = () =>{
     const getAllSucursales = async ()=>{
         const response = await axios.get(endPointBuscarSucursales)
         setTodasSucursales(response.data)
+    }
+
+    //
+    const getAllRoles = async ()=>{
+        const response = await axios.get(endPointBuscarTodosRoles)
+        setTodosRoles(response.data)
     }
 
     //
@@ -455,6 +462,17 @@ const AgregarEmpleado = () =>{
                  title='Debe incluir al menos una letra mayúscula, una letra minúscula y un número, máximo 16 y mínimo de 5.'
                  className='form-control'
                  />
+                </div>
+
+                <div className='atributo'>
+                    <label>Rol de empleado</label>
+                    <select
+                    value={rolId}
+                    onChange={(e)=>setRolId(e.target.value)}
+                    className='select'> 
+                        <option value={0}>Seleccione Cargo Actual</option>
+                        {todosRoles.map((cargo)=> <option key={cargo.id} value={cargo.id}>{cargo.nombre}</option>)}
+                    </select>
                 </div>
 
                 <div className='atributo'>

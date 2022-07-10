@@ -23,10 +23,12 @@ const endPointBuscarSueldoHistorico     = 'http://127.0.0.1:8000/api/SueldoHisto
 const endPointActualizarSueldoHistorico = 'http://127.0.0.1:8000/api/updateSueldoHistorial'
 const endPointRegistrarSueldoHistorico  = 'http://127.0.0.1:8000/api/addSueldoHistorial'
 const endPointBuscarSucursales          = 'http://127.0.0.1:8000/api/Sucursal'
+const endPointBuscarTodosRoles               = 'http://127.0.0.1:8000/api/Rol'
 
 const ActualizarEmpleado = () =>{
     const [tipoDocumentoId, setTipoDocumentoId]             = useState()
     const [sucursalId, setSucursalId]                       = useState('')
+    const [rolId, setRolId]                                 = useState('')
     const [numeroDocumento, setNumeroDocumento]             = useState('')
     const [empleadoNombre, setEmpleadoNombre]               = useState('')
     const [empleadoNumero, setEmpleadoNumero]               = useState('')
@@ -50,6 +52,7 @@ const ActualizarEmpleado = () =>{
     const [todosDocumentos, setTodosDocumentos] = useState([])
     const [todosCargos, setTodosCargos]         = useState([])
     const [todasSucursales, setTodasSucursales] = useState([])
+    const [todosRoles, setTodosRoles]           = useState([])
     const [empleadosCargos, setEmpleadosCargos] = useState([])
     const [sueldoHistorico, setSueldoHistorico] = useState([])
     let empleadoCargoNombre                     = ''
@@ -77,7 +80,7 @@ const ActualizarEmpleado = () =>{
         getEmpleadosCargos()
         getSueldoHistorico()
         getAllSucursales()
-        
+        getAllRoles()
     }, [])
 
     //
@@ -108,6 +111,7 @@ const ActualizarEmpleado = () =>{
         setFechaNacimiento(response.data.fechaNacimiento)
         setEmpleadoSueldo(response.data.empleadoSueldo)
         setSueldoEnCambio(response.data.empleadoSueldo)
+        setRolId(response.data.rolId)
 
 
         //console.log(response.data)   //DEV
@@ -150,7 +154,7 @@ const ActualizarEmpleado = () =>{
                     {tipoDocumentoId: idDocumento, sucursalId: idSucursal, numeroDocumento: numeroDocumento, empleadoNombre: empleadoNombre, 
                     empleadoNumero: empleadoNumero, empleadoCorreo: empleadoCorreo, empleadoUsuario: empleadoUsuario,
                     empleadoContrasenia: empleadoContrasenia, empleadoDireccion: empleadoDireccion, empleadoSueldo: empleadoSueldo,
-                    cargoActualId: idCargo, fechaContratacion: fechaContratacion, fechaNacimiento: fechaNacimiento,
+                    cargoActualId: idCargo, rolId: rolId, fechaContratacion: fechaContratacion, fechaNacimiento: fechaNacimiento,
                     estado: empleadoEstado})
             
                     if (response.status !== 200){
@@ -258,6 +262,13 @@ const ActualizarEmpleado = () =>{
         const response = await axios.get(`${endPointBuscarSueldoHistorico}E/${id}`)
         setSueldoHistorico(response.data)
     }
+
+    //
+    const getAllRoles = async ()=>{
+        const response = await axios.get(endPointBuscarTodosRoles)
+        setTodosRoles(response.data)
+    }
+
     //
     const formatearCargo = ()=>{
         todosCargos.map((cargo)=>{
@@ -266,7 +277,8 @@ const ActualizarEmpleado = () =>{
             }
         })
     }
-        //
+
+    //
     const formatearCargoNombre = (empleadoCargo)=>{
         todosCargos.map((cargo)=>{
             if (cargo.id == empleadoCargo.cargoId){
@@ -612,6 +624,18 @@ const ActualizarEmpleado = () =>{
                  maxLength={50}
                  className='form-control'
                  />
+                </div>
+
+                
+                <div className='atributo'>
+                    <label>Rol de empleado</label>
+                    <select
+                    value={rolId}
+                    onChange={(e)=>setRolId(e.target.value)}
+                    className='select'> 
+                        <option value={0}>Seleccione Cargo Actual</option>
+                        {todosRoles.map((cargo)=> <option key={cargo.id} value={cargo.id}>{cargo.nombre}</option>)}
+                    </select>
                 </div>
                 
                 <div className='atributo'>
