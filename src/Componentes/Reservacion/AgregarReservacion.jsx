@@ -120,10 +120,6 @@ function AgregarReservacion() {
     const horaInicioActual = date1.getHours()
     const horaFinalActual = date2.getHours()
 
-
-    /*console.log(horas)
-    console.log(horaInicioActual, horaFinalActual)*/
-
     let contador = 0
     horas.map(horario=>{
       if (horaInicioActual >= horario.horaInicio && horaInicioActual < horario.horaFinal || 
@@ -138,7 +134,7 @@ function AgregarReservacion() {
 
     })
 
-    console.log(contador)
+    //console.log(contador)
 
     if (clienteId.includes('Seleccione') || sucursalId.includes('Seleccione') || mesaId.includes('Seleccione')) {
       activarModal('Error', 'Debe seleccionar un cliente, un sucursal y una mesa')
@@ -150,6 +146,8 @@ function AgregarReservacion() {
 
       const response = await axios.post(endPointAddReservacion, {clienteId: idCliente, sucursalId: idSucursal,
       estado: 1})
+
+      console.log(response.data)
 
       if (response.status != 200) {
         activarModal('Error', `${response.data.Error}`)
