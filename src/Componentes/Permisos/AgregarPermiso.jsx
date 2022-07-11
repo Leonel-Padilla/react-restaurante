@@ -17,7 +17,7 @@ const AgregarPermiso = () => {
   const [screenId, setScreenId]           = useState(0)
   const [currentScreen, setCurrentScreen] = useState('')
   const [actions, setActions]             = useState({actualizar: 0, registrar: 0, buscar: 0,
-    imprimirReportes: 0, reimprimir: null, detalles: null})
+    imprimirReportes: 0, reimprimir: 0, detalles: 0})
   const navigate                          = useNavigate()
 
   const [mensajeModal, setMensajeModal] = useState('')
@@ -53,7 +53,6 @@ const AgregarPermiso = () => {
       activarModal('Error', 'Debe seleccionar un rol y una pantalla.')
     }else{
       const screenCode = screenId.split(' ')[0]
-      console.log(`${rolId} - ${screenCode}`)
 
       const response = await axios.post(endPointPostRolesScreens, {rolesId: rolId, pantallaId: screenCode, 
       rolPantalla: `${rolId} - ${screenCode}` ,...actions, estado: 1})
@@ -194,8 +193,7 @@ const AgregarPermiso = () => {
             </input> Ver Detalles
           </div>
 
-          : null
-          }
+          : null}
 
           {currentScreen === 'factura'? 
             <div className='acciones'>

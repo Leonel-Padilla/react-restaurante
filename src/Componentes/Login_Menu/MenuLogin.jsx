@@ -88,6 +88,7 @@ function MenuLogin () {
 
                     sessionStorage.setItem('userName', response1.data.empleadoUsuario)
                     sessionStorage.setItem('id', response1.data.id)
+                    sessionStorage.setItem('rol', response1.data.rolId)
                     navigate('/MenuPrincipal')
                 }else{
                     if (empleadoActual.contador == 2){

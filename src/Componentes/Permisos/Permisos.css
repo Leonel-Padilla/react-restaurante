@@ -1,8 +1,9 @@
 .contenedor {
   display: grid;
-  grid-template-rows: 100px repeat(4, 150px);
+  grid-template-rows: 100px repeat(4, 250px);
   grid-template-columns: repeat(4, 25%);
   justify-items: center;
+  overflow: scroll;
 }
 
 .rol {
