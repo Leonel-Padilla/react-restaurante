@@ -13,7 +13,7 @@ const endPointGetComentarios        = 'http://127.0.0.1:8000/api/Comentario'
 const endPointUpdateComentarios     = 'http://127.0.0.1:8000/api/updateComentario'
 const endPointGetSucursales         = 'http://127.0.0.1:8000/api/Sucursal'
 
-const MostrarComentario = () =>{
+const MostrarComentario = ({ accesos }) =>{
     const [comentarioActual, setComentarioActual]   = useState([])
     const [comentarios, setComentarios]             = useState([])
     const [sucursales, setSucursales]               = useState([])
@@ -273,8 +273,14 @@ const MostrarComentario = () =>{
                     <form 
                     className='d-flex align-self-center' 
                     style={{left: '300px'}} 
-                    onSubmit={getByValorBusqueda}
-                    >
+                    onSubmit={(e) => {
+                        if (Number(accesos.buscar) === 0){
+                            e.preventDefault()
+                            activarModal('Error', 'No tienes permisos para realizar esta acción.')
+                        }else{
+                            getByValorBusqueda(e)
+                        }
+                    }}>
                     <input
                         placeholder={parametroBusqueda.includes('Seleccione')? '': `${parametroBusqueda}`}
                         aria-label='aria-describedby'
@@ -326,7 +332,13 @@ const MostrarComentario = () =>{
                         bordered
                         style={{right: '0px'}}
                         className='align-self-center ms-2 me-2' 
-                        onClick={()=>createPDF()}
+                        onClick={()=>{
+                            if (Number(accesos.imprimirReportes) === 0){
+                                activarModal('Error', 'No tienes permisos para realizar esta acción.')
+                            }else{
+                                createPDF()
+                            }
+                        }}
                         >Reporte PDF
                     </Button>
 
@@ -336,7 +348,13 @@ const MostrarComentario = () =>{
                         bordered
                         style={{right: '0px'}}
                         className='align-self-center ms-2 me-2' 
-                        onClick={()=>createExcel()}
+                        onClick={()=>{
+                            if (Number(accesos.imprimirReportes) === 0){
+                                activarModal('Error', 'No tienes permisos para realizar esta acción.')
+                            }else{
+                                createExcel()
+                            }
+                        }}
                         >Reporte Excel
                     </Button>
             </div>
@@ -377,8 +395,12 @@ const MostrarComentario = () =>{
                                 children={comentario.estado == 1 ? 'Deshabilitar' : 'Habilitar'}
                                 color={'secondary'}
                                 onClick={()=>{
-                                    setComentarioActual(comentario)
-                                    activarModal('Cambiar', `¿Seguro que desea ${comentario.estado == 1 ? 'deshabilitar' : 'habilitar'} este registro?`)
+                                    if (Number(accesos.actualizar) === 0){
+                                        activarModal('Error', 'No tienes permisos para realizar esta acción.')
+                                    }else{
+                                        setComentarioActual(comentario)
+                                        activarModal('Cambiar', `¿Seguro que desea ${comentario.estado == 1 ? 'deshabilitar' : 'habilitar'} este registro?`)
+                                    }
                                 }}
                             ></Button>
                         </td>

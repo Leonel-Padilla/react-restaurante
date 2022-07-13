@@ -15,7 +15,7 @@ const endPointUpdate                = 'http://127.0.0.1:8000/api/updateEmpleado'
 const endPointGetEmpleados          = 'http://127.0.0.1:8000/api/Empleado'
 const endPointBuscarTodosDocumentos = 'http://127.0.0.1:8000/api/TipoDocumento'
 
-const MostrarEmpleados = ()=>{
+const MostrarEmpleados = ({ accesos })=>{
     const [empleados, setEmpleados]                 = useState([])
     const [empleadoActual, setEmpleadoActual]       = useState()
     const navigate                                  = useNavigate()
@@ -314,7 +314,14 @@ const MostrarEmpleados = ()=>{
             <form 
             className='d-flex align-self-center' 
             style={{left: '300px'}} 
-            onSubmit={GetByValorBusqueda}>
+            onSubmit={(e) => {
+                if (Number(accesos.buscar) === 0){
+                    e.preventDefault()
+                    activarModal('Error', 'No tienes permisos para realizar esta acción.')
+                }else{
+                    GetByValorBusqueda(e)
+                }
+            }}>
                 <input
                 placeholder={parametroBusqueda.includes('Seleccione')? '': 
                 parametroBusqueda == 'ID'? 'ID': parametroBusqueda == 'Nombre'? 'Nombre': 'Numero Documento'}
@@ -365,7 +372,13 @@ const MostrarEmpleados = ()=>{
                 bordered
                 style={{right: '0px'}}
                 className='align-self-center ms-2 me-2' 
-                onClick={()=>createPDF()}
+                onClick={()=>{
+                    if (Number(accesos.imprimirReportes) === 0){
+                        activarModal('Error', 'No tienes permisos para realizar esta acción.')
+                    }else{
+                        createPDF()
+                    }
+                }}
                 >Reporte PDF
             </Button>
 
@@ -375,7 +388,13 @@ const MostrarEmpleados = ()=>{
                 bordered
                 style={{right: '0px'}}
                 className='align-self-center ms-2 me-2' 
-                onClick={()=>createExcel()}
+                onClick={()=>{
+                    if (Number(accesos.imprimirReportes) === 0){
+                        activarModal('Error', 'No tienes permisos para realizar esta acción.')
+                    }else{
+                        createExcel()
+                    }
+                }}
                 >Reporte Excel
             </Button>
         </div>
@@ -429,8 +448,12 @@ const MostrarEmpleados = ()=>{
                             children={empleado.estado == 1 ? 'Deshabilitar' : 'Habilitar'}
                             color={'secondary'}
                             onClick={()=>{
-                                setEmpleadoActual(empleado)
-                                activarModal('Cambiar', `¿Seguro que desea ${empleado.estado == 1 ? 'deshabilitar' : 'habilitar'} este registro?`)
+                                if (Number(accesos.actualizar) === 0){
+                                    activarModal('Error', 'No tienes permisos para realizar esta acción.')
+                                }else{
+                                    setEmpleadoActual(empleado)
+                                    activarModal('Cambiar', `¿Seguro que desea ${empleado.estado == 1 ? 'deshabilitar' : 'habilitar'} este registro?`)
+                                }
                             }}
                             ></Button>
 

@@ -1,9 +1,13 @@
-body{
-  background-color: #9b9b9b9b;
+.container{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 400px;
   background-image: url(../../img/permiso.svg);
   background-size: auto; 
   background-repeat:no-repeat;
-  position: absolute;
+  position:relative
 }
 
 .text{
@@ -11,5 +15,6 @@ body{
   font-weight: 500;
   font-size: 50px;
   text-align: center;
-  color: gray;
+  color: white;
 }
+

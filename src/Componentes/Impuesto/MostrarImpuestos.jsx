@@ -11,7 +11,8 @@ import 'jspdf-autotable'
 
 const endPointGetImpusto    = 'http://127.0.0.1:8000/api/Impuesto'
 const endPointUpdateImpusto = 'http://127.0.0.1:8000/api/updateImpuesto'
-function MostrarImpuestos() {
+
+function MostrarImpuestos({ accesos }) {
   const [impuestos, setImpuestos]           = useState([])
   const [impuestoActual, setImpuestoActual] = useState({})
 
@@ -242,7 +243,14 @@ function MostrarImpuestos() {
         <form 
         className='d-flex align-self-center' 
         style={{left: '300px'}} 
-        onSubmit={getByValorBusqueda}>
+        onSubmit={(e) => {
+          if (Number(accesos.buscar) === 0){
+              e.preventDefault()
+              activarModal('Error', 'No tienes permisos para realizar esta acción.')
+          }else{
+              getByValorBusqueda(e)
+          }
+        }}>
           <input
           placeholder={parametroBusqueda.includes('Seleccione')? '': `${parametroBusqueda}`}
           aria-label='aria-describedby'
@@ -292,7 +300,13 @@ function MostrarImpuestos() {
           bordered
           style={{right: '0px'}}
           className='align-self-center ms-2 me-2' 
-          onClick={()=>createPDF()}
+          onClick={()=>{
+            if (Number(accesos.imprimirReportes) === 0){
+                activarModal('Error', 'No tienes permisos para realizar esta acción.')
+            }else{
+                createPDF()
+            }
+          }}
           >Reporte PDF
         </Button>
 
@@ -302,7 +316,13 @@ function MostrarImpuestos() {
             bordered
             style={{right: '0px'}}
             className='align-self-center ms-2 me-2' 
-            onClick={()=>createExcel()}
+            onClick={()=>{
+              if (Number(accesos.imprimirReportes) === 0){
+                  activarModal('Error', 'No tienes permisos para realizar esta acción.')
+              }else{
+                  createExcel()
+              }
+            }}
             >Reporte Excel
         </Button>
 
@@ -344,8 +364,13 @@ function MostrarImpuestos() {
                   children={impuesto.estado == 1 ? 'Deshabilitar' : 'Habilitar'}
                   color={'secondary'}
                   onClick={()=>{
+                    if (Number(accesos.actualizar) === 0){
+                      activarModal('Error', 'No tienes permisos para realizar esta acción.')
+                  }else{
                     setImpuestoActual(impuesto)
-                    activarModal('Cambiar', `¿Seguro que desea ${impuesto.estado == 1 ? 'deshabilitar' : 'habilitar'} este registro?`)}}>
+                    activarModal('Cambiar', `¿Seguro que desea ${impuesto.estado == 1 ? 'deshabilitar' : 'habilitar'} este registro?`)
+                  }
+                  }}>
                   </Button>
                 </td>
               </tr>)

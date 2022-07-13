@@ -15,8 +15,7 @@ const endPointUpdate    = 'http://127.0.0.1:8000/api/updateCargo'
 const endPointGet       = 'http://127.0.0.1:8000/api/Cargo'
 
 
-function MostrarCargos() {
-    
+function MostrarCargos({ accesos }) {
   const tablaExcel = useRef(null);
   const [cargos, setCargos]                         = useState([])
   const [cargoActual, setCargoActual]               = useState()
@@ -299,7 +298,14 @@ const createPDF = ()=>{
             <form 
             className='d-flex align-self-center' 
             style={{left: '300px'}} 
-            onSubmit={getByValorBusqueda}>
+            onSubmit={(e) => {
+                if (Number(accesos.buscar) === 0){
+                    e.preventDefault()
+                    activarModal('Error', 'No tienes permisos para realizar esta acción.')
+                }else{
+                    getByValorBusqueda(e)
+                }
+            }}>
                 <input
                 placeholder={parametroBusqueda.includes('Seleccione')? '': `${parametroBusqueda}`}
                 aria-label='aria-describedby'
@@ -350,8 +356,14 @@ const createPDF = ()=>{
             color={'gradient'}
             bordered
             style={{right: '0px'}}
-            className='align-self-center ms-2 me-2' 
-            onClick={()=>createPDF()}>
+            className='align-self-center ms-2 me-2'
+            onClick={()=>{
+                if (Number(accesos.imprimirReportes) === 0){
+                    activarModal('Error', 'No tienes permisos para realizar esta acción.')
+                }else{
+                    createPDF()
+                }
+            }}>
                 Reporte PDF
             </Button>
 
@@ -361,7 +373,13 @@ const createPDF = ()=>{
             bordered
             style={{right: '0px'}}
             className='align-self-center ms-2 me-2' 
-            onClick={()=>createExcel()}>
+            onClick={()=>{
+                    if (Number(accesos.imprimirReportes) === 0){
+                        activarModal('Error', 'No tienes permisos para realizar esta acción.')
+                    }else{
+                        createExcel()
+                    }
+                }}>
                 Reporte Excel
             </Button>
         </div>
@@ -401,8 +419,12 @@ const createPDF = ()=>{
                                 children={cargo.estado == 1 ? 'Deshabilitar' : 'Habilitar'}
                                 color={'secondary'}
                                 onClick={()=>{
-                                    setCargoActual(cargo)
-                                    activarModal('Cambiar', `¿Seguro que desea ${cargo.estado == 1 ? 'deshabilitar' : 'habilitar'} este registro?`)
+                                    if (Number(accesos.actualizar) === 0){
+                                        activarModal('Error', 'No tienes permisos para realizar esta acción.')
+                                    }else{
+                                        setCargoActual(cargo)
+                                        activarModal('Cambiar', `¿Seguro que desea ${cargo.estado == 1 ? 'deshabilitar' : 'habilitar'} este registro?`)
+                                    }
                                 }}
                                 ></Button>
 

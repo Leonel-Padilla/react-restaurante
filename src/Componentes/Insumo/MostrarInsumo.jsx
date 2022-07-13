@@ -13,7 +13,7 @@ const endPointGetInsumos        = 'http://127.0.0.1:8000/api/Insumo'
 const endPointUpdateInsumos     = 'http://127.0.0.1:8000/api/updateInsumo'
 const endPointGetAllProveedores = 'http://127.0.0.1:8000/api/Proveedor'
 
-const MostrarInsumo = () =>{
+const MostrarInsumo = ({ accesos }) =>{
 
     const [insumos, setInsumos]             = useState([])
     const [insumoActual, setInsumoActual]   = useState()
@@ -283,8 +283,14 @@ const createPDF = ()=>{
             <form 
             className='d-flex align-self-center' 
             style={{left: '300px'}} 
-            onSubmit={getByValorBusqueda}
-            >
+            onSubmit={(e) => {
+                if (Number(accesos.buscar) === 0){
+                    e.preventDefault()
+                    activarModal('Error', 'No tienes permisos para realizar esta acción.')
+                }else{
+                    getByValorBusqueda(e)
+                }
+            }}>
                 <input
                     placeholder={parametroBusqueda.includes('Seleccione')? '': `${parametroBusqueda}`}
                     aria-label='aria-describedby'
@@ -336,7 +342,13 @@ const createPDF = ()=>{
                 bordered
                 style={{right: '0px'}}
                 className='align-self-center ms-2 me-2' 
-                onClick={()=>createPDF()}
+                onClick={()=>{
+                    if (Number(accesos.imprimirReportes) === 0){
+                        activarModal('Error', 'No tienes permisos para realizar esta acción.')
+                    }else{
+                        createPDF()
+                    }
+                }}
                 >Reporte PDF
             </Button>
 
@@ -346,7 +358,13 @@ const createPDF = ()=>{
                 bordered
                 style={{right: '0px'}}
                 className='align-self-center ms-2 me-2' 
-                onClick={()=>createExcel()}
+                onClick={()=>{
+                    if (Number(accesos.imprimirReportes) === 0){
+                        activarModal('Error', 'No tienes permisos para realizar esta acción.')
+                    }else{
+                        createExcel()
+                    }
+                }}
                 >Reporte Excel
             </Button>
             
@@ -392,8 +410,12 @@ const createPDF = ()=>{
                             children={insumo.estado == 1 ? 'Deshabilitar' : 'Habilitar'}
                             color={'secondary'}
                             onClick={()=>{
-                                setInsumoActual(insumo)
-                                activarModal('Cambiar', `¿Seguro que desea ${insumo.estado == 1 ? 'deshabilitar' : 'habilitar'} este registro?`)
+                                if (Number(accesos.actualizar) === 0){
+                                    activarModal('Error', 'No tienes permisos para realizar esta acción.')
+                                }else{
+                                    setInsumoActual(insumo)
+                                    activarModal('Cambiar', `¿Seguro que desea ${insumo.estado == 1 ? 'deshabilitar' : 'habilitar'} este registro?`)
+                                }
                             }}
                             ></Button>
 

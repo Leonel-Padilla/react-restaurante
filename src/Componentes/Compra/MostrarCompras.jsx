@@ -19,7 +19,8 @@ const endPointGetCompraDetalles = 'http://127.0.0.1:8000/api/CompraDetalle'
 const endPointUpdateDetalle     = 'http://127.0.0.1:8000/api/updateCompraDetalle'
 const endPointUpdateInsumo      = 'http://127.0.0.1:8000/api/updateInsumo'
 
-const MostrarCompras = ()=> {
+const MostrarCompras = ({ accesos })=> {
+    console.log(accesos)
 
   const [compras, setCompras]           = useState([])
   const [empleados, setEmpleados]       = useState([])
@@ -408,7 +409,14 @@ const MostrarCompras = ()=> {
             <form 
             className='d-flex align-self-center' 
             style={{left: '300px'}} 
-            onSubmit={getByValorBusqueda}
+            onSubmit={(e) => {
+                if (Number(accesos.buscar) === 0){
+                    e.preventDefault()
+                    activarModal('Error', 'No tienes permisos para realizar esta acción.')
+                }else{
+                    getByValorBusqueda(e)
+                }
+            }}
             >
                 {
                     parametroBusqueda == 'Estado'?
@@ -482,7 +490,13 @@ const MostrarCompras = ()=> {
                 bordered
                 style={{right: '0px'}}
                 className='align-self-center ms-2 me-2' 
-                onClick={()=>createPDF()}
+                onClick={()=>{
+                    if (Number(accesos.imprimirReportes) === 0){
+                        activarModal('Error', 'No tienes permisos para realizar esta acción.')
+                    }else{
+                        createPDF()
+                    }
+                }}
                 >Reporte PDF
             </Button>
 
@@ -492,7 +506,13 @@ const MostrarCompras = ()=> {
                 bordered
                 style={{right: '0px'}}
                 className='align-self-center ms-2 me-2' 
-                onClick={()=>createExcel()}
+                onClick={()=>{
+                    if (Number(accesos.imprimirReportes) === 0){
+                        activarModal('Error', 'No tienes permisos para realizar esta acción.')
+                    }else{
+                        createExcel()
+                    }
+                }}
                 >Reporte Excel
             </Button>
         </div>
@@ -539,15 +559,16 @@ const MostrarCompras = ()=> {
                                 shadow
                                 color={'secondary'}
                                 onClick={()=>{
-                                    
-                                    
-                                    if (compra.estadoCompra == 'Recibida'){
-                                        getCompraDetalles(compra.id)
-                                        activarModal('Detalles de compra', ``)
+                                    if (Number(accesos.detalles) === 0){
+                                        activarModal('Error', 'No tienes permisos para realizar esta acción.')
                                     }else{
-                                        activarModal('Error', 'Para poder ver o rechazar los detalles de una compra, esta debe estar recibida.')
+                                        if (compra.estadoCompra == 'Recibida'){
+                                            getCompraDetalles(compra.id)
+                                            activarModal('Detalles de compra', ``)
+                                        }else{
+                                            activarModal('Error', 'Para poder ver o rechazar los detalles de una compra, esta debe estar recibida.')
+                                        }
                                     }
-
                                 }}
                                 >Detalles de Compra</Button>
 

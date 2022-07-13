@@ -3,7 +3,6 @@ import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { Button, Input,Tooltip, Modal, Text, } from '@nextui-org/react';
 import buscarLupa from '../../img/buscar_lupa.png';
-import lapizEditar from '../../img/lapiz_editar.png'
 import moment from 'moment';
 import Logo from '../../img/LOGO.png';
 import jsPDF from 'jspdf';
@@ -13,7 +12,8 @@ import 'jspdf-autotable'
 const endPointGetDeliveries        = 'http://127.0.0.1:8000/api/Delivery'
 const endPointGetCliente           = 'http://127.0.0.1:8000/api/Cliente'
 const endPointUpdateDeliveries     = 'http://127.0.0.1:8000/api/updateDelivery'
-function MostrarDeliverys() {
+
+function MostrarDeliverys({ accesos }) {
   const [clientes, setClientes]             = useState([])
   let clienteNombre                         = ''
   let idCliente                             = 0
@@ -294,7 +294,14 @@ function MostrarDeliverys() {
         <form
         className='d-flex align-self-center'
         style={{left: '300px'}}
-        onSubmit={getByValorBusqueda}>
+        onSubmit={(e) => {
+          if (Number(accesos.buscar) === 0){
+              e.preventDefault()
+              activarModal('Error', 'No tienes permisos para realizar esta acción.')
+          }else{
+              getByValorBusqueda(e)
+          }
+        }}>
           <input
           placeholder={parametroBusqueda.includes('Seleccione')? '': `${parametroBusqueda}`}
           aria-label='aria-describedby'
@@ -345,7 +352,13 @@ function MostrarDeliverys() {
           bordered
           style={{right: '0px'}}
           className='align-self-center ms-2 me-2' 
-          onClick={()=>createPDF()}
+          onClick={()=>{
+            if (Number(accesos.imprimirReportes) === 0){
+                activarModal('Error', 'No tienes permisos para realizar esta acción.')
+            }else{
+                createPDF()
+            }
+        }}
           >Reporte PDF
         </Button>
 
@@ -355,7 +368,13 @@ function MostrarDeliverys() {
             bordered
             style={{right: '0px'}}
             className='align-self-center ms-2 me-2' 
-            onClick={()=>createExcel()}
+            onClick={()=>{
+              if (Number(accesos.imprimirReportes) === 0){
+                  activarModal('Error', 'No tienes permisos para realizar esta acción.')
+              }else{
+                  createExcel()
+              }
+          }}
             >Reporte Excel
           </Button>
       </div>
@@ -403,8 +422,12 @@ function MostrarDeliverys() {
                   children={delivery.estado == 1 ? 'Deshabilitar' : 'Habilitar'}
                   color={'secondary'}
                   onClick={()=>{
-                    setDeliveryActual(delivery)
-                    activarModal('Cambiar', `¿Seguro que desea ${delivery.estado == 1 ? 'deshabilitar' : 'habilitar'} este registro?`)
+                    if (Number(accesos.actualizar) === 0){
+                      activarModal('Error', 'No tienes permisos para realizar esta acción.')
+                    }else{
+                      setDeliveryActual(delivery)
+                      activarModal('Cambiar', `¿Seguro que desea ${delivery.estado == 1 ? 'deshabilitar' : 'habilitar'} este registro?`)
+                    }
                   }}>
                   </Button>
                 </td>
