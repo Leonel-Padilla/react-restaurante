@@ -13,8 +13,7 @@ const endPointGetMesas      = 'http://127.0.0.1:8000/api/Mesa'
 const endPointUpdateMesa    = 'http://127.0.0.1:8000/api/updateMesa'
 const endPointGetSucursal   = 'http://127.0.0.1:8000/api/Sucursal'
 
-const MostrarMesas = ()=>{
-
+const MostrarMesas = ({ accesos })=>{
     const [parametroBusqueda, setParametroBusqueda]   = useState('Seleccione')
     const [valorBusqueda, setValorBusqueda]           = useState('')
     const [sucursales, setSucursales]                 = useState([]) 
@@ -291,8 +290,14 @@ const MostrarMesas = ()=>{
             <form 
             className='d-flex align-self-center' 
             style={{left: '300px'}} 
-            onSubmit={getByValorBusqueda}
-            >
+            onSubmit={(e) => {
+                if (Number(accesos.buscar) === 0){
+                    e.preventDefault()
+                    activarModal('Error', 'No tienes permisos para realizar esta acción.')
+                }else{
+                    getByValorBusqueda(e)
+                }
+            }}>
                 <input
                     placeholder={parametroBusqueda.includes('Seleccione')? '': `${parametroBusqueda}`}
                     aria-label='aria-describedby'
@@ -344,7 +349,13 @@ const MostrarMesas = ()=>{
                 bordered
                 style={{right: '0px'}}
                 className='align-self-center ms-2 me-2' 
-                onClick={()=>createPDF()}
+                onClick={()=>{
+                    if (Number(accesos.imprimirReportes) === 0){
+                        activarModal('Error', 'No tienes permisos para realizar esta acción.')
+                    }else{
+                        createPDF()
+                    }
+                }}
                 >Reporte PDF
             </Button>
 
@@ -354,7 +365,13 @@ const MostrarMesas = ()=>{
                 bordered
                 style={{right: '0px'}}
                 className='align-self-center ms-2 me-2' 
-                onClick={()=>createExcel()}
+                onClick={()=>{
+                    if (Number(accesos.imprimirReportes) === 0){
+                        activarModal('Error', 'No tienes permisos para realizar esta acción.')
+                    }else{
+                        createExcel()
+                    }
+                }}
                 >Reporte Excel
             </Button>
 
@@ -401,8 +418,12 @@ const MostrarMesas = ()=>{
                             children={mesa.estado == 1 ? 'Deshabilitar' : 'Habilitar'}
                             color={'secondary'}
                             onClick={()=>{
-                                setMesaActual(mesa)
-                                activarModal('Cambiar', `¿Seguro que desea ${mesa.estado == 1 ? 'deshabilitar' : 'habilitar'} este registro?`)
+                                if (Number(accesos.actualizar) === 0){
+                                    activarModal('Error', 'No tienes permisos para realizar esta acción.')
+                                }else{
+                                    setMesaActual(mesa)
+                                    activarModal('Cambiar', `¿Seguro que desea ${mesa.estado == 1 ? 'deshabilitar' : 'habilitar'} este registro?`)
+                                }
                             }}
                             ></Button>
 

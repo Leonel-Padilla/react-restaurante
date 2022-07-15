@@ -16,7 +16,7 @@ const endPointGetImpuesto           = 'http://127.0.0.1:8000/api/Impuesto'
 const endPointGetInsumo             = 'http://127.0.0.1:8000/api/Insumo'
 const endPointGetProductoInsumo     = 'http://127.0.0.1:8000/api/ProductoInsumo'
 
-const MostrarProducto = () =>{
+const MostrarProducto = ({ accesos }) =>{
     const [productos, setProductos]             = useState([])
     const [productoActual, setProductoActual]   = useState()
     const [impuestos, setImpuestos]             = useState([])
@@ -315,8 +315,14 @@ const MostrarProducto = () =>{
                     <form 
                     className='d-flex align-self-center' 
                     style={{left: '300px'}} 
-                    onSubmit={getByValorBusqueda}
-                    >
+                    onSubmit={(e) => {
+                        if (Number(accesos.buscar) === 0){
+                            e.preventDefault()
+                            activarModal('Error', 'No tienes permisos para realizar esta acción.')
+                        }else{
+                            getByValorBusqueda(e)
+                        }
+                    }}>
                     <input
                         placeholder={parametroBusqueda.includes('Seleccione')? '': `${parametroBusqueda}`}
                         aria-label='aria-describedby'
@@ -368,7 +374,13 @@ const MostrarProducto = () =>{
                         bordered
                         style={{right: '0px'}}
                         className='align-self-center ms-2 me-2' 
-                        onClick={()=>createPDF()}
+                        onClick={()=>{
+                            if (Number(accesos.imprimirReportes) === 0){
+                                activarModal('Error', 'No tienes permisos para realizar esta acción.')
+                            }else{
+                                createPDF()
+                            }
+                        }}
                         >Reporte PDF
                     </Button>
 
@@ -378,7 +390,13 @@ const MostrarProducto = () =>{
                         bordered
                         style={{right: '0px'}}
                         className='align-self-center ms-2 me-2' 
-                        onClick={()=>createExcel()}
+                        onClick={()=>{
+                            if (Number(accesos.imprimirReportes) === 0){
+                                activarModal('Error', 'No tienes permisos para realizar esta acción.')
+                            }else{
+                                createExcel()
+                            }
+                        }}
                         >Reporte Excel
                     </Button>
             </div>
@@ -421,8 +439,12 @@ const MostrarProducto = () =>{
                                     children={producto.estado == 1 ? 'Deshabilitar' : 'Habilitar'}
                                     color={'secondary'}
                                     onClick={()=>{
-                                        setProductoActual(producto)
-                                        activarModal('Cambiar', `¿Seguro que desea ${producto.estado == 1 ? 'deshabilitar' : 'habilitar'} este registro?`)
+                                        if (Number(accesos.actualizar) === 0){
+                                            activarModal('Error', 'No tienes permisos para realizar esta acción.')
+                                        }else{
+                                            setProductoActual(producto)
+                                            activarModal('Cambiar', `¿Seguro que desea ${producto.estado == 1 ? 'deshabilitar' : 'habilitar'} este registro?`)
+                                        }
                                     }}
                                 ></Button>
 
@@ -430,8 +452,12 @@ const MostrarProducto = () =>{
                                     children='Ver Insumos'
                                     color={'gradient'}
                                     onClick={()=>{
-                                        activarModal('Insumos', '')
-                                        getProductoInsumos(producto.id)
+                                        if (Number(accesos.detalles) === 0){
+                                            activarModal('Error', 'No tienes permisos para realizar esta acción.')
+                                        }else{
+                                            activarModal('Insumos', '')
+                                            getProductoInsumos(producto.id)
+                                        }
                                     }}
                                 >
                                 </Button>

@@ -13,7 +13,7 @@ const endPoint = 'http://127.0.0.1:8000/api/Proveedor'
 const endPointUpdate = 'http://127.0.0.1:8000/api/updateProveedor'
 const endPointGet = 'http://127.0.0.1:8000/api/Proveedor'
 
-const MostrarProveedores = ()=>{
+const MostrarProveedores = ({ accesos })=>{
     const [proveedores, setProveedores] = useState([])
     const [proveedorActual, setProveedorActual] = useState()
 
@@ -258,7 +258,14 @@ const MostrarProveedores = ()=>{
             <form 
             className='d-flex align-self-center' 
             style={{left: '300px'}} 
-            onSubmit={getByValorBusqueda}>
+            onSubmit={(e) => {
+                if (Number(accesos.buscar) === 0){
+                    e.preventDefault()
+                    activarModal('Error', 'No tienes permisos para realizar esta acción.')
+                }else{
+                    getByValorBusqueda(e)
+                }
+            }}>
                 <input
                     placeholder={parametroBusqueda.includes('Seleccione')? '': `${parametroBusqueda}`}
                     aria-label='aria-describedby'
@@ -309,7 +316,13 @@ const MostrarProveedores = ()=>{
                 bordered
                 style={{right: '0px'}}
                 className='align-self-center ms-2 me-2' 
-                onClick={()=>createPDF()}
+                onClick={()=>{
+                    if (Number(accesos.imprimirReportes) === 0){
+                        activarModal('Error', 'No tienes permisos para realizar esta acción.')
+                    }else{
+                        createPDF()
+                    }
+                }}
                 >Reporte PDF
             </Button>
 
@@ -319,7 +332,13 @@ const MostrarProveedores = ()=>{
                 bordered
                 style={{right: '0px'}}
                 className='align-self-center ms-2 me-2' 
-                onClick={()=>createExcel()}
+                onClick={()=>{
+                    if (Number(accesos.imprimirReportes) === 0){
+                        activarModal('Error', 'No tienes permisos para realizar esta acción.')
+                    }else{
+                        createExcel()
+                    }
+                }}
                 >Reporte Excel
             </Button>
         </div>
@@ -365,8 +384,12 @@ const MostrarProveedores = ()=>{
                                 children={proveedor.estado == 1 ? 'Deshabilitar' : 'Habilitar'}
                                 color={'secondary'}
                                 onClick={()=>{
-                                    setProveedorActual(proveedor)
+                                    if (Number(accesos.actualizar) === 0){
+                                        activarModal('Error', 'No tienes permisos para realizar esta acción.')
+                                    }else{
+                                        setProveedorActual(proveedor)
                                     activarModal('Cambiar', `¿Seguro que desea ${proveedor.estado == 1 ? 'deshabilitar' : 'habilitar'} este registro?`)
+                                    }
                                 }}
                                 ></Button>
 

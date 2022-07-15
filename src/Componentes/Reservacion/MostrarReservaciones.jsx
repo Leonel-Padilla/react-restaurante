@@ -15,7 +15,8 @@ const endPointGetMesa             = 'http://127.0.0.1:8000/api/Mesa'
 const endPointGetReservacion      = 'http://127.0.0.1:8000/api/Reservacion'
 const endPointUpdateReservacion   = 'http://127.0.0.1:8000/api/updateReservacion'
 const endPointGetReservacionMesa  = 'http://127.0.0.1:8000/api/ReservacionMesa'
-function MostrarReservaciones() {
+
+function MostrarReservaciones({ accesos }) {
   const [clientes, setClientes]           = useState([])
   let idCliente                           = ''
   let nombreCliente                       = ''
@@ -312,7 +313,14 @@ const createPDF = ()=>{
         <form
         className='d-flex align-self-center'
         style={{left: '300px'}}
-        onSubmit={getByValorBusqueda}>
+        onSubmit={(e) => {
+          if (Number(accesos.buscar) === 0){
+              e.preventDefault()
+              activarModal('Error', 'No tienes permisos para realizar esta acción.')
+          }else{
+              getByValorBusqueda(e)
+          }
+      }}>
           
           {parametroBusqueda == 'Cliente'?
             <select
@@ -376,7 +384,13 @@ const createPDF = ()=>{
           bordered
           style={{right: '0px'}}
           className='align-self-center ms-2 me-2' 
-          onClick={()=>createPDF()}
+          onClick={()=>{
+            if (Number(accesos.imprimirReportes) === 0){
+                activarModal('Error', 'No tienes permisos para realizar esta acción.')
+            }else{
+                createPDF()
+            }
+        }}
           >Reporte PDF
         </Button>
 
@@ -386,7 +400,13 @@ const createPDF = ()=>{
           bordered
           style={{right: '0px'}}
           className='align-self-center ms-2 me-2' 
-          onClick={()=>createExcel()}
+          onClick={()=>{
+            if (Number(accesos.imprimirReportes) === 0){
+                activarModal('Error', 'No tienes permisos para realizar esta acción.')
+            }else{
+                createExcel()
+            }
+          }}
           >Reporte Excel
         </Button>
 
@@ -445,8 +465,12 @@ const createPDF = ()=>{
                   children={reservacion.estado == 1 ? 'Deshabilitar' : 'Habilitar'}
                   color={'secondary'}
                   onClick={()=>{
-                    setReservacionActual(reservacion)
-                    activarModal('Cambiar', `¿Seguro que desea ${reservacion.estado == 1 ? 'deshabilitar' : 'habilitar'} este registro?`)
+                    if (Number(accesos.actualizar) === 0){
+                      activarModal('Error', 'No tienes permisos para realizar esta acción.')
+                    }else{
+                      setReservacionActual(reservacion)
+                      activarModal('Cambiar', `¿Seguro que desea ${reservacion.estado == 1 ? 'deshabilitar' : 'habilitar'} este registro?`)
+                    }  
                   }}>
                   </Button>
                 </td>
