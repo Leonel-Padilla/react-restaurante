@@ -40,27 +40,37 @@ const Cliente = () => {
   }
 
   const getAcceso = (permisos = [], nombre) => {
-    permisos.map(permiso => {
-      if(permiso.nombrePantalla === nombre){
-
-        setAccesos({
-          estado    : permiso.estado, 
-          registrar : permiso.registrar,
-          buscar    : permiso.buscar,
-          actualizar: permiso.actualizar,
-          imprimirReportes: permiso.imprimirReportes
-        })
-
-      }
-    })
+    if (!permisos.some(x => x.nombrePantalla === nombre)){
+      setAccesos({
+        estado    : 0, 
+        registrar : 0,
+        buscar    : 0,
+        actualizar: 0,
+        imprimirReportes: 0
+      })
+    }else{
+      permisos.map(permiso => {
+        if(permiso.nombrePantalla === nombre){
+  
+          setAccesos({
+            estado    : permiso.estado, 
+            registrar : permiso.registrar,
+            buscar    : permiso.buscar,
+            actualizar: permiso.actualizar,
+            imprimirReportes: permiso.imprimirReportes
+          })
+  
+        }
+      })
+    }
   }
   
   return (
     <div>
       <Routes>
-        <Route path='/' element={Number(accesos.estado) === 0 ? <Advertencia/> : <MostrarClientes accesos={accesos}></MostrarClientes>}/>
-        <Route path='/addCliente' element={Number(accesos.registrar) === 0 ? <Advertencia/> : <AgregarCliente></AgregarCliente>}/>
-        <Route path='/updateCliente/:id' element={Number(accesos.actualizar) === 0 ? <Advertencia/> : <ActualizarCliente></ActualizarCliente>}/>
+        <Route path='/' element={Number(accesos.estado) === 0 ? <Advertencia pagina={'Cliente'}/> : <MostrarClientes accesos={accesos}></MostrarClientes>}/>
+        <Route path='/addCliente' element={Number(accesos.registrar) === 0 ? <Advertencia pagina={'Cliente'}/> : <AgregarCliente></AgregarCliente>}/>
+        <Route path='/updateCliente/:id' element={Number(accesos.actualizar) === 0 ? <Advertencia pagina={'Cliente'}/> : <ActualizarCliente></ActualizarCliente>}/>
       </Routes>
     </div>
   )

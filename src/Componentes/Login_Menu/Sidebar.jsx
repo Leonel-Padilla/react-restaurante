@@ -16,6 +16,7 @@ import Compra from '../../img/compras.png'
 import Factura from '../../img/factura.png'
 import Reservacion from '../../img/reservacion.png'
 import Impuesto from '../../img/impuesto.png'
+import Permiso from '../../img/access.png'
 import { useNavigate } from "react-router-dom";
 
 
@@ -139,15 +140,20 @@ function Sidebar () {
                         Registrar Mesa</Button>
                 </Collapse>
                 
-                <Collapse 
-                title = {<Text h6 className="text-white">Permisos</Text>}
-                contentLeft={
-                <Avatar size="md" squared icon={<img src={Comida}/>} />}>
-                    <Button light color={'default'} onClick={()=>navigate('/Permisos/addPermiso')} className="text-white"> 
-                        Agregar Permisos</Button>
-                    <Button light color={'default'} onClick={()=>navigate('/Permisos')} className="text-white"> 
-                        Actualizar Permisos</Button>
-                </Collapse>
+                {sessionStorage.getItem('rol') !== 1 ?
+                    <Collapse 
+                    title = {<Text h6 className="text-white">Permisos</Text>}
+                    contentLeft={
+                    <Avatar size="md" squared icon={<img src={Permiso}/>} />}>
+                        <Button light color={'default'} onClick={()=>navigate('/Permisos/addPermiso')} className="text-white"> 
+                            Agregar Permisos</Button>
+                        <Button light color={'default'} onClick={()=>navigate('/Permisos')} className="text-white"> 
+                            Actualizar Permisos</Button>
+                    </Collapse>
+                :
+                    null
+                }
+                
 
                 <Collapse 
                 title = {<Text h6 className="text-white">Producto</Text>}

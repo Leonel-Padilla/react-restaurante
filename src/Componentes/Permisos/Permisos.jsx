@@ -161,7 +161,11 @@ const Permisos = () => {
                   const newValue = rolPantalla.estado === 1 ? 0 : 1
                   
                   newArray[index] = {...rolPantalla, estado: newValue, actualizar: newValue, registrar: newValue, buscar: newValue,
-                  imprimirReportes: newValue}
+                  imprimirReportes: newValue, 
+                  detalles: rolPantalla.pantallaNombre === 'factura' || rolPantalla.pantallaNombre === 'compra' || 
+                  rolPantalla.pantallaNombre === 'producto' ? newValue : 0,
+                  reimprimir: rolPantalla.pantallaNombre === 'factura' ? newValue : 0}
+
                   setRolesPantallas2(newArray)
                 }}>
               </input> {rolPantalla.pantallaNombre}

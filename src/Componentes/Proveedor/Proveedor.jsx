@@ -41,27 +41,38 @@ const Proveedor = ()=>{
       }
     
       const getAcceso = (permisos = [], nombre) => {
-        permisos.map(permiso => {
-          if(permiso.nombrePantalla === nombre){
-    
-            setAccesos({
-              estado    : permiso.estado, 
-              registrar : permiso.registrar,
-              buscar    : permiso.buscar,
-              actualizar: permiso.actualizar,
-              imprimirReportes: permiso.imprimirReportes
-            })
-    
-          }
-        })
+        if (!permisos.some(x => x.nombrePantalla === nombre)){
+          setAccesos({
+            estado    : 0, 
+            registrar : 0,
+            buscar    : 0,
+            actualizar: 0,
+            imprimirReportes: 0
+          })
+        }else{
+          permisos.map(permiso => {
+            if(permiso.nombrePantalla === nombre){
+      
+              setAccesos({
+                estado    : permiso.estado, 
+                registrar : permiso.registrar,
+                buscar    : permiso.buscar,
+                actualizar: permiso.actualizar,
+                imprimirReportes: permiso.imprimirReportes
+              })
+      
+            }
+          })
+        }
+
       }
 
     return (
         <div>
             <Routes>
-                <Route path='/' element={Number(accesos.estado) === 0 ? <Advertencia/> : <MostrarProveedores accesos={accesos}></MostrarProveedores>}/>
-                <Route path='/addProveedor' element={Number(accesos.registrar) === 0 ? <Advertencia/> : <AgregarProveedor></AgregarProveedor>}/>
-                <Route path='/updateProveedor/:id' element={Number(accesos.actualizar) === 0 ? <Advertencia/> : <ActualizarProveedor></ActualizarProveedor>}/>
+                <Route path='/' element={Number(accesos.estado) === 0 ? <Advertencia pagina={'Proveedor'}/> : <MostrarProveedores accesos={accesos}></MostrarProveedores>}/>
+                <Route path='/addProveedor' element={Number(accesos.registrar) === 0 ? <Advertencia pagina={'Proveedor'}/> : <AgregarProveedor></AgregarProveedor>}/>
+                <Route path='/updateProveedor/:id' element={Number(accesos.actualizar) === 0 ? <Advertencia pagina={'Proveedor'}/> : <ActualizarProveedor></ActualizarProveedor>}/>
             </Routes>
         </div>
       );

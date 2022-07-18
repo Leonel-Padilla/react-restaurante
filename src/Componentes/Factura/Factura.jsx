@@ -43,28 +43,40 @@ function Factura() {
   }
 
   const getAcceso = (permisos = [], nombre) => {
-    permisos.map(permiso => {
-      if(permiso.nombrePantalla === nombre){
-
-        setAccesos({
-          estado    : permiso.estado, 
-          registrar : permiso.registrar,
-          buscar    : permiso.buscar,
-          actualizar: permiso.actualizar,
-          imprimirReportes: permiso.imprimirReportes,
-          detalles: permiso.detalles,
-          reimprimir: permiso.reimprimir
-        })
-
-      }
-    })
+    if (!permisos.some(x => x.nombrePantalla === nombre)){
+      setAccesos({
+        estado    : 0, 
+        registrar : 0,
+        buscar    : 0,
+        actualizar: 0,
+        imprimirReportes: 0,
+        detalles  : 0,
+        reimprimir: 0
+      })
+    }else{
+      permisos.map(permiso => {
+        if(permiso.nombrePantalla === nombre){
+  
+          setAccesos({
+            estado    : permiso.estado, 
+            registrar : permiso.registrar,
+            buscar    : permiso.buscar,
+            actualizar: permiso.actualizar,
+            imprimirReportes: permiso.imprimirReportes,
+            detalles: permiso.detalles,
+            reimprimir: permiso.reimprimir
+          })
+  
+        }
+      })
+    }
   }
   return (
     <div>
       <Routes>
-        <Route path='/' element={Number(accesos.estado) === 0 ? <Advertencia/> : <MostrarFacturas accesos={accesos}></MostrarFacturas>}/>
-        <Route path='/addFactura' element={Number(accesos.registrar) === 0 ? <Advertencia/> : <AgregarFactura></AgregarFactura>}/>
-        <Route path='/updateFactura/:id' element={Number(accesos.actualizar) === 0 ? <Advertencia/> : <ActualizarFactura></ActualizarFactura>}/>
+        <Route path='/' element={Number(accesos.estado) === 0 ? <Advertencia pagina={'Factura'}/> : <MostrarFacturas accesos={accesos}></MostrarFacturas>}/>
+        <Route path='/addFactura' element={Number(accesos.registrar) === 0 ? <Advertencia pagina={'Factura'}/> : <AgregarFactura></AgregarFactura>}/>
+        <Route path='/updateFactura/:id' element={Number(accesos.actualizar) === 0 ? <Advertencia pagina={'Factura'}/> : <ActualizarFactura></ActualizarFactura>}/>
       </Routes>
     </div>
   )

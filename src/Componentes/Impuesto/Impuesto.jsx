@@ -60,9 +60,9 @@ function Impuesto() {
   return (
     <div>
       <Routes>
-          <Route path='/' element={Number(accesos.estado) === 0 ? <Advertencia/> : <MostrarImpuestos accesos={accesos}></MostrarImpuestos>}/>
-          <Route path='/addImpuesto' element={Number(accesos.registrar) === 0 ? <Advertencia/> : <AgregarImpuesto></AgregarImpuesto>}/>
-          <Route path='/updateImpuesto/:id' element={Number(accesos.actualizar) === 0 ? <Advertencia/> : <ActualizarImpuesto></ActualizarImpuesto>}/>
+          <Route path='/' element={Number(accesos.estado) === 0 ? <Advertencia pagina={'Impuesto'}/> : <MostrarImpuestos accesos={accesos}></MostrarImpuestos>}/>
+          <Route path='/addImpuesto' element={Number(accesos.registrar) === 0 ? <Advertencia pagina={'Impuesto'}/> : <AgregarImpuesto></AgregarImpuesto>}/>
+          <Route path='/updateImpuesto/:id' element={Number(accesos.actualizar) === 0 ? <Advertencia pagina={'Impuesto'}/> : <ActualizarImpuesto></ActualizarImpuesto>}/>
       </Routes>
     </div>
   )

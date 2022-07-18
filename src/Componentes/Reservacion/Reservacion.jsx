@@ -42,26 +42,36 @@ function Reservacion() {
   }
 
   const getAcceso = (permisos = [], nombre) => {
-    permisos.map(permiso => {
-      if(permiso.nombrePantalla === nombre){
-
-        setAccesos({
-          estado    : permiso.estado, 
-          registrar : permiso.registrar,
-          buscar    : permiso.buscar,
-          actualizar: permiso.actualizar,
-          imprimirReportes: permiso.imprimirReportes
-        })
-
-      }
-    })
+    if (!permisos.some(x => x.nombrePantalla === nombre)){
+      setAccesos({
+        estado    : 0, 
+        registrar : 0,
+        buscar    : 0,
+        actualizar: 0,
+        imprimirReportes: 0
+      })
+    }else{
+      permisos.map(permiso => {
+        if(permiso.nombrePantalla === nombre){
+  
+          setAccesos({
+            estado    : permiso.estado, 
+            registrar : permiso.registrar,
+            buscar    : permiso.buscar,
+            actualizar: permiso.actualizar,
+            imprimirReportes: permiso.imprimirReportes
+          })
+  
+        }
+      })
+    }
   }
   return (
     <div>
       <Routes>
-        <Route path='/' element={Number(accesos.estado) === 0 ? <Advertencia/> : <MostrarReservaciones accesos={accesos}></MostrarReservaciones>}/>
-        <Route path='/addReservacion' element={Number(accesos.registrar) === 0 ? <Advertencia/> : <AgregarReservacion></AgregarReservacion>}/>
-        <Route path='/updateReservacion/:id' element={Number(accesos.actualizar) === 0 ? <Advertencia/> : <ActualizarReservacion></ActualizarReservacion>}/> 
+        <Route path='/' element={Number(accesos.estado) === 0 ? <Advertencia pagina={'Reservacion'}/> : <MostrarReservaciones accesos={accesos}></MostrarReservaciones>}/>
+        <Route path='/addReservacion' element={Number(accesos.registrar) === 0 ? <Advertencia pagina={'Reservacion'}/> : <AgregarReservacion></AgregarReservacion>}/>
+        <Route path='/updateReservacion/:id' element={Number(accesos.actualizar) === 0 ? <Advertencia pagina={'Reservacion'}/> : <ActualizarReservacion></ActualizarReservacion>}/> 
       </Routes>
     </div>
   )
