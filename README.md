@@ -1,70 +1,76 @@
-# Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Hi, I'm Axcel Leonel Sánchez! 👋
 
-## Available Scripts
+**IMPORTANT**
 
-In the project directory, you can run:
+I'm a Front-End developer with more than two years of experience 
+developing applications with a variety of technologies, you can see 
+those projects in **this profile where you are at, which is my previous account:**
 
-### `npm start`
+[![GitHub](https://img.shields.io/badge/Previous_Account-282828?style=for-the-badge&logo=GitHub&logoColor=white)](https://github.com/Leonel-Padilla)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Currently I have **more than 1 year of experience with React**, you can see
+my personal React projects in **my new GitHub account:**
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+[![GitHub](https://img.shields.io/badge/GitHub_Account-282828?style=for-the-badge&logo=GitHub&logoColor=white)](https://github.com/Leonel-Padilla2)
 
-### `npm test`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+# 🔗 Links
+[![portfolio](https://img.shields.io/badge/my_portfolio-E8E8E8?style=for-the-badge&logo=ko-fi&logoColor=black)](https://leonel-padilla2.github.io/portfolio/)
+[![linkedin](https://img.shields.io/badge/linkedin-blue?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/axcel-leonel-sánchez-padilla)
 
-### `npm run build`
+# Restaurant Application
+This is the first React project I was part of.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Web application that allows the user to manage inventory, user permissions, clients,
+billing, purchasing, employees, and providers.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+If the user has the necessary permissions such as the admin role, then is allowed to register 
+and view bills, purchases, employees, clients, providers, products, add and remove permissions 
+to other users, also, the admin role is allowed to accept or decline products from any 
+provider, the application automatically creates records for following information:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- Employee positions
+- Employee salaries
+- Taxes
+- Product prices
 
-### `npm run eject`
+The application creates logs every time there is a request from the Front-End to the Back-End,
+you can see the Back-End repository in the link below:
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+"https://github.com/Leonel-Padilla/react-restaurante-backend"
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+# Technologies
+- React 
+- Axios
+- Bootstrap
+- React-Router
+- NextUI Library
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Run Locally
 
-## Learn More
+Clone the project
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```bash
+  git clone https://github.com/Leonel-Padilla/react-restaurante.git
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Go to the project directory
 
-### Code Splitting
+```bash
+  cd react-restaurante
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+Install dependencies
 
-### Analyzing the Bundle Size
+```bash
+  npm install
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+Start the server
 
-### Making a Progressive Web App
+```bash
+  npm run start
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
